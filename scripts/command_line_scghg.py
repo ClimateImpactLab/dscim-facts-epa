@@ -364,7 +364,6 @@ def epa_scghgs(sectors,
         
         # Changes coordinate names of gases
         df_full_scghg = df_full_scghg.assign_coords(gas=[gas_conversion_dict[gas] for gas in df_full_scghg.gas.values])
-        df_full_gcnp = df_full_gcnp.assign_coords(gas=[gas_conversion_dict[gas] for gas in df_full_gcnp.gas.values])
         
         # Splits SCGHGs by gas and saves them out separately
         # For uncollapsed SCGHGs
