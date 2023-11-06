@@ -4,6 +4,31 @@ This repository is an implementation of DSCIM, referred to as DSCIM-FACTS-EPA, t
 
 This Python library enables the calculation of sector-specific partial social cost of greenhouse gases (SC-GHG) and SC-GHGs that are combined across sectors. The main purpose of this library is to parse the monetized spatial damages from different sectors and integrate them into SC-GHGs for different discount levels, pulse years, and greenhouse gases. 
 
+## Run cases
+
+By default, DSCIM-FACTS-EPA can run SC-GHGs for carbon dioxide, methane, and nitrous oxide for pulse years 2020-2080 in 10 year increments for the Resources for the Future (RFF) emissions scenarios. For alternative gases, pulse years, or emissions scenarios the user will need to provide new GMST and GMSL trajectories. The user can provide these trajectories directly, or can use the DSCIM-FACTS-EPA FACTS runner to generate GMSL from ocean heat content (OHC) and GMST. The intended use cases of this repository are thus:
+
+1. The user wants to generate the Climate Impact Lab (CIL) RFF SC-GHGs themselves.
+2. The user has GMST and GMSL files and wants the use the CIL damage functions to generate SC-GHGs based on those files.
+3. The user has GMST and OHC files (usually directly from a simple climate model, such as FaIR) and wants to generate GMSL files from FACTS.
+  
+```mermaid
+flowchart LR
+
+A[1. Default] --> D(Setup)
+D --> |1.| E{Running SCGHGs}
+
+B[2. GMST/GMSL] --> D(Setup)
+D --> |2.| F(Formatting GMST/GMSL files)
+F --> |2.| E{Running SCGHGs}
+
+C[3. GMST/OHC] --> D(Setup)
+D --> |3.| F(Formatting GMST/GMSL files)
+F --> |3.| G(Running FACTS)
+G --> E{Running SCGHGs}
+```
+
+
 ## Setup
 
 To begin we assume you have a system with `conda` available from the command line, and some familiarity with it. A conda distribution is available from [miniconda](https://docs.conda.io/en/latest/miniconda.html), [Anaconda](https://www.anaconda.com/), or [mamba](https://mamba.readthedocs.io/en/latest/). This helps to ensure required software packages are correctly compiled and installed, replicating the analysis environment.
@@ -35,6 +60,27 @@ python scripts/directory_setup.py
 ```
 
 Note that this will download several gigabytes of data and may take several minutes, depending on your connection speed.
+
+## Formatting files
+
+This section will describe where exactly to put the GMST/GMSL/OHC files and how exactly each should be formatted.
+
+### GMST
+
+### GMSL
+
+### OHC
+
+## Running FACTS
+
+If you will be running FACTS, make sure that you have followed the **Formatting GMST/GMSL files** section above. To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). ##This assumes that the repository of FACTS is in the same directory as this repository. Likewise, we need to make sure that the FACTS environment can be found by this script (maybe we just make it on the fly)##. Once you have done so, run
+
+```bash
+bash repos/dscim-facts-epa/scripts/facts.runs/facts_runs.sh 
+```
+
+Keep in mind that the more pulse year and gas dimensions your files have, the longer this run will take. On a fast machine each combination can take in the neighborhood of 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take 3x(7 + 1)x10 = 240 minutes.
+
 
 ## Running SCGHGs
 
