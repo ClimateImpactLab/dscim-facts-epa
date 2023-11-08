@@ -25,6 +25,9 @@ sealevel_step:
     GrIS1f:
         module_set: "FittedISMIP"
         module: "GrIS"
+        options:
+            crateyear_start: 2080
+            crateyear_end: 2100
         options_allowoverwrite:
             climate_data_file: "%CLIMATE_DATA_FILE%"
         include_in_workflow:

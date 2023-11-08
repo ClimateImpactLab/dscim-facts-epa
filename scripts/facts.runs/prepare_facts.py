@@ -9,19 +9,40 @@ from datetime import datetime
 from itertools import product
 from pathlib import Path
 import shutil
-from datatree import DataTree
+import argparse
+
+# Create argument parser
+parser = argparse.ArgumentParser(description='Process two lists.')
+
+# Add named arguments for the lists
+parser.add_argument('--facts_repo',nargs ='*', help = 'Path to the FACTS repo')
+parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
+parser.add_argument('--gases', nargs='*', help='List of gases')
+
+# Parse the command line arguments
+args = parser.parse_args()
+
+# Access the lists using the argument names
+pulse_years = args.pulse_years
+gases = args.gases
+facts_dir = args.facts_repo
+
+print("pulse_years:", pulse_years)
+print("gases:", gases)
 
 scenario = 'ssp585'
 nsamps = 10000
 proj_years = np.arange(1750, 2501)
 
 
-pulse_years = ['control', 2020]
-gases = ['CO2_Fossil']
 
-for pulse_year, gas in product(pulse_years,gases):
+for pulse_year, gas in list(product(pulse_years,gases)) + [('control','control'),]:
     template_dir = Path(os.getcwd()) / 'template'
-    run_dir = Path(os.getcwd()) / f'rff.{pulse_year}.{gas}'
+    if '_' in gas:
+        gas_exp = gas.replace('_','.')
+    else:
+        gas_exp = gas
+    run_dir = Path(facts_repo) / f'rff.{pulse_year}.{gas_exp}'
     input_dir = run_dir / "input"
     os.makedirs(run_dir, exist_ok = True)
     os.makedirs(input_dir, exist_ok = True)
@@ -40,30 +61,38 @@ for pulse_year, gas in product(pulse_years,gases):
             "Note": "Code provided by Kelly McCusker of Rhodium Group Climate Impact Lab and adapted for use in FACTS."
         }
 
-    t1 = xr.open_dataset('~/gcp_integration_archive_integration_econclim_data_climate_AR6_rff_ar6_rff_fair162_control_pulse_CO2_Fossil_2020-2030-2040-2050-2060-2070-2080_emis_conc_rf_temp_lambdaeff_ohc_emissions-driven_naturalfix_v5.03.nc')
-    t1.close()
+    temp_file = xr.open_dataset('~/repos/dscim-facts-epa/scripts/input/climate/gmst_pulse.nc4')
+    ohc_file = xr.open_dataset('~/repos/dscim-facts-epa/scripts/input/climate/ohc_pulse.nc4')
+    temp_file.close()
+    ohc_file.close()
     if pulse_year == 'control':
-        dat = (t1
-            .drop_vars(['concentration', 'forcing', 'lambda_effective', 'rff_sp_index','climate_param_index'])
-            .squeeze(drop = True)
-            .rename(temperature = 'surface_temperature',year = 'years',runid  = 'samples')
-            .sel(runtype = 'control',pulse_year = 2020, drop = True)
+        tempds = (temp_file
+            .rename(control_temperature = 'surface_temperature',year = 'years',runid  = 'samples')
             .assign_coords(locations = -1)
             .expand_dims("locations")
-        )
+        ).surface_temperature.to_dataset()
+        
+        ohcds = (ohc_file
+            .rename(control_ocean_heat_content = 'ocean_heat_content',year = 'years',runid  = 'samples')
+            .assign_coords(locations = -1)
+            .expand_dims("locations")
+        ).ocean_heat_content.to_dataset()
     else:
-        dat = (t1
-            .drop_vars(['concentration', 'forcing', 'lambda_effective', 'rff_sp_index','climate_param_index'])
-            .squeeze(drop = True)
-            .rename(temperature = 'surface_temperature',year = 'years',runid  = 'samples')
-            .sel(runtype = 'pulse',pulse_year = pulse_year, drop = True)
+        tempds = (temp_file
+            .rename(pulse_temperature = 'surface_temperature',year = 'years',runid  = 'samples')
+            .sel(pulse_year = int(pulse_year), gas = gas, drop = True)
             .assign_coords(locations = -1)
             .expand_dims("locations")
-        )
+        ).surface_temperature.to_dataset()
+        
+        ohcds = (ohc_file
+            .rename(pulse_ocean_heat_content = 'ocean_heat_content',year = 'years',runid  = 'samples')
+            .sel(pulse_year = int(pulse_year), gas = gas, drop = True)
+            .assign_coords(locations = -1)
+            .expand_dims("locations")
+        ).ocean_heat_content.to_dataset()
 
-    tempds = dat.surface_temperature.to_dataset()
     temps = tempds.surface_temperature.values
-    ohcds = dat.ocean_heat_content.to_dataset()
     ohcs = ohcds.ocean_heat_content.values
     # Write the datasets to netCDF
     tempds.to_netcdf(input_dir / "gsat.nc4", encoding={"surface_temperature": {"dtype": "float64", "zlib": True, "complevel":4}})
