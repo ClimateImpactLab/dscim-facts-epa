@@ -7,7 +7,7 @@ gases=("CO2_Fossil" "CH4")
 facts_dir="/home/jonahmgilbert/repos/facts"
 
 # Create FACTS experiments
-echo python prepare_facts.py --facts_repo "${facts_dir}" --pulse_years "${pulse_years[@]}" --gases "${gases[@]}"
+python prepare_facts.py --facts_repo "${facts_dir}" --pulse_years "${pulse_years[@]}" --gases "${gases[@]}"
 
 # # Loop through the pulse years
 # for gas in "${gases[@]}"; do

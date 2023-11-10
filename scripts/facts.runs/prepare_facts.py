@@ -42,7 +42,7 @@ for pulse_year, gas in list(product(pulse_years,gases)) + [('control','control')
     # FACTS does not accept underscores in experiment names
     gas_exp = gas.replace('_','.')
     
-    run_dir = Path(facts_repo) / f'rff.{pulse_year}.{gas_exp}'
+    run_dir = Path(facts_dir) / f'rff.{pulse_year}.{gas_exp}'
     input_dir = run_dir / "input"
     os.makedirs(run_dir, exist_ok = True)
     os.makedirs(input_dir, exist_ok = True)
