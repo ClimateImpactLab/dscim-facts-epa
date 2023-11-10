@@ -25,8 +25,8 @@ args = parser.parse_args()
 # Access the lists using the argument names
 pulse_years = args.pulse_years
 gases = args.gases
-facts_dir = args.facts_repo
-gmsl_pulse = args.gmsl_pulse
+facts_dir = args.facts_repo[0]
+gmsl_pulse = args.gmsl_pulse[0]
 
 print("pulse_years:", pulse_years)
 print("gases:", gases)
@@ -39,22 +39,24 @@ control = (0.5 * xr.open_dataset(facts_dir + '/rff.control.control/output/rff.co
 nsamps = len(control.samples.values)
      
 pulse_gas = []
-for pulse_year, gas in list(product(pulse_years,gases))
-    pulse = (0.5 * xr.open_dataset(facts_dir + f'/rff.{pulse_year}.{gas}/output/rff.{pulse_year}.{gas}.total.workflow.wf1f.global.nc') +
-        0.5 * xr.open_dataset(facts_dir + f'/rff.{pulse_year}.{gas}/output/rff.{pulse_year}.{gas}.total.workflow.wf2f.global.nc')
+for pulse_year, gas in list(product(pulse_years,gases)):
+    gas_exp = gas.replace('_','.')
+    pulse = ((0.5 * xr.open_dataset(facts_dir + f'/rff.{pulse_year}.{gas_exp}/output/rff.{pulse_year}.{gas_exp}.total.workflow.wf1f.global.nc') +
+        0.5 * xr.open_dataset(facts_dir + f'/rff.{pulse_year}.{gas_exp}/output/rff.{pulse_year}.{gas_exp}.total.workflow.wf2f.global.nc'))
+             .rename({'samples':'runid','sea_level_change':'pulse_gmsl','years':'year'})
              .assign_coords({'runid':np.arange(1,nsamps + 1),'gas':gas, 'pulse_year':pulse_year})
              .expand_dims(['gas','pulse_year'])
             )
     pulse_gas = pulse_gas + [pulse,]
-pulse = xr.concat(pulse_gas)
+#pulse = xr.concat(pulse_gas, dim = ['pulse_year','gas'])
     
 pulse = (pulse
          .squeeze(drop = True)
-         .rename({'samples':'runid','sea_level_change':'pulse_gmsl','years':'year'})
+         .drop(['lat','lon'])
          .assign_coords({'runid':np.arange(1,nsamps + 1),'gas':'CO2_Fossil', 'pulse_year':2020})
          .expand_dims(['gas','pulse_year'])
-         .drop(['lat','lon'])
         )
+
 control = (control
            .squeeze(drop = True)
            .rename({'samples':'runid','sea_level_change':'control_gmsl','years':'year'})
@@ -64,7 +66,7 @@ control = (control
 gmsl_ds = xr.merge([control,pulse])/10
 
 save = Path(os.getcwd())
-save = save.parent.absolute() / 'input' / 'climate
+save = save.parent.absolute() / 'input' / 'climate'
 
 gmsl_ds.to_netcdf(save / gmsl_pulse, encoding = {"control_gmsl":{"dtype":"float64"},"pulse_gmsl":{"dtype":"float64"}})
     

@@ -13,8 +13,10 @@ parser = argparse.ArgumentParser(description='Process two lists.')
 
 # Add named arguments for the lists
 parser.add_argument('--facts_repo', nargs=1, help = 'Path to the FACTS repo')
+parser.add_argument('--dscim_repo', nargs=1, help = 'Path to the FACTS repo')
 parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
 parser.add_argument('--gases', nargs='*', help='List of gases')
+
 
 # Parse the command line arguments
 args = parser.parse_args()
@@ -22,7 +24,8 @@ args = parser.parse_args()
 # Access the lists using the argument names
 pulse_years = args.pulse_years
 gases = args.gases
-facts_dir = args.facts_repo[0]
+facts_dir = Path(args.facts_repo[0])
+dscim_dir = Path(args.dscim_repo[0])
 print("Facts_dir:", facts_dir)
 print("pulse_years:", pulse_years)
 print("gases:", gases)
@@ -32,14 +35,13 @@ nsamps = 10000
 proj_years = np.arange(1750, 2501)
 
 
-
 for pulse_year, gas in list(product(pulse_years,gases)) + [('control','control'),]:
     template_dir = Path(os.getcwd()) / 'template'
     
     # FACTS does not accept underscores in experiment names
     gas_exp = gas.replace('_','.')
     
-    run_dir = Path(facts_dir) / f'rff.{pulse_year}.{gas_exp}'
+    run_dir = facts_dir / f'rff.{pulse_year}.{gas_exp}'
     input_dir = run_dir / "input"
     os.makedirs(run_dir, exist_ok = True)
     os.makedirs(input_dir, exist_ok = True)
@@ -58,8 +60,8 @@ for pulse_year, gas in list(product(pulse_years,gases)) + [('control','control')
             "Note": "Code provided by Kelly McCusker of Rhodium Group Climate Impact Lab and adapted for use in FACTS."
         }
 
-    temp_file = xr.open_dataset('~/repos/dscim-facts-epa/scripts/input/climate/gmst_pulse.nc4')
-    ohc_file = xr.open_dataset('~/repos/dscim-facts-epa/scripts/input/climate/ohc_pulse.nc4')
+    temp_file = xr.open_dataset(dscim_dir/'scripts'/'input'/'climate'/'gmst_pulse.nc4')
+    ohc_file = xr.open_dataset(dscim_dir/'scripts'/'input'/'climate'/'ohc_pulse.nc4')
     temp_file.close()
     ohc_file.close()
     if pulse_year == 'control':
