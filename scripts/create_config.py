@@ -4,6 +4,21 @@ from pathlib import Path
 from datetime import datetime
 import sys
 import re
+import argparse
+
+# Create argument parser
+parser = argparse.ArgumentParser(description='Create config from gmsl and gmst pulse files')
+
+# Add named arguments for the lists
+parser.add_argument('--gmsl_pulse',nargs ='1', help = 'Path to GMSL pulse file')
+parser.add_argument('--gmst_pulse', nargs='1', help='Path to GMST pulse file')
+
+# Parse the command line arguments
+args = parser.parse_args()
+
+# Access the lists using the argument names
+gmsl_pulsename = args.gmsl_pulse
+gmst_pulsename = args.gmst_pulse
 
 currentDay = datetime.now().day
 currentMonth = datetime.now().month
