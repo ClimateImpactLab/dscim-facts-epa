@@ -25,3 +25,4 @@ done
 python format_facts.py --facts-repo "${facts_dir}" --pulse_years "${pulse_years[@]}" --gases "${gases[@]}"
 
 # Create config for dscim run
+python create_config.py
