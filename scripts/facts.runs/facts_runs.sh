@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Define arrays for pulse years and gases
-pulse_years=(2020 2030)
-gases=("CO2_Fossil" "CH4") 
+pulse_years=(2020)
+gases=("CO2_Fossil") 
 
 facts_dir="/home/jonahmgilbert/repos/facts"
 

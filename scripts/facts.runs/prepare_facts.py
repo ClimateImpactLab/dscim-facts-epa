@@ -1,10 +1,7 @@
 import os
-import sys
 import xarray as xr
-import pandas as pd
 import numpy as np
 import argparse
-import pickle
 from datetime import datetime
 from itertools import product
 from pathlib import Path
@@ -25,8 +22,8 @@ args = parser.parse_args()
 # Access the lists using the argument names
 pulse_years = args.pulse_years
 gases = args.gases
-facts_dir = args.facts_repo
-
+facts_dir = args.facts_repo[0]
+print("Facts_dir:", facts_dir)
 print("pulse_years:", pulse_years)
 print("gases:", gases)
 
