@@ -14,10 +14,10 @@ for gas in "${gases[@]}"; do
         echo "Gas: $gas"
 	    echo "Pulse: $year"
         cd $facts_dir
-        echo python3 runFACTS.py rff.$year.$gas_exp
+        python3 runFACTS.py rff.$year.$gas_exp
     done
 done
-echo python3 runFACTS.py rff.control.control
+python3 runFACTS.py rff.control.control
 cd $dscim_facts_epa_dir/scripts/facts.runs
 # Take the outputs of the FACTS experiment and save in the proper format
 python format_facts.py --facts_repo "${facts_dir}" --pulse_years "${pulse_years[@]}" --gases "${gases[@]}" --gmsl_pulse facts_gmsl_pulse.nc4
