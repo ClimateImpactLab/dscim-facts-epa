@@ -10,8 +10,8 @@ import argparse
 parser = argparse.ArgumentParser(description='Create config from gmsl and gmst pulse files')
 
 # Add named arguments for the lists
-parser.add_argument('--gmsl_pulse',nargs ='1', help = 'Path to GMSL pulse file')
-parser.add_argument('--gmst_pulse', nargs='1', help='Path to GMST pulse file')
+parser.add_argument('--gmsl_pulse', nargs=1, help='Path to GMSL pulse file')
+parser.add_argument('--gmst_pulse', nargs=1, help='Path to GMST pulse file')
 
 # Parse the command line arguments
 args = parser.parse_args()

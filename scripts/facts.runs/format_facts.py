@@ -14,10 +14,10 @@ import shutil
 parser = argparse.ArgumentParser(description='Process lists of gases and pulse years to get experiments from FACTS')
 
 # Add named arguments for the lists
-parser.add_argument('--facts_repo',nargs ='1', help = 'Path to the FACTS repo')
+parser.add_argument('--facts_repo', nargs=1, help = 'Path to the FACTS repo')
 parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
 parser.add_argument('--gases', nargs='*', help='List of gases')
-parser.add_argument('--gmsl_pulse', nargs='1', help='gmsl pulse filename to save out')
+parser.add_argument('--gmsl_pulse', nargs=1, help='gmsl pulse filename to save out')
 
 # Parse the command line arguments
 args = parser.parse_args()

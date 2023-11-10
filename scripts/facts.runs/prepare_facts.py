@@ -15,7 +15,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Process two lists.')
 
 # Add named arguments for the lists
-parser.add_argument('--facts_repo',nargs ='1', help = 'Path to the FACTS repo')
+parser.add_argument('--facts_repo', nargs=1, help = 'Path to the FACTS repo')
 parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
 parser.add_argument('--gases', nargs='*', help='List of gases')
 

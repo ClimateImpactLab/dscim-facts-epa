@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Define arrays for pulse years and gases
-pulse_years = ( 2020 )
-gases = ( "CO2_Fossil" ) 
+pulse_years=(2020 2030)
+gases=("CO2_Fossil" "CH4") 
 
-facts_dir = "/home/jonahmgilbert/repos/facts"
+facts_dir="/home/jonahmgilbert/repos/facts"
 
 # Create FACTS experiments
 echo python prepare_facts.py --facts_repo "${facts_dir}" --pulse_years "${pulse_years[@]}" --gases "${gases[@]}"
