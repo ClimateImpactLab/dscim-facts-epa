@@ -20,7 +20,8 @@ D --> |1.| E{Running SCGHGs}
 
 B[2. GMST/GMSL] --> D(Setup)
 D --> |2.| F(Formatting GMST/GMSL files)
-F --> |2.| E{Running SCGHGs}
+F --> |2.| H(Creating a run config)
+H --> E{Running SCGHGs}
 
 C[3. GMST/OHC] --> D(Setup)
 D --> |3.| F(Formatting GMST/GMSL files)
@@ -63,23 +64,55 @@ Note that this will download several gigabytes of data and may take several minu
 
 ## Formatting files
 
-This section will describe where exactly to put the GMST/GMSL/OHC files and how exactly each should be formatted.
+In order to ensure that both `FACTS` and `dscim-facts-epa` are able to read new GMST, GMSL, and OHC files, a strict format must be adopted.
+1. We require that there be a control and pulse version of the appropriate variable:
+    - For GMST, these are `control_temperature` and `pulse_temperature`
+    - For GMSL, these are `control_gmsl` and `pulse_gmsl`
+    - For OHC, these are `control_ocean_heat_content` and `pulse_ocean_heat_content`
+2. Any combination of gases and pulse years can be supplied. SC-GHGs will then be runnable for those gases and pulse years
+3. We expect `year` to be at minimum from 2000-2300
+4. The `runid` dimension corresponds to a particular matching of FaIR parameters to RFF-SPs. See the file for those matches. We expect 10000 `runids` from 1 to 10000
 
 ### GMST
+![gmst_pulse_720](https://github.com/ClimateImpactLab/dscim-facts-epa/assets/5862128/9631c307-6cb0-417f-9e1c-4835d5293c05)
 
 ### GMSL
+![gmsl_pulse_720](https://github.com/ClimateImpactLab/dscim-facts-epa/assets/5862128/6335e4ae-0be2-4370-b001-75767c817197)
 
 ### OHC
+![ohc_pulse_720](https://github.com/ClimateImpactLab/dscim-facts-epa/assets/5862128/f980274b-bc85-45fd-a7af-8b93003a919f)
+
+## Creating a run config
+
+If you have already run GMSL and GMST files, it is recommended to run them through the `create_config.py` file, as this file will ensure that you have formatted your files correctly. In addition, this script will generate a config which will allow you to directly begin running `dscim-facts-epa`. To run this script, you will need to specify your formatted gmst and gmsl files:
+
+```bash
+create_config.py --gmst_file [GMST file] --gmsl_file [GMSL file]
+```
+
+Once this config is created, you can proceed to the **Running SCGHGs** step.
 
 ## Running FACTS
 
-If you will be running FACTS, make sure that you have followed the **Formatting GMST/GMSL files** section above. To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). ##This assumes that the repository of FACTS is in the same directory as this repository. Likewise, we need to make sure that the FACTS environment can be found by this script (maybe we just make it on the fly)##. Once you have done so, run
+If you will be running FACTS, make sure that you have followed the **Formatting GMST/GMSL files** section above. To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). The user must then make modifications to the `scripts/facts.runs/facts_runs.sh` script to ensure all files are found and run specifications are set. Those changes are:
+ - on line 3 of the script, change `pulse_years` to the desired pulse years to be run by FACTS
+ - on line 4, change `gas` to the desired gases to be run by FACTS
+ - on line 5, change `facts_dir` to where you have cloned your FACTS repository
+ - on line 5, change `dscim_facts_epa_dir` to where you have cloned this repository 
+
+Once you have done so, activate your installed FACTS virtual environment. This script will need two additional packages to set up the FACTS experiments:
 
 ```bash
-bash repos/dscim-facts-epa/scripts/facts.runs/facts_runs.sh 
+pip install xarray netcdf4
 ```
 
-Keep in mind that the more pulse year and gas dimensions your files have, the longer this run will take. On a fast machine each combination can take in the neighborhood of 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take 3x(7 + 1)x10 = 240 minutes.
+Now run:
+
+```bash
+bash facts_runs.sh 
+```
+
+Keep in mind that the more pulse year and gas dimensions your files have, the longer this run will take. On a fast machine each combination can take in the neighborhood of 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take (3 x 7 + 1) x 10 = 220 minutes.
 
 
 ## Running SCGHGs
@@ -87,7 +120,7 @@ Keep in mind that the more pulse year and gas dimensions your files have, the lo
 After setting up your environment and the input data, you can run SCGHG calculations under different conditions with
 
 ```bash
-python scripts/command_line_scghg.py
+python scripts/command_line_scghg.py [(optional) config file]
 ```
 
 and follow the on-screen prompts. When the selector is a carrot, you may only select one option. Use the arrow keys on your keyboard to highlight your desired option and click enter to submit. When you are presented with `X` and `o` selectors, you may use the spacebar to select (`X`) or deselect (`o`) then click enter to submit once you have chosen your desired number of parameters. Once you have completed all of the options, the DSCIM run will begin.
