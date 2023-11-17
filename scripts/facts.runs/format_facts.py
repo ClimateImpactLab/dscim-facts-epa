@@ -44,17 +44,15 @@ for pulse_year, gas in list(product(pulse_years,gases)):
     pulse = ((0.5 * xr.open_dataset(facts_dir + f'/rff.{pulse_year}.{gas_exp}/output/rff.{pulse_year}.{gas_exp}.total.workflow.wf1f.global.nc') +
         0.5 * xr.open_dataset(facts_dir + f'/rff.{pulse_year}.{gas_exp}/output/rff.{pulse_year}.{gas_exp}.total.workflow.wf2f.global.nc'))
              .rename({'samples':'runid','sea_level_change':'pulse_gmsl','years':'year'})
-             .assign_coords({'runid':np.arange(1,nsamps + 1),'gas':gas, 'pulse_year':pulse_year})
+             .assign_coords({'runid':np.arange(1,nsamps + 1),'gas':gas, 'pulse_year':int(pulse_year)})
              .expand_dims(['gas','pulse_year'])
             )
     pulse_gas = pulse_gas + [pulse,]
-#pulse = xr.concat(pulse_gas, dim = ['pulse_year','gas'])
+pulse = xr.combine_by_coords(pulse_gas)
     
 pulse = (pulse
          .squeeze(drop = True)
          .drop(['lat','lon'])
-         .assign_coords({'runid':np.arange(1,nsamps + 1),'gas':'CO2_Fossil', 'pulse_year':2020})
-         .expand_dims(['gas','pulse_year'])
         )
 
 control = (control
