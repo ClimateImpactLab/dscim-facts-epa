@@ -189,7 +189,7 @@ def epa_scghg(sector = "CAMEL_m1_c0.20",
 
             conversion = xr.DataArray.from_dict(d)
             return conversion
-
+    
     # Read in U.S. and global socioeconomic files
     if terr_us:
         econ_terr_us = EconVars(
@@ -388,11 +388,12 @@ def epa_scghgs(sectors,
         else:
             conf_savename = ""
         gases = conf["rff_climate"]["gases"]
+        print(gases)
         if uncollapsed:    
             for gas in gases:
                 out_dir = Path(conf['save_path']) / f"{'territorial_us' if terr_us else 'global'}_scghgs" / 'full_distributions' / gas 
                 makedir(out_dir)
-                uncollapsed_gas_scghgs = df_full_scghg.sel(gas = gas, drop = True).to_dataframe().reindex()
+                uncollapsed_gas_scghgs = df_full_scghg.sel(gas = gas_conversion_dict[gas], drop = True).to_dataframe().reindex()
                 print(f"Saving {'territorial U.S.' if terr_us else 'global'} uncollapsed {sector_short} sc-{gas} \n pulse year: {pulse_year}")
                 uncollapsed_gas_scghgs.to_csv(out_dir / f"{conf_savename}sc-{gas}-dscim-{sector_short}-{pulse_year}-n10000.csv")
                 attrs_save = attrs.copy()
@@ -408,7 +409,7 @@ def epa_scghgs(sectors,
         for gas in gases:
             out_dir = Path(conf['save_path']) / f"{'territorial_us' if terr_us else 'global'}_scghgs"   
             makedir(out_dir)
-            collapsed_gas_scghg = df_full_scghg.sel(gas = gas, drop = True).rename('scghg').to_dataframe().reindex() 
+            collapsed_gas_scghg = df_full_scghg.sel(gas = gas_conversion_dict[gas], drop = True).rename('scghg').to_dataframe().reindex() 
             print(f"Saving {'territorial U.S.' if terr_us else 'global'} collapsed {sector_short} sc-{gas} \n pulse year: {pulse_year}")
             collapsed_gas_scghg.to_csv(out_dir / f"{conf_savename}sc-{gas}-dscim-{sector_short}-{pulse_year}.csv") 
 
@@ -470,7 +471,7 @@ questions = [
     inquirer.Checkbox("pulse_year",
         message= 'Select pulse years',
         choices= pulse_year_choices,
-        default = [pulse_years]),
+        default = pulse_years),
     inquirer.List("U.S.",
         message= 'Select valuation type',
         choices= [
