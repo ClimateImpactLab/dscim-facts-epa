@@ -371,7 +371,7 @@ def epa_scghgs(sectors,
             conf_savename = re.split('\.', conf_name)[0] + "-"
         else:
             conf_savename = ""
-        gases = ['CO2','CH4', 'N2O']
+        gases = conf["rff_climate"]["gases"]
         if uncollapsed:    
             for gas in gases:
                 out_dir = Path(conf['save_path']) / f"{'territorial_us' if terr_us else 'global'}_scghgs" / 'full_distributions' / gas 
@@ -418,8 +418,8 @@ def epa_scghgs(sectors,
 f = Figlet(font='slant')
 print(f.renderText('DSCIM-EPA'))
 
-
-
+pulse_years = conf["pulse_years"]["gases"]
+pulse_year_choices = [(str(i), i) for i in pulse_years]
 questions = [
     inquirer.List("sector",
         message= 'Select sector',
@@ -453,38 +453,8 @@ questions = [
                    [1.421158116, 0.00461878399]]),
     inquirer.Checkbox("pulse_year",
         message= 'Select pulse years',
-        choices= [
-            (
-                '2020',
-                2020
-            ),
-            (
-                '2030',
-                2030
-            ),
-            (
-                '2040',
-                2040
-            ),
-            (
-                '2050',
-                2050
-            ),
-            (
-                '2060',
-                2060
-            ),
-            (
-                '2070',
-                2070
-            ),
-            (
-                '2080',
-                2080
-            ),
-
-    ],
-        default = [2020,2030,2040,2050,2060,2070,2080]),
+        choices= pulse_year_choices,
+        default = [pulse_years]),
     inquirer.List("U.S.",
         message= 'Select valuation type',
         choices= [
