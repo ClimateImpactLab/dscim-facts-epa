@@ -23,4 +23,4 @@ cd $dscim_facts_epa_dir/scripts/facts.runs
 python format_facts.py --facts_repo "${facts_dir}" --pulse_years "${pulse_years[@]}" --gases "${gases[@]}" --gmsl_pulse facts_gmsl_pulse.nc4
 cd $dscim_facts_epa_dir/scripts
 # Create config for dscim run
-python create_config.py --gmsl_pulse facts_gmsl_pulse.nc4 --gmst_pulse gmst_pulse.nc4
+python create_config.py --gmsl_pulse facts_gmsl_pulse.nc4 --gmst_pulse gmst_pulse.nc4 --pulse_years "${pulse_years[@]}" --gases "${gases[@]}"

@@ -12,6 +12,8 @@ parser = argparse.ArgumentParser(description='Create config from gmsl and gmst p
 # Add named arguments for the lists
 parser.add_argument('--gmsl_pulse', nargs=1, help='Path to GMSL pulse file')
 parser.add_argument('--gmst_pulse', nargs=1, help='Path to GMST pulse file')
+parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
+parser.add_argument('--gases', nargs='*', help='List of gases')
 
 # Parse the command line arguments
 args = parser.parse_args()
@@ -19,6 +21,8 @@ args = parser.parse_args()
 # Access the lists using the argument names
 gmsl_pulsename = args.gmsl_pulse
 gmst_pulsename = args.gmst_pulse
+pulse_years = args.pulse_years
+gases = args.gases
 
 currentDay = datetime.now().day
 currentMonth = datetime.now().month
@@ -46,7 +50,7 @@ damage_functions = input / "damage_functions"
 
 conf_base = {'mortality_version': 1,
              'coastal_version': '0.20',
-             'rff_climate': {'gases': ['CO2_Fossil', 'CH4', 'N2O'],
+             'rff_climate': {'gases': gases,
                              'gmsl_path': '',
                              'gmst_path': '',
                              'gmst_fair_path': str(climate_inputs / gmst_pulsename),
@@ -56,7 +60,7 @@ conf_base = {'mortality_version': 1,
                              'emission_scenarios': None},
              'paths': {'rff_damage_function_library': str(damage_functions)},
              'rffdata': {'socioec_output': str(econ_inputs),
-                         'pulse_years': [2020, 2030, 2040, 2050, 2060, 2070, 2080]},
+                         'pulse_years': pulse_years},
              'sectors': {'coastal_v0.20': {'formula': 'damages ~ -1 + gmsl + np.power(gmsl, 2)'},
                          'agriculture': {'formula': 'damages ~ -1 + anomaly + np.power(anomaly, 2)'},
                          'mortality_v1': {'formula': 'damages ~ -1 + anomaly + np.power(anomaly, 2)'},
