@@ -68,7 +68,11 @@ conf_base = {'mortality_version': 1,
                          'labor': {'formula': 'damages ~ -1 + anomaly + np.power(anomaly, 2)'},
                          'AMEL_m1': {'formula': 'damages ~ -1 + anomaly + np.power(anomaly, 2)'},
                          'CAMEL_m1_c0.20': {'formula': 'damages ~ -1 + anomaly + np.power(anomaly, 2) + gmsl + np.power(gmsl, 2)'}},
-             'save_path': str(output)}
+             'save_path': str(output),
+             'gas_conversions':{
+                 'CO2_Fossil': 2.72916487e-10,
+                 'CH4': 2.50000000e-08,
+                 'N2O': 6.36480131e-07}}
 
 
 if os.path.exists(f"facts_conf_{currentDay}-{currentMonth}-{currentYear}.yaml"):
