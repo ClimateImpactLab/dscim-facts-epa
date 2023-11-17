@@ -1,4 +1,4 @@
-name: dscim-epa
+name: dscim-facts-epa
 channels:
   - conda-forge
   - defaults
