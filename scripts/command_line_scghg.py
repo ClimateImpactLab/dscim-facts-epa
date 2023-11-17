@@ -418,7 +418,7 @@ def epa_scghgs(sectors,
 f = Figlet(font='slant')
 print(f.renderText('DSCIM-EPA'))
 
-pulse_years = conf["pulse_years"]["gases"]
+pulse_years = conf["rffdata"]["pulse_years"]
 pulse_year_choices = [(str(i), i) for i in pulse_years]
 questions = [
     inquirer.List("sector",
