@@ -173,6 +173,22 @@ def epa_scghg(sector = "CAMEL_m1_c0.20",
      'weitzman_parameter': [0.5],
      'save_files': []}
 
+    d = {
+        "coords": {
+            "gas": { "dims":"gas", "data":list(conf['gas_conversions'].keys()), "attrs": {"units": "tons"}}
+        },
+        "dims":"gas",
+        "data":list(conf['gas_conversions'].values())}
+    
+    # This class allows for updating the climate conversion
+    class Climate2(Climate):
+        @property
+        def conversion(self):
+            """Conversion factors to turn the pulse units
+            into the appropriate units for an SCC calculation"""
+
+            conversion = xr.DataArray.from_dict(d)
+            return conversion
 
     # Read in U.S. and global socioeconomic files
     if terr_us:
@@ -182,7 +198,7 @@ def epa_scghg(sector = "CAMEL_m1_c0.20",
         # List of kwargs to add to kwargs read in from the config file for direct territorial U.S. damages
         add_kwargs = {
             "econ_vars": econ_terr_us,
-            "climate_vars": Climate(**conf["rff_climate"], pulse_year=pulse_year),
+            "climate_vars": Climate2(**conf["rff_climate"], pulse_year=pulse_year),
             "formula": conf["sectors"][sector if not terr_us else sector[:-4]]["formula"],
             "discounting_type": discount_type,
             "sector": sector,
@@ -228,7 +244,7 @@ def epa_scghg(sector = "CAMEL_m1_c0.20",
     # List of kwargs to add to kwargs read in from the config file for global discounting and damages
     add_kwargs = {
         "econ_vars": econ_glob,
-        "climate_vars": Climate(**conf["rff_climate"], pulse_year=pulse_year),
+        "climate_vars": Climate2(**conf["rff_climate"], pulse_year=pulse_year),
         "formula": conf["sectors"][sector if not terr_us else sector[:-4]]["formula"],
         "discounting_type": discount_type,
         "sector": sector,
