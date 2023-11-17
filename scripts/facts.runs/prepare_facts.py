@@ -30,7 +30,7 @@ print("Facts_dir:", facts_dir)
 print("pulse_years:", pulse_years)
 print("gases:", gases)
 
-scenario = 'ssp585'
+scenario = 'ssp245'
 nsamps = 10000
 proj_years = np.arange(1750, 2501)
 
