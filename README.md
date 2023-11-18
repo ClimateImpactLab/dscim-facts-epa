@@ -9,8 +9,8 @@ This Python library enables the calculation of sector-specific partial social co
 By default, DSCIM-FACTS-EPA can run SC-GHGs for carbon dioxide, methane, and nitrous oxide for pulse years 2020-2080 in 10 year increments for the Resources for the Future (RFF) emissions scenarios. For alternative gases or pulse years the user will need to provide new GMST and GMSL trajectories. The user can provide these trajectories directly, or can use the DSCIM-FACTS-EPA FACTS runner to generate GMSL from ocean heat content (OHC) and GMST. The intended use cases of this repository are thus:
 
 1. The user wants to generate the Climate Impact Lab (CIL) RFF SC-GHGs themselves.
-2. The user has GMST and GMSL files and wants to use the CIL damage functions to generate SC-GHGs based on those files.
-3. The user has GMST and OHC files (usually directly from a simple climate model, such as FaIR) and wants to generate GMSL files from FACTS.
+2. The user has GMST and GMSL files following the guidelines below and wants to use the CIL damage functions to generate SC-GHGs based on those files.
+3. The user has GMST and OHC files following the guidelines below (usually directly from a simple climate model, such as FaIR) and wants to generate GMSL files from FACTS.
   
 ```mermaid
 flowchart LR
@@ -71,7 +71,7 @@ In order to ensure that both `FACTS` and `dscim-facts-epa` are able to read new 
     - For OHC, these are `control_ocean_heat_content` and `pulse_ocean_heat_content`
 2. Any combination of gases and pulse years can be supplied. SC-GHGs will then be runnable for those gases and pulse years
 3. We expect `year` to be at minimum from 2000-2300
-4. The `runid` dimension corresponds to a particular matching of FaIR parameters to RFF-SPs. See the file for those matches. We expect 10000 `runids` from 1 to 10000
+4. The `runid` dimension corresponds to the matching of FaIR parameters to RFF-SPs specified for EPA's September 2022 draft technical report, "Report on the Social Cost of Greenhouse Gases: Estimates Incorporating Recent Scientific Advances". We expect 10000 `runids` from 1 to 10000
 
 ### GMST
 ![gmst_pulse_720](https://github.com/ClimateImpactLab/dscim-facts-epa/assets/5862128/9631c307-6cb0-417f-9e1c-4835d5293c05)
@@ -82,9 +82,9 @@ In order to ensure that both `FACTS` and `dscim-facts-epa` are able to read new 
 ### OHC
 ![ohc_pulse_720](https://github.com/ClimateImpactLab/dscim-facts-epa/assets/5862128/f980274b-bc85-45fd-a7af-8b93003a919f)
 
-## Creating a run config
+## Creating a `dscim-facts-epa` run config
 
-If you have already run GMSL and GMST files, it is recommended to run them through the `create_config.py` file, as this file will ensure that you have formatted your files correctly. In addition, this script will generate a config which will allow you to directly begin running `dscim-facts-epa`. To run this script, you will need to specify your formatted gmst and gmsl files:
+If you already have alternative GMSL and GMST files, it is recommended to run them through the `create_config.py` script to ensure that the files are formatted correctly. In addition, this script will generate a config that will allow you to directly begin running `dscim-facts-epa` using the user-specified GMST and GMSL inputs. To run this script, you will need to specify your correctly formatted gmst and gmsl files:
 
 ```bash
 create_config.py --gmst_file [GMST file] --gmsl_file [GMSL file]
