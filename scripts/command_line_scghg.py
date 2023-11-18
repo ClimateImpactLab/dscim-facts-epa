@@ -179,7 +179,7 @@ def epa_scghg(sector = "CAMEL_m1_c0.20",
 
     d = {
         "coords": {
-            "gas": { "dims":"gas", "data":list(conf['gas_conversions'].keys()), "attrs": {"units": "tons"}}
+            "gas": { "dims":"gas", "data":list(conf['gas_conversions'].keys()), "attrs": {"units": "tonnes"}}
         },
         "dims":"gas",
         "data":list(conf['gas_conversions'].values())}
