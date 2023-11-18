@@ -24,8 +24,8 @@ conf_base = {'mortality_version': 1,
  'rff_climate': {'gases': ['CO2_Fossil', 'CH4', 'N2O'],
   'gmsl_path': '',
   'gmst_path': '',
-  'gmst_fair_path': str(climate_inputs / 'gmst_pulse.nc'),
-  'gmsl_fair_path': str(climate_inputs / 'gmsl_pulse.zarr'),
+  'gmst_fair_path': str(climate_inputs / 'gmst_pulse.nc4'),
+  'gmsl_fair_path': str(climate_inputs / 'gmsl_pulse.nc4'),
   'damages_pulse_conversion_path': str(climate_inputs / 'conversion_v5.03_Feb072022.nc4'),
   'ecs_mask_path': None,
   'emission_scenarios': None},
@@ -39,12 +39,16 @@ conf_base = {'mortality_version': 1,
   'labor': {'formula': 'damages ~ -1 + anomaly + np.power(anomaly, 2)'},
   'AMEL_m1': {'formula': 'damages ~ -1 + anomaly + np.power(anomaly, 2)'},
   'CAMEL_m1_c0.20': {'formula': 'damages ~ -1 + anomaly + np.power(anomaly, 2) + gmsl + np.power(gmsl, 2)'}},
-  'save_path': str(output)}
+  'save_path': str(output),
+  'gas_conversions':{
+   'CO2_Fossil': 2.72916487e-10,
+   'CH4': 2.50000000e-08,
+   'N2O': 6.36480131e-07}}
   
 # Download inputs from internet  
 print("Downloading input files...")
-name = 'dscim_v20221021_inputs.zip'
-url = 'https://storage.googleapis.com/climateimpactlab-scc-tool/dscim-epa_input_data/' + name
+name = 'dscim_v20231117_inputs.zip'
+url = 'https://storage.googleapis.com/climateimpactlab-scc-tool/dscim-facts-epa_input_data/' + name
 with requests.get(url, stream = True) as r:
     r.raise_for_status()
     with open(name, 'wb') as f:
