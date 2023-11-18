@@ -4,9 +4,35 @@ This repository is an implementation of DSCIM, referred to as DSCIM-FACTS-EPA, t
 
 This Python library enables the calculation of sector-specific partial social cost of greenhouse gases (SC-GHG) and SC-GHGs that are combined across sectors. The main purpose of this library is to parse the monetized spatial damages from different sectors and integrate them into SC-GHGs for different discount levels, pulse years, and greenhouse gases. 
 
+## Run cases
+
+By default, DSCIM-FACTS-EPA can run SC-GHGs for carbon dioxide, methane, and nitrous oxide for pulse years 2020-2080 in 10 year increments for the Resources for the Future (RFF) emissions scenarios. For alternative gases or pulse years the user will need to provide new GMST and GMSL trajectories. The user can provide these trajectories directly, or can use the DSCIM-FACTS-EPA FACTS runner to generate GMSL from ocean heat content (OHC) and GMST. The intended use cases of this repository are thus:
+
+1. The user wants to generate the Climate Impact Lab (CIL) RFF SC-GHGs themselves.
+2. The user has GMST and GMSL files following the guidelines below and wants to use the CIL damage functions to generate SC-GHGs based on those files.
+3. The user has GMST and OHC files following the guidelines below (usually directly from a simple climate model, such as FaIR) and wants to generate GMSL files from FACTS.
+  
+```mermaid
+flowchart LR
+
+A[1. Default] --> D(Setup)
+D --> |1.| E{Running SCGHGs}
+
+B[2. GMST/GMSL] --> D(Setup)
+D --> |2.| F(Formatting GMST/GMSL files)
+F --> |2.| H(Creating a run config)
+H --> E{Running SCGHGs}
+
+C[3. GMST/OHC] --> D(Setup)
+D --> |3.| F(Formatting GMST/GMSL files)
+F --> |3.| G(Running FACTS)
+G --> E{Running SCGHGs}
+```
+
+
 ## Setup
 
-To begin we assume you have a system with `conda` available from the command line, and some familiarity with it. A conda distribution is available from [miniconda](https://docs.conda.io/en/latest/miniconda.html), [Anaconda](https://www.anaconda.com/), or [mamba](https://mamba.readthedocs.io/en/latest/). This helps to ensure required software packages are correctly compiled and installed, replicating the analysis environment.
+To begin we assume you have a system with `conda` available from the command line, and some familiarity with it. A conda distribution is available from [miniconda](https://docs.conda.io/en/latest/miniconda.html), [Anaconda](https://www.anaconda.com/), or [mamba](https://mamba.readthedocs.io/en/latest/). This helps to ensure required software packages are correctly compiled and installed, replicating the analysis environment. If you are using conda, we recommend following [this](https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community) guide to speed up environment solve time.
 
 Begin in the `dscim-facts-epa` project directory. If needed this can be downloaded and unzipped, or cloned with `git`. For example
 
@@ -36,12 +62,82 @@ python scripts/directory_setup.py
 
 Note that this will download several gigabytes of data and may take several minutes, depending on your connection speed.
 
-## Running SCGHGs
+## Formatting files
 
-After setting up your environment and the input data, you can run SCGHG calculations under different conditions with
+In order to ensure that both `FACTS` and `dscim-facts-epa` are able to read new GMST, GMSL, and OHC files, a strict format must be adopted.
+1. We require that there be a control and pulse version of the appropriate variable:
+    - For GMST, these are `control_temperature` and `pulse_temperature`
+    - For GMSL, these are `control_gmsl` and `pulse_gmsl`
+    - For OHC, these are `control_ocean_heat_content` and `pulse_ocean_heat_content`
+2. Any combination of gases and pulse years can be supplied. SC-GHGs will then be runnable for those gases and pulse years
+3. We expect `year` to be at minimum from 2000-2300
+4. The `runid` dimension corresponds to the matching of FaIR parameters to RFF-SPs specified for EPA's September 2022 draft technical report, "Report on the Social Cost of Greenhouse Gases: Estimates Incorporating Recent Scientific Advances". We expect 10000 `runids` from 1 to 10000
+
+### GMST
+![gmst_pulse_720](https://github.com/ClimateImpactLab/dscim-facts-epa/assets/5862128/9631c307-6cb0-417f-9e1c-4835d5293c05)
+
+### GMSL
+![gmsl_pulse_720](https://github.com/ClimateImpactLab/dscim-facts-epa/assets/5862128/6335e4ae-0be2-4370-b001-75767c817197)
+
+### OHC
+![ohc_pulse_720](https://github.com/ClimateImpactLab/dscim-facts-epa/assets/5862128/f980274b-bc85-45fd-a7af-8b93003a919f)
+
+## Creating a `dscim-facts-epa` run config
+
+If you already have alternative GMSL and GMST files, it is recommended to run them through the `create_config.py` script to ensure that the files are formatted correctly. In addition, this script will generate a config that will allow you to directly begin running `dscim-facts-epa` using the user-specified GMST and GMSL inputs. To run this script, you will need to specify your correctly formatted gmst and gmsl files:
 
 ```bash
-python scripts/command_line_scghg.py
+create_config.py --gmst_file [GMST file] --gmsl_file [GMSL file]
+```
+
+Once this config is created, you can proceed to the **Running SCGHGs** step.
+
+## Running FACTS
+
+If you will be running FACTS, make sure that you have followed the **Formatting GMST/GMSL files** section above. To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). If you are running on a Linux machine, proceed to the **Not Docker** section, otherwise proceed to the **Docker** section.
+
+### Docker
+
+If you are using a docker, you will need to additionally mount `dscim-facts-epa` by modifying the command in the facts quickstart to:
+
+```bash
+docker run -it --volume=$HOME/facts:/opt/facts --volume=$HOME/dscim-facts-epa:/opt/dscim-facts-epa -w /opt/facts facts
+```
+Replace `$HOME/dscim-facts-epa` and `$HOME/facts` with the path to your cloned `dscim-facts-epa` repository and facts repository, respectively. Once inside the docker, the script will need two additional packages to set up the FACTS experiments:
+
+```bash
+pip install xarray netcdf4
+```
+Now proceed to the **Running the bash script** step.
+
+### Not Docker
+
+To run FACTS outside of a docker, the user can simply use the `dscim-facts-epa` environment installed above. Activate the environment by typing `conda activate dscim-facts-epa` and proceed to the next section.
+
+### Running the bash script
+
+The user must now make modifications to the `scripts/facts.runs/facts_runs.sh` script to ensure all files are found and run specifications are set. Those changes are:
+ - on line 3 of the script, change `pulse_years` to the desired pulse years to be run by FACTS
+ - on line 4, change `gas` to the desired gases to be run by FACTS
+ - on line 5, change `facts_dir` to where you have cloned your FACTS repository. Both this directory and the dscim-facts-epa directory will not need to be set if you are running in a docker
+ - on line 5, change `dscim_facts_epa_dir` to where you have cloned this repository 
+
+Now run:
+
+```bash
+bash facts_runs.sh 
+```
+
+Keep in mind that the more pulse year and gas dimensions your files have, the longer this run will take. On a fast machine each combination can take in the neighborhood of 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take (3 x 7 + 1) x 10 = 220 minutes.
+
+Once the run is complete, exit the docker if you are using it.
+
+## Running SCGHGs
+
+After setting up your environment and the input data, activate your environment by typing `conda activate dscim-facts-epa`. You can run SCGHG calculations under different conditions with
+
+```bash
+python scripts/command_line_scghg.py [(optional) config file]
 ```
 
 and follow the on-screen prompts. When the selector is a carrot, you may only select one option. Use the arrow keys on your keyboard to highlight your desired option and click enter to submit. When you are presented with `X` and `o` selectors, you may use the spacebar to select (`X`) or deselect (`o`) then click enter to submit once you have chosen your desired number of parameters. Once you have completed all of the options, the DSCIM run will begin.
