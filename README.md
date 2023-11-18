@@ -130,10 +130,11 @@ bash facts_runs.sh
 
 Keep in mind that the more pulse year and gas dimensions your files have, the longer this run will take. On a fast machine each combination can take in the neighborhood of 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take (3 x 7 + 1) x 10 = 220 minutes.
 
+Once the run is complete, exit the docker if you are using it.
 
 ## Running SCGHGs
 
-After setting up your environment and the input data, you can run SCGHG calculations under different conditions with
+After setting up your environment and the input data, activate your environment by typing `conda activate dscim-facts-epa`. You can run SCGHG calculations under different conditions with
 
 ```bash
 python scripts/command_line_scghg.py [(optional) config file]
