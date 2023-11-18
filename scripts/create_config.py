@@ -21,7 +21,7 @@ args = parser.parse_args()
 # Access the lists using the argument names
 gmsl_pulsename = args.gmsl_pulse
 gmst_pulsename = args.gmst_pulse
-pulse_years = args.pulse_years
+pulse_years = list(map(int, args.pulse_years))
 gases = args.gases
 
 currentDay = datetime.now().day
@@ -45,9 +45,9 @@ conf_base = {'mortality_version': 1,
              'rff_climate': {'gases': gases,
                              'gmsl_path': '',
                              'gmst_path': '',
-                             'gmst_fair_path': str(climate_inputs / gmst_pulsename),
-                             'gmsl_fair_path': str(climate_inputs / gmsl_pulsename),
-                             'damages_pulse_conversion_path': str(climate_inputs / 'conversion_v5.03_Feb072022.nc4'),
+                             'gmst_fair_path': str(climate_inputs) + "/" + gmst_pulsename[0],
+                             'gmsl_fair_path': str(climate_inputs) + "/" + gmsl_pulsename[0],
+                             'damages_pulse_conversion_path': str(climate_inputs) + '/conversion_v5.03_Feb072022.nc4',
                              'ecs_mask_path': None,
                              'emission_scenarios': None},
              'paths': {'rff_damage_function_library': str(damage_functions)},
