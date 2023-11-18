@@ -177,21 +177,22 @@ def epa_scghg(sector = "CAMEL_m1_c0.20",
      'weitzman_parameter': [0.5],
      'save_files': []}
 
-    d = {
+    gas_conversion_factors = {
         "coords": {
             "gas": { "dims":"gas", "data":list(conf['gas_conversions'].keys()), "attrs": {"units": "tonnes"}}
         },
         "dims":"gas",
         "data":list(conf['gas_conversions'].values())}
     
-    # This class allows for updating the climate conversion
+    # This class allows us to bypass reading in the pulse conversion netcdf file  
+    # and instead set up pulse conversions from a user config file.
     class Climate2(Climate):
         @property
         def conversion(self):
             """Conversion factors to turn the pulse units
             into the appropriate units for an SCC calculation"""
 
-            conversion = xr.DataArray.from_dict(d)
+            conversion = xr.DataArray.from_dict(gas_conversion_factors)
             return conversion
     
     # Read in U.S. and global socioeconomic files
