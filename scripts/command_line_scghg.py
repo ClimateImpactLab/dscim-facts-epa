@@ -177,6 +177,8 @@ def epa_scghg(sector = "CAMEL_m1_c0.20",
      'weitzman_parameter': [0.5],
      'save_files': []}
 
+    # there can be a molecular conversion bundled in with the conversion factor, so it isn't always just tonnes
+    # for example with carbon vs carbon dioxide conversion
     gas_conversion_factors = {
         "coords": {
             "gas": { "dims":"gas", "data":list(conf['gas_conversions'].keys()), "attrs": {"units": "tonnes"}}
