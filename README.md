@@ -6,10 +6,10 @@ This Python library enables the calculation of sector-specific partial social co
 
 ## Run cases
 
-By default, DSCIM-FACTS-EPA can run SC-GHGs for carbon dioxide, methane, and nitrous oxide for pulse years 2020-2080 in 10 year increments for the Resources for the Future (RFF) emissions scenarios. For alternative gases, pulse years, or emissions scenarios the user will need to provide new GMST and GMSL trajectories. The user can provide these trajectories directly, or can use the DSCIM-FACTS-EPA FACTS runner to generate GMSL from ocean heat content (OHC) and GMST. The intended use cases of this repository are thus:
+By default, DSCIM-FACTS-EPA can run SC-GHGs for carbon dioxide, methane, and nitrous oxide for pulse years 2020-2080 in 10 year increments for the Resources for the Future (RFF) emissions scenarios. For alternative gases or pulse years the user will need to provide new GMST and GMSL trajectories. The user can provide these trajectories directly, or can use the DSCIM-FACTS-EPA FACTS runner to generate GMSL from ocean heat content (OHC) and GMST. The intended use cases of this repository are thus:
 
 1. The user wants to generate the Climate Impact Lab (CIL) RFF SC-GHGs themselves.
-2. The user has GMST and GMSL files and wants the use the CIL damage functions to generate SC-GHGs based on those files.
+2. The user has GMST and GMSL files and wants to use the CIL damage functions to generate SC-GHGs based on those files.
 3. The user has GMST and OHC files (usually directly from a simple climate model, such as FaIR) and wants to generate GMSL files from FACTS.
   
 ```mermaid
