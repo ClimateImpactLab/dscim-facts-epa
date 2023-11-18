@@ -40,6 +40,10 @@ discount_conversion_dict = {'1.016010255_9.149608e-05': '1.5% Ramsey',
 gas_conversion_dict = {'CO2_Fossil':'CO2',
                        'N2O':'N2O',
                        'CH4':'CH4'} 
+
+for gas in conf['gas_conversions'].keys():
+    if gas not in gas_conversion_dict.keys():
+        gas_conversion_dict[gas] = gas
     
 def makedir(path):
     if not os.path.exists(path):
@@ -173,7 +177,26 @@ def epa_scghg(sector = "CAMEL_m1_c0.20",
      'weitzman_parameter': [0.5],
      'save_files': []}
 
+    # there can be a molecular conversion bundled in with the conversion factor, so it isn't always just tonnes
+    # for example with carbon vs carbon dioxide conversion
+    gas_conversion_factors = {
+        "coords": {
+            "gas": { "dims":"gas", "data":list(conf['gas_conversions'].keys()), "attrs": {"units": "tonnes"}}
+        },
+        "dims":"gas",
+        "data":list(conf['gas_conversions'].values())}
+    
+    # This class allows us to bypass reading in the pulse conversion netcdf file  
+    # and instead set up pulse conversions from a user config file.
+    class Climate2(Climate):
+        @property
+        def conversion(self):
+            """Conversion factors to turn the pulse units
+            into the appropriate units for an SCC calculation"""
 
+            conversion = xr.DataArray.from_dict(gas_conversion_factors)
+            return conversion
+    
     # Read in U.S. and global socioeconomic files
     if terr_us:
         econ_terr_us = EconVars(
@@ -182,7 +205,7 @@ def epa_scghg(sector = "CAMEL_m1_c0.20",
         # List of kwargs to add to kwargs read in from the config file for direct territorial U.S. damages
         add_kwargs = {
             "econ_vars": econ_terr_us,
-            "climate_vars": Climate(**conf["rff_climate"], pulse_year=pulse_year),
+            "climate_vars": Climate2(**conf["rff_climate"], pulse_year=pulse_year),
             "formula": conf["sectors"][sector if not terr_us else sector[:-4]]["formula"],
             "discounting_type": discount_type,
             "sector": sector,
@@ -228,7 +251,7 @@ def epa_scghg(sector = "CAMEL_m1_c0.20",
     # List of kwargs to add to kwargs read in from the config file for global discounting and damages
     add_kwargs = {
         "econ_vars": econ_glob,
-        "climate_vars": Climate(**conf["rff_climate"], pulse_year=pulse_year),
+        "climate_vars": Climate2(**conf["rff_climate"], pulse_year=pulse_year),
         "formula": conf["sectors"][sector if not terr_us else sector[:-4]]["formula"],
         "discounting_type": discount_type,
         "sector": sector,
@@ -364,7 +387,6 @@ def epa_scghgs(sectors,
         
         # Changes coordinate names of gases
         df_full_scghg = df_full_scghg.assign_coords(gas=[gas_conversion_dict[gas] for gas in df_full_scghg.gas.values])
-        df_full_gcnp = df_full_gcnp.assign_coords(gas=[gas_conversion_dict[gas] for gas in df_full_gcnp.gas.values])
         
         # Splits SCGHGs by gas and saves them out separately
         # For uncollapsed SCGHGs
@@ -372,12 +394,12 @@ def epa_scghgs(sectors,
             conf_savename = re.split('\.', conf_name)[0] + "-"
         else:
             conf_savename = ""
-        gases = ['CO2','CH4', 'N2O']
+        gases = conf["rff_climate"]["gases"]
         if uncollapsed:    
             for gas in gases:
                 out_dir = Path(conf['save_path']) / f"{'territorial_us' if terr_us else 'global'}_scghgs" / 'full_distributions' / gas 
                 makedir(out_dir)
-                uncollapsed_gas_scghgs = df_full_scghg.sel(gas = gas, drop = True).to_dataframe().reindex()
+                uncollapsed_gas_scghgs = df_full_scghg.sel(gas = gas_conversion_dict[gas], drop = True).to_dataframe().reindex()
                 print(f"Saving {'territorial U.S.' if terr_us else 'global'} uncollapsed {sector_short} sc-{gas} \n pulse year: {pulse_year}")
                 uncollapsed_gas_scghgs.to_csv(out_dir / f"{conf_savename}sc-{gas}-dscim-{sector_short}-{pulse_year}-n10000.csv")
                 attrs_save = attrs.copy()
@@ -393,7 +415,7 @@ def epa_scghgs(sectors,
         for gas in gases:
             out_dir = Path(conf['save_path']) / f"{'territorial_us' if terr_us else 'global'}_scghgs"   
             makedir(out_dir)
-            collapsed_gas_scghg = df_full_scghg.sel(gas = gas, drop = True).rename('scghg').to_dataframe().reindex() 
+            collapsed_gas_scghg = df_full_scghg.sel(gas = gas_conversion_dict[gas], drop = True).rename('scghg').to_dataframe().reindex() 
             print(f"Saving {'territorial U.S.' if terr_us else 'global'} collapsed {sector_short} sc-{gas} \n pulse year: {pulse_year}")
             collapsed_gas_scghg.to_csv(out_dir / f"{conf_savename}sc-{gas}-dscim-{sector_short}-{pulse_year}.csv") 
 
@@ -419,8 +441,8 @@ def epa_scghgs(sectors,
 f = Figlet(font='slant')
 print(f.renderText('DSCIM-EPA'))
 
-
-
+pulse_years = conf["rffdata"]["pulse_years"]
+pulse_year_choices = [(str(i), i) for i in pulse_years]
 questions = [
     inquirer.List("sector",
         message= 'Select sector',
@@ -454,38 +476,8 @@ questions = [
                    [1.421158116, 0.00461878399]]),
     inquirer.Checkbox("pulse_year",
         message= 'Select pulse years',
-        choices= [
-            (
-                '2020',
-                2020
-            ),
-            (
-                '2030',
-                2030
-            ),
-            (
-                '2040',
-                2040
-            ),
-            (
-                '2050',
-                2050
-            ),
-            (
-                '2060',
-                2060
-            ),
-            (
-                '2070',
-                2070
-            ),
-            (
-                '2080',
-                2080
-            ),
-
-    ],
-        default = [2020,2030,2040,2050,2060,2070,2080]),
+        choices= pulse_year_choices,
+        default = pulse_years),
     inquirer.List("U.S.",
         message= 'Select valuation type',
         choices= [
