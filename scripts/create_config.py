@@ -28,14 +28,6 @@ currentDay = datetime.now().day
 currentMonth = datetime.now().month
 currentYear = datetime.now().year
 
-args = sys.argv
-if len(args) == 1:
-    gmst_pulsename = "gmst_pulse.nc4"
-    gmsl_pulsename = "gmsl_pulse.nc4"
-else:
-    gmst_pulsename = args[1]
-    gmsl_pulsename = args[2]
-
 
 # We may want to read these files in to make sure they exist/have the correct format
 
