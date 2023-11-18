@@ -40,6 +40,10 @@ discount_conversion_dict = {'1.016010255_9.149608e-05': '1.5% Ramsey',
 gas_conversion_dict = {'CO2_Fossil':'CO2',
                        'N2O':'N2O',
                        'CH4':'CH4'} 
+
+for gas in conf['gas_conversions'].keys():
+    if gas not in gas_conversion_dict.keys():
+        gas_conversion_dict[gas] = gas
     
 def makedir(path):
     if not os.path.exists(path):
