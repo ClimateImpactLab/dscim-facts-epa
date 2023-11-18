@@ -388,7 +388,6 @@ def epa_scghgs(sectors,
         else:
             conf_savename = ""
         gases = conf["rff_climate"]["gases"]
-        print(gases)
         if uncollapsed:    
             for gas in gases:
                 out_dir = Path(conf['save_path']) / f"{'territorial_us' if terr_us else 'global'}_scghgs" / 'full_distributions' / gas 
