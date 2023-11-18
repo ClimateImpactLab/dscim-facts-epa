@@ -94,10 +94,15 @@ Once this config is created, you can proceed to the **Running SCGHGs** step.
 
 ## Running FACTS
 
-If you will be running FACTS, make sure that you have followed the **Formatting GMST/GMSL files** section above. To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). The user must then make modifications to the `scripts/facts.runs/facts_runs.sh` script to ensure all files are found and run specifications are set. Those changes are:
+If you will be running FACTS, make sure that you have followed the **Formatting GMST/GMSL files** section above. To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). If you are using a docker, you will need to additionally mount `dscim-facts-epa` by modifying the command in the facts quickstart to:
+
+```bash
+docker run -it --volume=$HOME/facts:/opt/facts --volume=$HOME/dscim-facts-epa:/opt/dscim-facts-epa -w /opt/facts facts
+```
+Replacing the paths to `FACTS` and `dscim-facts-epa` to the paths to your cloned repositories. The user must then make modifications to the `scripts/facts.runs/facts_runs.sh` script to ensure all files are found and run specifications are set. Those changes are:
  - on line 3 of the script, change `pulse_years` to the desired pulse years to be run by FACTS
  - on line 4, change `gas` to the desired gases to be run by FACTS
- - on line 5, change `facts_dir` to where you have cloned your FACTS repository
+ - on line 5, change `facts_dir` to where you have cloned your FACTS repository. Both this directory and the dscim-facts-epa directory will not need to be set if you are running in a docker
  - on line 5, change `dscim_facts_epa_dir` to where you have cloned this repository 
 
 Once you have done so, activate your installed FACTS virtual environment. This script will need two additional packages to set up the FACTS experiments:
