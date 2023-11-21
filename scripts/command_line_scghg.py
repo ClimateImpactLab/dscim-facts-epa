@@ -26,7 +26,9 @@ else:
 master = Path(os.getcwd()) / conf_name
 try:
     with open(master, "r") as stream:
-        conf = yaml.safe_load(stream)
+        docker_replace = stream.replace('/opt/dscim-facts-epa/',
+                                         str(Path(os.getcwd()).parent.absolute()))
+        conf = yaml.safe_load(docker_replace)
 except FileNotFoundError:
     raise FileNotFoundError("Please run directory_setup.py or place the config in your current working directory")
 
