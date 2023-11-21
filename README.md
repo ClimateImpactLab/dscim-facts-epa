@@ -128,7 +128,9 @@ Now run:
 bash facts_runs.sh 
 ```
 
-Keep in mind that the more pulse year and gas dimensions your files have, the longer this run will take. On a fast machine each combination can take in the neighborhood of 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take (3 x 7 + 1) x 10 = 220 minutes.
+FACTS is a relatively memory intensive and disk space intensive running process. To successfully run FACTS, you will need a fairly powerful system with at least 32 gigabytes of computer RAM on a fairly powerful workstation (or a server). In addition, FACTS currently requires around 30 gigabytes of disk space per run, which means that 3 gases for 7 pulse years (a total of 22 runs including the control) will require in the neighborhood of 660 gigabytes of disk space. To clear this memory after the run has completed, you can remove the subdirectories in the `~/radical.pilot.sandbox` folder.
+
+Keep in mind that the more pulse year and gas dimensions your files have, the longer this run will take. On a fast machine each combination can take in the neighborhood of 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take 220 minutes.
 
 Once the run is complete, exit the docker if you are using it.
 
