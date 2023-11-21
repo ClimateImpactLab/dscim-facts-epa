@@ -26,7 +26,7 @@ else:
 master = Path(os.getcwd()) / conf_name
 try:
     with open(master, "r") as stream:
-        docker_replace = stream.replace('/opt/dscim-facts-epa/',
+        docker_replace = stream.read().replace('/opt/dscim-facts-epa/',
                                          str(Path(os.getcwd()).parent.absolute()))
         conf = yaml.safe_load(docker_replace)
 except FileNotFoundError:
