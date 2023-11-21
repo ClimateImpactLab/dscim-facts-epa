@@ -24,13 +24,18 @@ else:
 
 
 master = Path(os.getcwd()) / conf_name
-try:
-    with open(master, "r") as stream:
-        docker_replace = stream.read().replace('/opt/dscim-facts-epa/',
-                                         str(Path(os.getcwd()).parent.absolute()))
-        conf = yaml.safe_load(docker_replace)
-except FileNotFoundError:
-    raise FileNotFoundError("Please run directory_setup.py or place the config in your current working directory")
+
+def read_replace_conf(master):
+    try:
+        with open(master, "r") as stream:
+            docker_replace = stream.read().replace('/opt/dscim-facts-epa/',
+                                            str(Path(os.getcwd()).parent.absolute()))
+            conf = yaml.safe_load(docker_replace)
+    except FileNotFoundError:
+        raise FileNotFoundError("Please run directory_setup.py or place the config in your current working directory")
+    return(conf)
+
+conf = read_replace_conf(master)
 
 coastal_v = str(conf["coastal_version"])
 mortality_v = str(conf["mortality_version"])
@@ -170,8 +175,7 @@ def epa_scghg(sector = "CAMEL_m1_c0.20",
     
     # Read generated config
     master = Path(os.getcwd()) / conf_name
-    with open(master, "r") as stream:
-        conf = yaml.safe_load(stream)
+    conf = read_replace_conf(master)
     
     # Manually add other config parameters that are not meant to change run to run
     conf["global_parameters"] = {'fair_aggregation': ["uncollapsed"],
@@ -332,8 +336,7 @@ def epa_scghgs(sectors,
 
     # Read generated config    
     master = Path(os.getcwd()) / conf_name
-    with open(master, "r") as stream:
-        conf = yaml.safe_load(stream)
+    conf = read_replace_conf(master)
         
     attrs={}
 
