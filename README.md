@@ -103,9 +103,10 @@ If you are using a docker, you will need to additionally mount `dscim-facts-epa`
 ```bash
 docker run -it --volume=$HOME/facts:/opt/facts --volume=$HOME/dscim-facts-epa:/opt/dscim-facts-epa -w /opt/facts facts
 ```
-Replace `$HOME/dscim-facts-epa` and `$HOME/facts` with the path to your cloned `dscim-facts-epa` repository and facts repository, respectively. Once inside the docker, the script will need two additional packages to set up the FACTS experiments:
+Replace `$HOME/dscim-facts-epa` and `$HOME/facts` with the path to your cloned `dscim-facts-epa` repository and facts repository, respectively. Once inside the docker, the script will need two additional packages to set up the FACTS experiments (and also to enter the correct directory):
 
 ```bash
+cd /opt/dscim-facts-epa/scripts/facts.runs
 pip install xarray netcdf4
 ```
 Now proceed to the **Running the bash script** step.
