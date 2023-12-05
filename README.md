@@ -16,31 +16,31 @@ By default, DSCIM-FACTS-EPA can run SC-GHGs for carbon dioxide, methane, and nit
 flowchart LR
 
 A[1. Default] --> D(Setup)
-D --> |1.| E{Running SCGHGs}
+D --> |1.| E{Running SC-GHGs}
 
 B[2. GMST/GMSL] --> D(Setup)
 D --> |2.| F(Formatting GMST/GMSL files)
 F --> |2.| H(Creating a run config)
-H --> E{Running SCGHGs}
+H --> E{Running SC-GHGs}
 
 C[3. GMST/OHC] --> D(Setup)
 D --> |3.| F(Formatting GMST/GMSL files)
 F --> |3.| G(Running FACTS)
-G --> E{Running SCGHGs}
+G --> E{Running SC-GHGs}
 ```
 
 
 ## Setup
 
-To begin we assume you have a system with `conda` available from the command line, and some familiarity with it. A conda distribution is available from [miniconda](https://docs.conda.io/en/latest/miniconda.html), [Anaconda](https://www.anaconda.com/), or [mamba](https://mamba.readthedocs.io/en/latest/). This helps to ensure required software packages are correctly compiled and installed, replicating the analysis environment. If you are using conda, we recommend following [this](https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community) guide to speed up environment solve time.
+To begin, we assume you have a system with `conda` available from the command line, and some familiarity with it. A conda distribution is available from [miniconda](https://docs.conda.io/en/latest/miniconda.html), [Anaconda](https://www.anaconda.com/), or [mamba](https://mamba.readthedocs.io/en/latest/). This helps to ensure that required software packages are correctly compiled and installed, replicating the analysis environment. If you are using conda, we recommend following [this](https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community) guide to speed up environment solve time.
 
-Begin in the `dscim-facts-epa` project directory. If needed this can be downloaded and unzipped, or cloned with `git`. For example
+Begin in the `dscim-facts-epa` project directory, which can be downloaded and unzipped, or cloned with `git` in a terminal. For example:
 
 ```bash
 git clone https://github.com/ClimateImpactLab/dscim-facts-epa.git
 ```
 
-Next, setup a conda environment for this analysis. This replicates the software environment used for analysis. With `conda` from the command line this is
+Next, from within the root directory of `dscim-facts-epa`, set up a conda environment for this analysis. This replicates the software environment used for analysis. With `conda` from the command line this is
 
 ```bash
 conda env create -f environment.yml
@@ -52,9 +52,9 @@ and then activate the environment with
 conda activate dscim-facts-epa
 ```
 
-Be sure that all commands and analysis are run from this conda environment.
+Be sure that all commands and analyses are run from this conda environment.
 
-With the environment setup and active, the next step is to download required input data into the local directory. From the command line run:
+With the environment set up and active, the next step is downloading the required DSCIM-FACTS-EPA input data into the local directory. From the command line run:
 
 ```bash
 python scripts/directory_setup.py
@@ -64,14 +64,14 @@ Note that this will download several gigabytes of data and may take several minu
 
 ## Formatting files
 
-In order to ensure that both `FACTS` and `dscim-facts-epa` are able to read new GMST, GMSL, and OHC files, a strict format must be adopted.
+To ensure that both `FACTS` and `dscim-facts-epa` can read new GMST, GMSL, and OHC files, a strict format must be adopted.
 1. We require that there be a control and pulse version of the appropriate variable:
     - For GMST, these are `control_temperature` and `pulse_temperature`
     - For GMSL, these are `control_gmsl` and `pulse_gmsl`
     - For OHC, these are `control_ocean_heat_content` and `pulse_ocean_heat_content`
-2. Any combination of gases and pulse years can be supplied. SC-GHGs will then be runnable for those gases and pulse years
-3. We expect `year` to be at minimum from 2000-2300
-4. The `runid` dimension corresponds to the matching of FaIR parameters to RFF-SPs specified for EPA's September 2022 draft technical report, "Report on the Social Cost of Greenhouse Gases: Estimates Incorporating Recent Scientific Advances". We expect 10000 `runids` from 1 to 10000
+2. Any combination of gases and pulse years can be supplied. SC-GHGs will then be runnable for those gases and pulse years.
+3. We expect `year` to be at minimum from 2000-2300. Climate inputs are made relative to 2001-2010 to be consistent with the damage functions.
+4. The `runid` dimension corresponds to the FaIR parameters and RFF-SPs crosswalk specified for EPA's September 2022 draft technical report, "Report on the Social Cost of Greenhouse Gases: Estimates Incorporating Recent Scientific Advances". Thus, each runid is associated with an RFF-SP index and a climate parameter index. We expect 10000 `runids` from 1 to 10000
 
 ### GMST
 ![gmst_pulse_720](https://github.com/ClimateImpactLab/dscim-facts-epa/assets/5862128/9631c307-6cb0-417f-9e1c-4835d5293c05)
@@ -90,20 +90,20 @@ If you already have alternative GMSL and GMST files, it is recommended to run th
 create_config.py --gmst_file [GMST file] --gmsl_file [GMSL file]
 ```
 
-Once this config is created, you can proceed to the **Running SCGHGs** step.
+Once this config is created, you can proceed to the **Running SC-GHGs** step.
 
 ## Running FACTS
 
-If you will be running FACTS, make sure that you have followed the **Formatting GMST/GMSL files** section above. To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). If you are running on a Linux machine, proceed to the **Not Docker** section, otherwise proceed to the **Docker** section.
+If you will be running FACTS, ensure you have followed the **Formatting GMST/GMSL files** section above. To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). If you are running on a Linux machine, proceed to the **Not Docker** section, otherwise proceed to the **Docker** section.
 
 ### Docker
 
-If you are using a docker, you will need to additionally mount `dscim-facts-epa` by modifying the command in the facts quickstart to:
+If you are using a docker, you will need to additionally mount the `dscim-facts-epa` directory by modifying the command in the facts quickstart to:
 
 ```bash
 docker run -it --volume=$HOME/facts:/opt/facts --volume=$HOME/dscim-facts-epa:/opt/dscim-facts-epa -w /opt/facts facts
 ```
-Replace `$HOME/dscim-facts-epa` and `$HOME/facts` with the path to your cloned `dscim-facts-epa` repository and facts repository, respectively. Once inside the docker, the script will need two additional packages to set up the FACTS experiments (and also to enter the correct directory):
+Replace `$HOME/dscim-facts-epa` and `$HOME/facts` with the path to your cloned `dscim-facts-epa` repository and facts repository, respectively. Once inside the docker, the script to run facts will need two additional packages to set up the FACTS experiments. Therefore, move into the necessary directory and install the packages like so:
 
 ```bash
 cd /opt/dscim-facts-epa/scripts/facts.runs
@@ -113,7 +113,7 @@ Now proceed to the **Running the bash script** step.
 
 ### Not Docker
 
-To run FACTS outside of a docker, the user can simply use the `dscim-facts-epa` environment installed above. Activate the environment by typing `conda activate dscim-facts-epa` and proceed to the next section.
+To run FACTS outside of a docker, the user can use the `dscim-facts-epa` environment installed above. Activate the environment by typing `conda activate dscim-facts-epa` and proceed to the next section.
 
 ### Running the bash script
 
@@ -129,15 +129,15 @@ Now run:
 bash facts_runs.sh 
 ```
 
-FACTS is a relatively memory intensive and disk space intensive running process. To successfully run FACTS, you will need a fairly powerful system with at least 32 gigabytes of computer RAM on a fairly powerful workstation (or a server). In addition, FACTS currently requires around 30 gigabytes of disk space per run, which means that 3 gases for 7 pulse years (a total of 22 runs including the control) will require in the neighborhood of 660 gigabytes of disk space. To clear this memory after the run has completed, you can remove the subdirectories in the `~/radical.pilot.sandbox` folder.
+Running FACTS is a relatively memory-intensive and disk-space-intensive process. To successfully run FACTS, you will need a moderately powerful workstation (or server) with at least 32 gigabytes of computer RAM. In addition, FACTS currently requires around 30 gigabytes of disk space per pulse year-gas, which means that 3 gases and 7 pulse years (a total of 22 runs including the control) will require approximately 660 gigabytes of disk space. Alternatively, one can run subsets of runs at a time and clear memory in between. To clear memory after a run has been completed, remove the subdirectories in the `~/radical.pilot.sandbox` folder.
 
-Keep in mind that the more pulse year and gas dimensions your files have, the longer this run will take. On a fast machine each combination can take in the neighborhood of 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take 220 minutes.
+Note that the more pulse year and gas dimensions your input climate files have, the longer this run will take as pulse year-gas combinations are run in sequence. On a fast machine each combination can take approximately 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take 220 minutes.
 
-Once the run is complete, exit the docker if you are using it.
+If a docker was used, exit it once the run is complete using the `exit` command.
 
-## Running SCGHGs
+## Running SC-GHGs
 
-After setting up your environment and the input data, activate your environment by typing `conda activate dscim-facts-epa`. You can run SCGHG calculations under different conditions with
+After setting up the dscim-facts-epa environment and input data, activate the environment by typing `conda activate dscim-facts-epa`. You can run SC-GHG calculations under different conditions with
 
 ```bash
 python scripts/command_line_scghg.py [(optional) config file]
