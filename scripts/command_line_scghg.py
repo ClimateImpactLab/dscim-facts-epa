@@ -24,11 +24,21 @@ else:
 
 
 master = Path(os.getcwd()) / conf_name
-try:
-    with open(master, "r") as stream:
-        conf = yaml.safe_load(stream)
-except FileNotFoundError:
-    raise FileNotFoundError("Please run directory_setup.py or place the config in your current working directory")
+
+# For configs that are generated in the FACTS docker, file structure is relative to the docker paths.
+# This function serves to ensure that configs generated in the FACTS docker have their filepaths
+# converted to paths that are relative to this script
+def read_replace_conf(master):
+    try:
+        with open(master, "r") as stream:
+            docker_replace = stream.read().replace('/opt/dscim-facts-epa',
+                                            str(Path(os.getcwd()).parent.absolute()))
+            conf = yaml.safe_load(docker_replace)
+    except FileNotFoundError:
+        raise FileNotFoundError("Please run directory_setup.py or place the config in your current working directory")
+    return(conf)
+
+conf = read_replace_conf(master)
 
 coastal_v = str(conf["coastal_version"])
 mortality_v = str(conf["mortality_version"])
@@ -161,15 +171,11 @@ def epa_scghg(sector = "CAMEL_m1_c0.20",
             rho = 0.0,
             pulse_year = 2020,
             discount_type = "euler_ramsey",
-            menu_option = "risk_aversion"):
+            menu_option = "risk_aversion",
+            conf = conf):
 
     if menu_option != "risk_aversion":
         raise Exception("DSCIM-EPA provides only 'risk_aversion' SCGHGs")
-    
-    # Read generated config
-    master = Path(os.getcwd()) / conf_name
-    with open(master, "r") as stream:
-        conf = yaml.safe_load(stream)
     
     # Manually add other config parameters that are not meant to change run to run
     conf["global_parameters"] = {'fair_aggregation': ["uncollapsed"],
@@ -326,13 +332,8 @@ def epa_scghgs(sectors,
              risk_combos = (('risk_aversion', 'euler_ramsey')),
              pulse_years = (2020,2030,2040,2050,2060,2070,2080),
              gcnp = False,
-             uncollapsed = False):
-
-    # Read generated config    
-    master = Path(os.getcwd()) / conf_name
-    with open(master, "r") as stream:
-        conf = yaml.safe_load(stream)
-        
+             uncollapsed = False,
+             conf = conf):        
     attrs={}
 
     # Nested for loops to run each combination of SCGHGs requested
@@ -362,7 +363,8 @@ def epa_scghgs(sectors,
                                                           menu_option = menu_option,
                                                           eta = eta,
                                                           rho = rho,
-                                                          pulse_year = pulse_year)
+                                                          pulse_year = pulse_year,
+                                                          conf = conf)
             
             # Creates new coordinates to differentiate between runs
             # For SCGHGs
@@ -521,7 +523,8 @@ epa_scghgs(sector,
          risk_combos,
          pulse_years=pulse_years,
          gcnp = gcnp,
-         uncollapsed = uncollapsed)
+         uncollapsed = uncollapsed,
+         conf = conf)
 
 
 print(f"Full results are available in {str(Path(conf['save_path']))}")
