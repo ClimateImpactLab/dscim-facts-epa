@@ -70,7 +70,7 @@ To ensure that both `FACTS` and `dscim-facts-epa` can read new GMST, GMSL, and O
     - For GMSL, these are `control_gmsl` and `pulse_gmsl`
     - For OHC, these are `control_ocean_heat_content` and `pulse_ocean_heat_content`
 2. Any combination of gases and pulse years can be supplied. SC-GHGs will then be runnable for those gases and pulse years.
-3. We expect `year` to be at minimum from 2000-2300. Climate inputs are made relative to 2001-2010 to be consistent with the damage functions.
+3. We expect `year` to be at minimum from 2000-2300. Climate inputs are automatically made relative to 2001-2010 in `dscim-facts-epa` to be consistent with the damage functions.
 4. The `runid` dimension corresponds to the FaIR parameters and RFF-SPs crosswalk specified for EPA's September 2022 draft technical report, "Report on the Social Cost of Greenhouse Gases: Estimates Incorporating Recent Scientific Advances". Thus, each runid is associated with an RFF-SP index and a climate parameter index. We expect 10000 `runids` from 1 to 10000
 
 ### GMST
@@ -129,9 +129,9 @@ Now run:
 bash facts_runs.sh 
 ```
 
-Running FACTS is a relatively memory-intensive and disk-space-intensive process. To successfully run FACTS, you will need a moderately powerful workstation (or server) with at least 32 gigabytes of computer RAM. FACTS by default only uses two CPU cores, and is not particularly sensitive to clock speed or number of cores of the CPU. In addition, FACTS currently requires around 30 gigabytes of disk space per pulse year-gas, which means that 3 gases and 7 pulse years (a total of 22 runs including the control) will require approximately 660 gigabytes of disk space. Alternatively, one can run subsets of runs at a time and clear memory in between. To clear memory after a run has been completed, remove the subdirectories in the `~/radical.pilot.sandbox` folder.
+Running FACTS is a relatively memory-intensive and disk-space-intensive process. To successfully run FACTS, you will need a moderately powerful workstation (or server) with at least 32 gigabytes of computer RAM. By default, FACTS uses two CPU cores and is not particularly sensitive to clock speed or number of CPU cores. In addition, FACTS currently requires around 30 gigabytes of disk space per pulse year-gas, which means that 3 gases and 7 pulse years (a total of 22 runs including the control) will require approximately 660 gigabytes of disk space. Alternatively, one can run subsets of runs at a time and clear memory in between. To clear memory after a run has been completed, remove the subdirectories in the `~/radical.pilot.sandbox` folder.
 
-Note that the more pulse year and gas dimensions your input climate files have, the longer this run will take as pulse year-gas combinations are run in sequence. On a fast machine each combination can take approximately 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take 220 minutes. FACTS by default only uses two cores The script will create the appropriate number of FACTS experiments (22 in the case of the example), run through them, and concatenate them into the format expected by `dscim-facts-epa`.
+Note that the more pulse year and gas dimensions your input climate files have, the longer this run will take as pulse year-gas combinations are run in sequence. On a fast machine, each combination can take approximately 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take 220 minutes. The run script will create the appropriate number of FACTS "experiments" (22 in the example case), run through them, and concatenate the outputs into the format expected by `dscim-facts-epa`.
 
 If a docker was used, exit it once the run is complete using the `exit` command.
 
