@@ -101,19 +101,19 @@ If you will be running FACTS, ensure you have followed the **Formatting GMST/GMS
 If you are using a docker, you will need to additionally mount the `dscim-facts-epa` directory by modifying the command in the facts quickstart to:
 
 ```bash
-docker run -it --volume=$HOME/facts:/opt/facts --volume=$HOME/dscim-facts-epa:/opt/dscim-facts-epa -w /opt/facts facts
+docker run -it --volume=$HOME/facts:/opt/facts --volume=$HOME/dscim-facts-epa:/opt/dscim-facts-epa -w /opt/dscim-facts-epa/scripts/facts.runs facts
 ```
-Replace `$HOME/dscim-facts-epa` and `$HOME/facts` with the path to your cloned `dscim-facts-epa` repository and facts repository, respectively. Once inside the docker, the script to run facts will need two additional packages to set up the FACTS experiments. Therefore, move into the necessary directory and install the packages like so:
-
-```bash
-cd /opt/dscim-facts-epa/scripts/facts.runs
-pip install xarray netcdf4
-```
-Now proceed to the **Running the bash script** step.
+Replace `$HOME/dscim-facts-epa` and `$HOME/facts` with the path to your cloned `dscim-facts-epa` repository and facts repository, respectively. Now proceed to the **Running the bash script** step.
 
 ### Not Docker
 
-To run FACTS outside of a docker, the user can use the `dscim-facts-epa` environment installed above. Activate the environment by typing `conda activate dscim-facts-epa` and proceed to the next section.
+To run FACTS outside of a docker, the user can use the `dscim-facts-epa` environment installed above. Activate the environment by typing `conda activate dscim-facts-epa` and install an additional python package:
+
+```bash
+pip install radical.entk==1.41.0
+```
+
+and proceed to the next section.
 
 ### Running the bash script
 

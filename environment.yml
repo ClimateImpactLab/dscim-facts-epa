@@ -36,5 +36,4 @@ dependencies:
       - p_tqdm==1.4.0
       - impactlab_tools==0.4.0
       - inquirer==2.10.0
-      - radical.entk==1.41.0
       - pyyaml==6.0.1
