@@ -94,7 +94,7 @@ Once this config is created, you can proceed to the **Running SC-GHGs** step.
 
 ## Running FACTS
 
-If you will be running FACTS, ensure you have followed the **Formatting GMST/GMSL files** section above. To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). If you are running on a Linux machine, proceed to the **Not Docker** section, otherwise proceed to the **Docker** section.
+If you will be running FACTS, ensure you have followed the **Formatting GMST/GMSL files** section above. We recommend installing or cloning FACTS v1.1.1 found [here](https://github.com/radical-collaboration/facts/releases/tag/v1.1.1). To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). If you are running on a Linux machine, proceed to the **Not Docker** section, otherwise proceed to the **Docker** section.
 
 ### Docker
 
