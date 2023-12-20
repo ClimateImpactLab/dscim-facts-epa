@@ -71,9 +71,9 @@ def generate_meta(menu_item):
     
     # find git commit hash
     try:
-        label = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('ascii').strip()
+        gitlabel = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('ascii').strip()
     except subprocess.CalledProcessError:
-        label = "unknown"
+        gitlabel = "unknown"
     
     meta = {"Author": "Climate Impact Lab",
             "Date Created": date.today().strftime("%d/%m/%Y"),
@@ -94,7 +94,7 @@ def generate_meta(menu_item):
         )
 
     # update with git hash and machine name
-    meta.update(dict(machine=machine_name, commit=label,url="https://github.com/ClimateImpactLab/dscim-epa/commit/"+subprocess.check_output(['git','rev-parse','HEAD']).decode('ascii').strip()))
+    meta.update(dict(machine=machine_name, commit=gitlabel,url=f"https://github.com/ClimateImpactLab/dscim-epa/commit/{gitlabel}"))
 
     # convert to strs
     meta = {k: v if type(v) in [int, float] else str(v) for k, v in meta.items()}
