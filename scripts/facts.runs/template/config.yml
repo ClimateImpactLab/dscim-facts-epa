@@ -5,6 +5,7 @@ global-options:
     pyear_end: 2300
     pyear_step: 1
     baseyear: 2005
+    pipeline_file: 'pipeline.global.yml'
 
 
 climate_step:
