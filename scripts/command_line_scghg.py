@@ -441,7 +441,7 @@ def epa_scghgs(sectors,
 
 # Command line interface for DSCIM-epa runs        
 f = Figlet(font='slant', width=100)
-print(f.renderText('DSCIM-FACTS-EPA'))
+print(f.renderText('DSCIM'))
 
 pulse_years = conf["rffdata"]["pulse_years"]
 pulse_year_choices = [(str(i), i) for i in pulse_years]
