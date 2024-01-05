@@ -1,5 +1,7 @@
 #!/bin/bash
 # Define arrays for pulse years and gases
+# Additional gases can be appended with spaces in between
+# example: pulse_years=(2020 2030 2040)
 pulse_years=(2020)
 gases=("CO2_Fossil")
 facts_dir="/opt/facts"
