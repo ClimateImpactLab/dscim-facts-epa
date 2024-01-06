@@ -15,6 +15,9 @@ import subprocess
 from datetime import date
 import sys
 
+# EDIT this line upon each release of dscim-facts-epa
+VERSION = "unreleased"
+
 args = sys.argv
 if len(args) == 1:
     conf_name = "generated_conf.yml"
@@ -71,9 +74,9 @@ def generate_meta(menu_item):
     
     # find git commit hash
     try:
-        label = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('ascii').strip()
+        gitlabel = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('ascii').strip()
     except subprocess.CalledProcessError:
-        label = "unknown"
+        gitlabel = "unknown"
     
     meta = {"Author": "Climate Impact Lab",
             "Date Created": date.today().strftime("%d/%m/%Y"),
@@ -94,7 +97,7 @@ def generate_meta(menu_item):
         )
 
     # update with git hash and machine name
-    meta.update(dict(machine=machine_name, commit=label,url="https://github.com/ClimateImpactLab/dscim-epa/commit/"+subprocess.check_output(['git','rev-parse','HEAD']).decode('ascii').strip()))
+    meta.update(dict(machine=machine_name, commit=gitlabel,url=f"https://github.com/ClimateImpactLab/dscim-epa/commit/{gitlabel}"))
 
     # convert to strs
     meta = {k: v if type(v) in [int, float] else str(v) for k, v in meta.items()}
@@ -440,8 +443,9 @@ def epa_scghgs(sectors,
    
 
 # Command line interface for DSCIM-epa runs        
-f = Figlet(font='slant')
-print(f.renderText('DSCIM-EPA'))
+f = Figlet(font='slant', width=100)
+print(f.renderText('DSCIM'))
+print(f"... dscim-facts-epa version {VERSION} ...")
 
 pulse_years = conf["rffdata"]["pulse_years"]
 pulse_year_choices = [(str(i), i) for i in pulse_years]
