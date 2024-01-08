@@ -54,10 +54,10 @@ conda activate dscim-facts-epa
 
 Be sure that all commands and analyses are run from this conda environment.
 
-With the environment set up and active, the next step is downloading the required DSCIM-FACTS-EPA input data into the local directory. From the command line run:
+With the environment set up and active, the next step is downloading the required DSCIM-FACTS-EPA input data into the local directory. Assuming you are in the `dscim-facts-epa/scripts` directory, from the command line run:
 
 ```bash
-python scripts/directory_setup.py
+python directory_setup.py
 ```
 
 Note that this will download several gigabytes of data and may take several minutes, depending on your connection speed.
@@ -129,7 +129,7 @@ The user must now make modifications to the `scripts/facts.runs/facts_runs.sh` s
  - on line 8, change `facts_dir` to where you have cloned your FACTS repository. Both this directory and the dscim-facts-epa directory will not need to be set if you are running in a docker
  - on line 9, change `dscim_facts_epa_dir` to where you have cloned this repository 
 
-Now run:
+Assuming you are in the `dscim-facts-epa/scripts/facts.runs` folder run:
 
 ```bash
 bash facts_runs.sh 
@@ -145,14 +145,14 @@ If a docker was used, exit it once the run is complete using the `exit` command.
 
 After setting up the dscim-facts-epa environment and input data, activate the environment by typing `conda activate dscim-facts-epa`. You can run SC-GHG calculations under different conditions with or without a config file.
 
-If you want to run the cil-spec SC-GHGs, you can run:
+Assuming you are in the `dscim-facts-epa/scripts` folder, if you want to run the cil-spec SC-GHGs, you can run:
 ```bash
-python scripts/command_line_scghg.py
+python command_line_scghg.py
 ```
 
 Alternatively, if you have run FACTS, or are using a gmsl file of your own, you can run:
 ```bash
-python scripts/command_line_scghg.py name_of_config.yml
+python command_line_scghg.py name_of_config.yml
 ```
 
 and follow the on-screen prompts. When the selector is a carrot, you may only select one option. Use the arrow keys on your keyboard to highlight your desired option and click enter to submit. When you are presented with `X` and `o` selectors, you may use the spacebar to select (`X`) or deselect (`o`) then click enter to submit once you have chosen your desired number of parameters. Once you have completed all of the options, the DSCIM run will begin.
