@@ -10,8 +10,8 @@ import argparse
 parser = argparse.ArgumentParser(description='Create config from gmsl and gmst pulse files')
 
 # Add named arguments for the lists
-parser.add_argument('--gmsl_pulse', nargs=1, help='Path to GMSL pulse file')
-parser.add_argument('--gmst_pulse', nargs=1, help='Path to GMST pulse file')
+parser.add_argument('--gmsl_file', nargs=1, help='Path to GMSL pulse file')
+parser.add_argument('--gmst_file', nargs=1, help='Path to GMST pulse file')
 parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
 parser.add_argument('--gases', nargs='*', help='List of gases')
 
@@ -19,8 +19,8 @@ parser.add_argument('--gases', nargs='*', help='List of gases')
 args = parser.parse_args()
 
 # Access the lists using the argument names
-gmsl_pulsename = args.gmsl_pulse
-gmst_pulsename = args.gmst_pulse
+gmsl_pulsename = args.gmsl_file
+gmst_pulsename = args.gmst_file
 
 if args.pulse_years:
     pulse_years = list(map(int, args.pulse_years))
