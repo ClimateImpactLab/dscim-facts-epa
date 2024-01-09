@@ -91,8 +91,8 @@ python create_config.py --gmst_file GMST_filename.nc4 --gmsl_file GMSL_filename.
 ```
 
 Description of arguments:
-- `--gmst_file`: This should be the name of your GMST pulse file placed in `dscim-facts-epa/scripts/input/climate`
-- `--gmsl_file`: This should be the name of your GMSL pulse file placed in `dscim-facts-epa/scripts/input/climate`
+- `--gmst_file`: The name of your GMST file placed in `dscim-facts-epa/scripts/input/climate`
+- `--gmsl_file`: The name of your GMSL file placed in `dscim-facts-epa/scripts/input/climate`
 - `--pulse_years`  (optional -- default: 2020): Space delimited pulse years. Pulse years must be included in the coordinates of your gmst/gmsl files
 - `--gases` (optional -- default: "CO2_Fossil"): Space delimited gases. Gases must be included in the coordinates of your gmst/gmsl files
 
@@ -100,16 +100,20 @@ Once this config is created, you can proceed to the **Running SC-GHGs** step.
 
 ## Running FACTS
 
-If you will be running FACTS, ensure you have followed the **Formatting GMST/GMSL files** section above. We recommend installing or cloning FACTS v1.1.1 found [here](https://github.com/radical-collaboration/facts/releases/tag/v1.1.1). To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). If you are running on a Linux machine, proceed to the **Not Docker** section, otherwise proceed to the **Docker** section.
+If you will be running FACTS, ensure you have followed the **Formatting GMST/GMSL files** section above. 
+
+We recommend installing or cloning FACTS v1.1.1 found [here](https://github.com/radical-collaboration/facts/releases/tag/v1.1.1). To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). If you are running on a Linux machine (quickstart Section 1.1), proceed to the **Not Docker** section below. If you are running in a Container (quickstart Section 1.2), proceed to the **Docker** section below. We recommend reading these sections before following the FACTS quickstart. Note that to run `facts` for DSCIM-FACTS-EPA, you will *not* need to set up the `emulandice` module in facts.
 
 ### Docker
 
-Once you have reached step 3 of section 1.2 in the FACTS quickstart, you are done with the quickstart. If you are using a docker, you will need to additionally mount the `dscim-facts-epa` directory by modifying the command in the facts quickstart to:
+Once you have reached step 3 of section 1.2 in the FACTS quickstart, come back here and use the following `docker` command: 
 
 ```bash
 docker run -it --volume=$HOME/facts:/opt/facts --volume=$HOME/dscim-facts-epa:/opt/dscim-facts-epa -w /opt/dscim-facts-epa/scripts/facts.runs facts
 ```
-Replace `$HOME/dscim-facts-epa` and `$HOME/facts` with the path to your cloned `dscim-facts-epa` repository and facts repository, respectively. Now proceed to the **Running the bash script** step.
+Replace `$HOME/dscim-facts-epa` and `$HOME/facts` with the path to your cloned or downloaded `dscim-facts-epa` repository and facts repository, respectively. This command will start the container, mounting the `dscim-facts-epa` directory and the `facts` directory. Once the container is running, your working directory will be `/opt/dscim-facts-epa/scripts/facts.runs`.
+
+Now proceed to the **Running the bash script** step.
 
 ### Not Docker
 
@@ -126,7 +130,8 @@ and proceed to the next section.
 The user must now make modifications to the `scripts/facts.runs/facts_runs.sh` script to ensure all files are found and run specifications are set. Those changes are:
  - on line 6 of the script, change `pulse_years` to the desired pulse years to be run by FACTS
  - on line 7, change `gas` to the desired gases to be run by FACTS
- - on line 8, change `facts_dir` to where you have cloned your FACTS repository. Both this directory and the dscim-facts-epa directory will not need to be set if you are running in a docker
+ If not running in the Docker Container:
+ - on line 8, change `facts_dir` to where you have cloned your FACTS repository
  - on line 9, change `dscim_facts_epa_dir` to where you have cloned this repository 
 
 Assuming you are in the `dscim-facts-epa/scripts/facts.runs` folder run:
