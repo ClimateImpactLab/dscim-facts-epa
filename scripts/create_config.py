@@ -10,8 +10,8 @@ import argparse
 parser = argparse.ArgumentParser(description='Create config from gmsl and gmst pulse files')
 
 # Add named arguments for the lists
-parser.add_argument('--gmsl_pulse', nargs=1, help='Path to GMSL pulse file')
-parser.add_argument('--gmst_pulse', nargs=1, help='Path to GMST pulse file')
+parser.add_argument('--gmsl_file', nargs=1, help='Path to GMSL pulse file')
+parser.add_argument('--gmst_file', nargs=1, help='Path to GMST pulse file')
 parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
 parser.add_argument('--gases', nargs='*', help='List of gases')
 
@@ -19,10 +19,25 @@ parser.add_argument('--gases', nargs='*', help='List of gases')
 args = parser.parse_args()
 
 # Access the lists using the argument names
-gmsl_pulsename = args.gmsl_pulse
-gmst_pulsename = args.gmst_pulse
-pulse_years = list(map(int, args.pulse_years))
-gases = args.gases
+gmsl_pulsename = args.gmsl_file
+gmst_pulsename = args.gmst_file
+
+if args.pulse_years:
+    pulse_years = list(map(int, args.pulse_years))
+else:
+    print("No pulse years specified")
+    print("Defaulting to 2020 pulse year")
+    pulse_years = [2020]
+
+if args.gases:
+    gases = args.gases
+else:
+    print("No gases specified")
+    print("Defaulting to CO2_Fossil")
+    gases = ['CO2_Fossil']
+
+print(pulse_years)
+print(gases)
 
 currentDay = datetime.now().day
 currentMonth = datetime.now().month
