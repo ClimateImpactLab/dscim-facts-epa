@@ -130,6 +130,7 @@ and proceed to the next section.
 The user must now make modifications to the `scripts/facts.runs/facts_runs.sh` script to ensure all files are found and run specifications are set. Those changes are:
  - on line 6 of the script, change `pulse_years` to the desired pulse years to be run by FACTS
  - on line 7, change `gas` to the desired gases to be run by FACTS
+ 
  If not running in the Docker Container:
  - on line 8, change `facts_dir` to where you have cloned your FACTS repository
  - on line 9, change `dscim_facts_epa_dir` to where you have cloned this repository 
