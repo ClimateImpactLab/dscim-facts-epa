@@ -93,8 +93,8 @@ python create_config.py --gmst_file GMST_filename.nc4 --gmsl_file GMSL_filename.
 Description of arguments:
 - `--gmst_file`: This should be the name of your GMST pulse file placed in `dscim-facts-epa/scripts/input/climate`
 - `--gmsl_file`: This should be the name of your GMSL pulse file placed in `dscim-facts-epa/scripts/input/climate`
-- `--pulse_years`: Space delimited pulse years as exist in the coordinates of your gmst/gmsl pulse files
-- `--gases`: Space delimited gases as exist in the coordinates of your gmst/gmsl pulse files
+- `--pulse_years`  (optional -- default: 2020): Space delimited pulse years. Pulse years must be included in the coordinates of your gmst/gmsl files
+- `--gases` (optional -- default: "CO2_Fossil"): Space delimited gases. Gases must be included in the coordinates of your gmst/gmsl files
 
 Once this config is created, you can proceed to the **Running SC-GHGs** step.
 
