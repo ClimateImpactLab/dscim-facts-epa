@@ -87,12 +87,12 @@ To ensure that both `FACTS` and `dscim-facts-epa` can read new GMST, GMSL, and O
 If you already have alternative GMSL and GMST files, it is recommended to run them through the `create_config.py` script to ensure that the files are formatted correctly. In addition, this script will generate a config that will allow you to directly begin running `dscim-facts-epa` using the user-specified GMST and GMSL inputs, gases, and pulse_years. To run this script, you will need to specify your correctly formatted gmst and gmsl files:
 
 ```bash
-python create_config.py --gmst_pulse GMST_filename.nc4 --gmsl_pulse GMSL_filename.nc4 --pulse_years pulseyear1 pulseyear2 ... --gases gas1 gas2 ...
+python create_config.py --gmst_file GMST_filename.nc4 --gmsl_file GMSL_filename.nc4 --pulse_years pulseyear1 pulseyear2 ... --gases gas1 gas2 ...
 ```
 
 Description of arguments:
-- `--gmst_pulse`: This should be the name of your GMST pulse file placed in `dscim-facts-epa/scripts/input/climate`
-- `--gmsl_pulse`: This should be the name of your GMSL pulse file placed in `dscim-facts-epa/scripts/input/climate`
+- `--gmst_file`: This should be the name of your GMST pulse file placed in `dscim-facts-epa/scripts/input/climate`
+- `--gmsl_file`: This should be the name of your GMSL pulse file placed in `dscim-facts-epa/scripts/input/climate`
 - `--pulse_years`: Space delimited pulse years as exist in the coordinates of your gmst/gmsl pulse files
 - `--gases`: Space delimited gases as exist in the coordinates of your gmst/gmsl pulse files
 
