@@ -23,10 +23,23 @@ parser.add_argument('--gmsl_pulse', nargs=1, help='gmsl pulse filename to save o
 args = parser.parse_args()
 
 # Access the lists using the argument names
-pulse_years = args.pulse_years
-gases = args.gases
 facts_dir = args.facts_repo[0]
 gmsl_pulse = args.gmsl_pulse[0]
+
+if args.pulse_years:
+    pulse_years = list(map(int, args.pulse_years))
+else:
+    print("No pulse years specified")
+    print("Defaulting to 2020 pulse year")
+    pulse_years = [2020]
+
+if args.gases:
+    gases = args.gases
+else:
+    print("No gases specified")
+    print("Defaulting to CO2_Fossil")
+    gases = ['CO2_Fossil']
+
 
 print("pulse_years:", pulse_years)
 print("gases:", gases)
