@@ -16,7 +16,7 @@ from datetime import date
 import sys
 
 # EDIT this line upon each release of dscim-facts-epa
-VERSION = "unreleased"
+VERSION = "0.1.0"
 
 args = sys.argv
 if len(args) == 1:
