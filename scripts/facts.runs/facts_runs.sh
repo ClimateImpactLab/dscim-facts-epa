@@ -20,13 +20,13 @@ for gas in "${gases[@]}"; do
         wfs=0
         gas_exp="${gas//_/.}"
         # Check if experiment output files have already been generated
-        if [ -f $facts_dir/experiments/rff.$year.$gas_exp/output/rff.$year.$gas_exp.total.workflow.wf1f.global.nc]; then
+        if [ -f $facts_dir/experiments/rff.$year.$gas_exp/output/rff.$year.$gas_exp.total.workflow.wf1f.global.nc ]; then
             wfs=$((wfs + 1))
         fi
-        if [ -f $facts_dir/experiments/rff.$year.$gas_exp/output/rff.$year.$gas_exp.total.workflow.wf2f.global.nc]; then
+        if [ -f $facts_dir/experiments/rff.$year.$gas_exp/output/rff.$year.$gas_exp.total.workflow.wf2f.global.nc ]; then
             wfs=$((wfs + 1))
         fi
-        if [(( $wfs != 2 | $overwrite == 1 ))]; then
+        if (( $wfs != 2 | $overwrite == 1 )); then
             cd $facts_dir
             python3 runFACTS.py experiments/rff.$year.$gas_exp
         else 
