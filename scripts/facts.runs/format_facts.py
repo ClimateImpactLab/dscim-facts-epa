@@ -46,16 +46,16 @@ print("gases:", gases)
 
 
 
-control = (0.5 * xr.open_dataset(facts_dir + '/rff.control.control/output/rff.control.control.total.workflow.wf1f.global.nc') +
-    0.5 * xr.open_dataset(facts_dir + '/rff.control.control/output/rff.control.control.total.workflow.wf2f.global.nc'))
+control = (0.5 * xr.open_dataset(facts_dir + '/experiments/rff.control.control/output/rff.control.control.total.workflow.wf1f.global.nc') +
+    0.5 * xr.open_dataset(facts_dir + '/experiments/rff.control.control/output/rff.control.control.total.workflow.wf2f.global.nc'))
 
 nsamps = len(control.samples.values)
      
 pulse_gas = []
 for pulse_year, gas in list(product(pulse_years,gases)):
     gas_exp = gas.replace('_','.')
-    pulse = ((0.5 * xr.open_dataset(facts_dir + f'/rff.{pulse_year}.{gas_exp}/output/rff.{pulse_year}.{gas_exp}.total.workflow.wf1f.global.nc') +
-        0.5 * xr.open_dataset(facts_dir + f'/rff.{pulse_year}.{gas_exp}/output/rff.{pulse_year}.{gas_exp}.total.workflow.wf2f.global.nc'))
+    pulse = ((0.5 * xr.open_dataset(facts_dir + f'/experiments/rff.{pulse_year}.{gas_exp}/output/rff.{pulse_year}.{gas_exp}.total.workflow.wf1f.global.nc') +
+        0.5 * xr.open_dataset(facts_dir + f'/experiments/rff.{pulse_year}.{gas_exp}/output/rff.{pulse_year}.{gas_exp}.total.workflow.wf2f.global.nc'))
              .rename({'samples':'runid','sea_level_change':'pulse_gmsl','years':'year'})
              .assign_coords({'runid':np.arange(1,nsamps + 1),'gas':gas, 'pulse_year':int(pulse_year)})
              .expand_dims(['gas','pulse_year'])
