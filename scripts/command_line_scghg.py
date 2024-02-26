@@ -425,7 +425,7 @@ def epa_scghgs(sectors,
             collapsed_gas_scghg.to_csv(out_dir / f"{conf_savename}sc-{gas}-dscim-{sector_short}-{pulse_year}.csv") 
 
         # Creates attribute files 
-        with open(out_dir / f"attributes-{sector_short}.txt", 'w') as f: 
+        with open(out_dir / f"{conf_savename}attributes-{sector_short}.txt", 'w') as f: 
             for key, value in attrs.items(): 
                 f.write('%s:%s\n' % (key, value))
     
