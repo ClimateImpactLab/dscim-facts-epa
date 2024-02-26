@@ -21,7 +21,6 @@ D --> |1.| E{Running SC-GHGs}
 B[2. GMST/GMSL] --> D(Setup)
 D --> |2.| F(Formatting GMST/GMSL files)
 F --> |2.| H(Creating a run config)
-H --> E{Running SC-GHGs}
 
 C[3. GMST/OHC] --> D(Setup)
 D --> |3.| F(Formatting GMST/GMSL files)
@@ -214,4 +213,3 @@ Econ
 Damage Functions
 - Files containing a set of damage function coefficients for each RFF draw for each economic sector and valuation choice.
 - RFF damage function emulator weights: damage_function_weights.nc4
-
