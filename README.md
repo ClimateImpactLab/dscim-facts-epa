@@ -21,12 +21,12 @@ D --> |1.| E{Running SC-GHGs}
 B[2. GMST/GMSL] --> D(Setup)
 D --> |2.| F(Formatting GMST/GMSL files)
 F --> |2.| H(Creating a run config)
-H --> E{Running SC-GHGs}
 
 C[3. GMST/OHC] --> D(Setup)
 D --> |3.| F(Formatting GMST/GMSL files)
 F --> |3.| G(Running FACTS)
-G --> E{Running SC-GHGs}
+G --> |3.| H(Creating a run config)
+H --> E{Running SC-GHGs}
 ```
 
 
@@ -84,7 +84,7 @@ To ensure that both `FACTS` and `dscim-facts-epa` can read new GMST, GMSL, and O
 
 ## Creating a `dscim-facts-epa` run config
 
-If you already have alternative GMSL and GMST files, it is recommended to run them through the `create_config.py` script to ensure that the files are formatted correctly. In addition, this script will generate a config that will allow you to directly begin running `dscim-facts-epa` using the user-specified GMST and GMSL inputs, gases, and pulse_years. To run this script, you will need to specify your correctly formatted gmst and gmsl files:
+If you already have alternative GMSL and GMST files, it is recommended to run them through the `create_config.py`. This script will generate a config that will allow you to directly begin running `dscim-facts-epa` using the user-specified GMST and GMSL inputs, gases, and pulse_years. To run this script, you will need to specify your correctly formatted gmst and gmsl files:
 
 ```bash
 python create_config.py --gmst_file GMST_filename.nc4 --gmsl_file GMSL_filename.nc4 --pulse_years pulseyear1 pulseyear2 ... --gases gas1 gas2 ...
@@ -96,7 +96,20 @@ Description of arguments:
 - `--pulse_years`  (optional -- default: 2020): Space delimited pulse years. Pulse years must be included in the coordinates of your gmst/gmsl files
 - `--gases` (optional -- default: "CO2_Fossil"): Space delimited gases. Gases must be included in the coordinates of your gmst/gmsl files
 
-Once this config is created, you can proceed to the **Running SC-GHGs** step.
+Once this config is created, the final step is to specify the "pulse conversion" for each gas. This conversion factor converts the final SC-GHG from `$ / pulse size of FaIR gas species` to `$ / tonne of GHG`. 
+
+To do this, modify the `gas_conversions` portion of the config. By default, this is:
+
+```
+gas_conversions:
+  CH4: 2.5e-08
+  CO2_Fossil: 2.72916487e-10
+  N2O: 6.36480131e-07
+```
+
+To add additional gases, create a new line and follow the formatting of the previous lines. New gases should match the coordinate values of your `gas` dimension in your gmst, gmsl, or ohc files. For example, the SCC default pulse size in DSCIM-FACTS-EPA is 1 GtC (1 gigatonne Carbon). To convert to $ / tonne CO2, molecular weights are used to convert C to CO2, and Gt is converted to tonnes: `1 / [((12+2*16)/12) * (1e9)] = 2.72916487e-10`
+
+Once this is done, proceed to the **Running SC-GHGs** step.
 
 ## Running FACTS
 
@@ -204,4 +217,3 @@ Econ
 Damage Functions
 - Files containing a set of damage function coefficients for each RFF draw for each economic sector and valuation choice.
 - RFF damage function emulator weights: damage_function_weights.nc4
-
