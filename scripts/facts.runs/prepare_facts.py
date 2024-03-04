@@ -32,7 +32,6 @@ print("gases:", gases)
 
 scenario = 'ssp245'
 nsamps = 10000
-proj_years = np.arange(1750, 2501)
 
 
 for pulse_year, gas in list(product(pulse_years,gases)) + [('control','control'),]:
@@ -62,6 +61,8 @@ for pulse_year, gas in list(product(pulse_years,gases)) + [('control','control')
 
     temp_file = xr.open_dataset(dscim_dir/'scripts'/'input'/'climate'/'gmst_pulse.nc4')
     ohc_file = xr.open_dataset(dscim_dir/'scripts'/'input'/'climate'/'ohc_pulse.nc4')
+    proj_years = temp_file.year.values.flatten()
+
     temp_file.close()
     ohc_file.close()
     if pulse_year == 'control':
