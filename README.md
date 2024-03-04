@@ -102,7 +102,7 @@ Once this config is created, you can proceed to the **Running SC-GHGs** step.
 
 If you will be running FACTS, ensure you have followed the **Formatting GMST/GMSL files** section above. 
 
-We recommend installing or cloning FACTS v1.1.1 found [here](https://github.com/radical-collaboration/facts/releases/tag/v1.1.1). To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). If you are running on a Linux machine (quickstart Section 1.1), proceed to the **Not Docker** section below. If you are running in a Container (quickstart Section 1.2), proceed to the **Docker** section below. We recommend reading these sections before following the FACTS quickstart. Note that to run `facts` for DSCIM-FACTS-EPA, you will *not* need to set up the `emulandice` module in facts.
+We recommend installing or cloning FACTS v1.1.2 found [here](https://github.com/radical-collaboration/facts/releases/tag/v1.1.2). To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). If you are running on a Linux machine (quickstart Section 1.1), proceed to the **Not Docker** section below. If you are running in a Container (quickstart Section 1.2), proceed to the **Docker** section below. We recommend reading these sections before following the FACTS quickstart. Note that to run `facts` for DSCIM-FACTS-EPA, you will *not* need to set up the `emulandice` module in facts.
 
 ### Docker
 
