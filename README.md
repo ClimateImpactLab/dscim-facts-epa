@@ -96,7 +96,9 @@ Description of arguments:
 - `--pulse_years`  (optional -- default: 2020): Space delimited pulse years. Pulse years must be included in the coordinates of your gmst/gmsl files
 - `--gases` (optional -- default: "CO2_Fossil"): Space delimited gases. Gases must be included in the coordinates of your gmst/gmsl files
 
-Once this config is created, the final step is to specify the pulse size for each gas. To do this, modify the `gas_conversions` portion of the config. By default, this is:
+Once this config is created, the final step is to specify the "pulse conversion" for each gas. This conversion factor converts the final SC-GHG from `$ / pulse size of FaIR gas species` to `$ / tonne of GHG`. 
+
+To do this, modify the `gas_conversions` portion of the config. By default, this is:
 
 ```
 gas_conversions:
@@ -105,7 +107,9 @@ gas_conversions:
   N2O: 6.36480131e-07
 ```
 
-To add additional gases simply create a new line and follow the formatting of the previous lines. New gases should match the coordinate values of your `gas` dimension in your gmst, gmsl, or ohc files. For example, a 100 Mt pulse of CFC would be added as `CFC: 1.0e-08`. Once this is done you can proceed to the **Running SC-GHGs** step.
+To add additional gases, create a new line and follow the formatting of the previous lines. New gases should match the coordinate values of your `gas` dimension in your gmst, gmsl, or ohc files. For example, the SCC default pulse size in DSCIM-FACTS-EPA is 1 GtC (1 gigatonne Carbon). To convert to $ / tonne CO2, molecular weights are used to convert C to CO2, and Gt is converted to tonnes: `[1 / ((12+2*16)/12) * (1e9)] = 2.72916487e-10`
+
+Once this is done, proceed to the **Running SC-GHGs** step.
 
 ## Running FACTS
 
