@@ -10,10 +10,6 @@ gmsl_file="/opt/inputs/climate/facts_gmsl_pulse.nc4"
 # Paths to directories
 facts_dir="/opt/facts"
 dscim_facts_epa_dir="/opt/dscim-facts-epa"
-input_dir="/opt/inputs"
-output_dir="/opt/outputs"
-config_dir="/opt/configs"
-modules_dir="/opt/modules-data"
 # Creates symlink to all modules data
 ln -s $modules_dir/*.tar.gz $facts_dir/modules-data
 # Create FACTS experiments
@@ -22,8 +18,8 @@ python3 prepare_facts.py \
  --facts_repo "${facts_dir}" \
  --pulse_years "${pulse_years[@]}" \
  --gases "${gases[@]}" \
- --gmst_file $inputs_dir/climate/gmst_pulse.nc4 \
- --ohc_file $inputs_dir/climate/ohc_pulse.nc4 
+ --gmst_file /opt/dscim-facts-epa/scripts/input/climate/gmst_pulse.nc4 \
+ --ohc_file /opt/dscim-facts-epa/scripts/input/climate/ohc_pulse.nc4 
 # Loop through the pulse years
 for gas in "${gases[@]}"; do
     # Loop through the gases
@@ -49,7 +45,4 @@ python3 create_config.py \
 --gmsl_file $gmsl_file \
 --gmst_file gmst_pulse.nc4 \
 --pulse_years "${pulse_years[@]}" \
---gases "${gases[@]}" \
---input_dir $input_dir \
---output_dir $output_dir \
---config_dir $config_dir \
+--gases "${gases[@]}" 

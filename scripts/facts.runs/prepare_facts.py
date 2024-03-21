@@ -9,15 +9,15 @@ import shutil
 import argparse
 
 # Create argument parser
-parser = argparse.ArgumentParser(description='Process two lists.')
+parser = argparse.ArgumentParser(description='Process repositories and gases/pulse_years to pass into FACTS.')
 
 # Add named arguments for the lists
 parser.add_argument('--facts_repo', nargs=1, help = 'Path to the FACTS repo')
 parser.add_argument('--dscim_repo', nargs=1, help = 'Path to the dscim-facts-epa repo')
 parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
 parser.add_argument('--gases', nargs='*', help='List of gases')
-parser.add_argument('--gmst_file', nargs='*', help='Path to GMST pulse file')
-parser.add_argument('--ohc_file', nargs='*', help='Path to OHC pulse file')
+parser.add_argument('--gmst_file', nargs=1, help='Path to GMST pulse file')
+parser.add_argument('--ohc_file', nargs=1, help='Path to OHC pulse file')
 
 
 # Parse the command line arguments

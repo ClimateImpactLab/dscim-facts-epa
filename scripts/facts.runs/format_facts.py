@@ -17,14 +17,14 @@ parser = argparse.ArgumentParser(description='Process lists of gases and pulse y
 parser.add_argument('--facts_repo', nargs=1, help = 'Path to the FACTS repo')
 parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
 parser.add_argument('--gases', nargs='*', help='List of gases')
-parser.add_argument('--gmsl_pulse', nargs=1, help='gmsl pulse filename to save out')
+parser.add_argument('--gmsl_file', nargs=1, help='gmsl pulse filename to save out')
 
 # Parse the command line arguments
 args = parser.parse_args()
 
 # Access the lists using the argument names
 facts_dir = args.facts_repo[0]
-gmsl_pulse = args.gmsl_pulse[0]
+gmsl_pulse = Path(args.gmsl_file[0])
 
 if args.pulse_years:
     pulse_years = list(map(int, args.pulse_years))
@@ -78,5 +78,5 @@ gmsl_ds = xr.merge([control,pulse])/10
 save = Path(os.getcwd())
 save = save.parent.absolute() / 'input' / 'climate'
 
-gmsl_ds.to_netcdf(save / gmsl_pulse, encoding = {"control_gmsl":{"dtype":"float64"},"pulse_gmsl":{"dtype":"float64"}})
+gmsl_ds.to_netcdf(gmsl_pulse, encoding = {"control_gmsl":{"dtype":"float64"},"pulse_gmsl":{"dtype":"float64"}})
     
