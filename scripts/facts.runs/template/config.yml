@@ -5,12 +5,14 @@ global-options:
     pyear_end: 2300
     pyear_step: 1
     baseyear: 2005
+    pipeline_file: 'pipeline.global.yml'
 
 
 climate_step:
     dummy:
         module_set: "facts"
         module: "dummy"
+        pipeline_file: 'pipeline.yml'
         input_data_file:
             - "ohc.nc4"
             - "gsat.nc4"
@@ -56,7 +58,7 @@ sealevel_step:
     ar5AIS:
         module_set: "ipccar5"
         module: "icesheets"
-        pipeline_file: "pipeline.AIS.yml"
+        pipeline_file: "pipeline.AIS.global.yml"
         options_allowoverwrite:
             climate_data_file: "%CLIMATE_DATA_FILE%"
         include_in_workflow:
@@ -67,13 +69,6 @@ sealevel_step:
         module: "sterodynamics"
         options_allowoverwrite:
             climate_data_file: "%CLIMATE_DATA_FILE%"
-        include_in_workflow:
-            - "wf1f"
-            - "wf2f"
-
-    k14vlm:
-        module_set: "kopp14"
-        module: "verticallandmotion"
         include_in_workflow:
             - "wf1f"
             - "wf2f"
