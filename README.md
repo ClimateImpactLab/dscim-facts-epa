@@ -4,13 +4,28 @@ This repository is an implementation of DSCIM, referred to as DSCIM-FACTS-EPA, t
 
 This Python library enables the calculation of sector-specific partial social cost of greenhouse gases (SC-GHG) and SC-GHGs that are combined across sectors. The main purpose of this library is to parse the monetized spatial damages from different sectors and integrate them into SC-GHGs for different discount levels, pulse years, and greenhouse gases. 
 
-## Run cases
+## Outline
+This README is organized as follows:
 
-By default, DSCIM-FACTS-EPA can run SC-GHGs for carbon dioxide, methane, and nitrous oxide for pulse years 2020-2080 in 10 year increments for the Resources for the Future (RFF) emissions scenarios. For alternative gases or pulse years the user will need to provide new GMST and GMSL trajectories. The user can provide these trajectories directly, or can use the DSCIM-FACTS-EPA FACTS runner to generate GMSL from ocean heat content (OHC) and GMST. The intended use cases of this repository are thus:
+- Types of run cases
+- Run process overview
+- Installation and setup of `dscim-facts-epa`
+- Running `dscim-facts-epa` SC-GHG command line tool
+- Format of GMST, OHC, GMSL input files
+- FACTS-specific setup
+    - Installation of `facts`
+      - Docker (Windows, Mac OS)
+      - Not Docker (Linux)
+    - Running `facts` with bash run script
+- 
 
-1. The user wants to generate the Climate Impact Lab (CIL) RFF SC-GHGs themselves.
-2. The user has GMST and GMSL files following the guidelines below and wants to use the CIL damage functions to generate SC-GHGs based on those files.
-3. The user has GMST and OHC files following the guidelines below (usually directly from a simple climate model, such as FaIR) and wants to generate GMSL files from FACTS.
+## Types of run cases
+
+By default, DSCIM-FACTS-EPA can run SC-GHGs for carbon dioxide, methane, and nitrous oxide for pulse years 2020-2080 in 10 year increments for the Resources for the Future socioeconomic pathways (RFF-SPs). For alternative gases or pulse years, the user can provide new GMST and GMSL trajectories. The user can provide these trajectories directly as input files, or can use the DSCIM-FACTS-EPA FACTS runner to generate GMSL from ocean heat content (OHC) and GMST. The intended use cases of this repository are thus:
+
+1. The user wants to generate the default Climate Impact Lab (CIL) RFF SC-GHGs.
+2. The user has alternative GMST and GMSL files following the guidelines below and wants to use the CIL damage functions to generate SC-GHGs based on those files.
+3. The user has alternative GMST and OHC files following the guidelines below (usually directly from a simple climate model, such as FaIR) and wants to generate GMSL files from FACTS and use the CIL damage functions to generate SC-GHGs from those files.
   
 ```mermaid
 flowchart LR
@@ -21,16 +36,27 @@ D --> |1.| E{Running SC-GHGs}
 B[2. GMST/GMSL] --> D(Setup)
 D --> |2.| F(Formatting GMST/GMSL files)
 F --> |2.| H(Creating a run config)
-H --> E{Running SC-GHGs}
 
 C[3. GMST/OHC] --> D(Setup)
 D --> |3.| F(Formatting GMST/GMSL files)
 F --> |3.| G(Running FACTS)
-G --> E{Running SC-GHGs}
+G --> |3.| H(Creating a run config)
+H --> E{Running SC-GHGs}
 ```
 
+## Run process overview
+The general run process, ignoring environment setup, is summarized here. Detailed instructions for each step are provided later in the README.
+ 
+1. Format user GMST and OHC files manually as specified earlier
+2. Place formatted GMST/OHC files into `dscim-facts-epa/scripts/input/climate`
+   - There is a “feature” right now where the GMST and OHC filenames must be named “gmst_pulse.nc4” and “ohc_pulse.nc4” (from line 63 in `dscim-facts-epa/scripts/facts.runs/prepare_facts.py`). We will update this to be a user option.
+3. Set up Docker/Not Docker container/environment (see Installation of `facts`)
+4. Edit `dscim-facts-epa/scripts/facts.runs/facts_runs.sh` script to specify pulse years, gases, and directory locations
+5. Run `bash facts_runs.sh` to generatea a config file for running `dscim-facts-epa` command line tool
+6. Modify the generated config from step 5 to specify gas pulse conversions
+7. Run `dscim-facts-epa` command line tool with newly generated config
 
-## Setup
+## Installation and setup of `dscim-facts-epa`
 
 To begin, we assume you have a system with `conda` available from the command line, and some familiarity with it. A conda distribution is available from [miniconda](https://docs.conda.io/en/latest/miniconda.html), [Anaconda](https://www.anaconda.com/), or [mamba](https://mamba.readthedocs.io/en/latest/). This helps to ensure that required software packages are correctly compiled and installed, replicating the analysis environment. If you are using conda, we recommend following [this](https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community) guide to speed up environment solve time.
 
@@ -54,10 +80,10 @@ conda activate dscim-facts-epa
 
 Be sure that all commands and analyses are run from this conda environment.
 
-With the environment set up and active, the next step is downloading the required DSCIM-FACTS-EPA input data into the local directory. From the command line run:
+With the environment set up and active, the next step is downloading the required DSCIM-FACTS-EPA input data into the local directory. Assuming you are in the `dscim-facts-epa/scripts` directory, from the command line run:
 
 ```bash
-python scripts/directory_setup.py
+python directory_setup.py
 ```
 
 Note that this will download several gigabytes of data and may take several minutes, depending on your connection speed.
@@ -84,26 +110,49 @@ To ensure that both `FACTS` and `dscim-facts-epa` can read new GMST, GMSL, and O
 
 ## Creating a `dscim-facts-epa` run config
 
-If you already have alternative GMSL and GMST files, it is recommended to run them through the `create_config.py` script to ensure that the files are formatted correctly. In addition, this script will generate a config that will allow you to directly begin running `dscim-facts-epa` using the user-specified GMST and GMSL inputs. To run this script, you will need to specify your correctly formatted gmst and gmsl files:
+If you already have alternative GMSL and GMST files, it is recommended to run them through the `create_config.py`. This script will generate a config that will allow you to directly begin running `dscim-facts-epa` using the user-specified GMST and GMSL inputs, gases, and pulse_years. To run this script, you will need to specify your correctly formatted gmst and gmsl files:
 
 ```bash
-create_config.py --gmst_file [GMST file] --gmsl_file [GMSL file]
+python create_config.py --gmst_file GMST_filename.nc4 --gmsl_file GMSL_filename.nc4 --pulse_years pulseyear1 pulseyear2 ... --gases gas1 gas2 ...
 ```
 
-Once this config is created, you can proceed to the **Running SC-GHGs** step.
+Description of arguments:
+- `--gmst_file`: The name of your GMST file placed in `dscim-facts-epa/scripts/input/climate`
+- `--gmsl_file`: The name of your GMSL file placed in `dscim-facts-epa/scripts/input/climate`
+- `--pulse_years`  (optional -- default: 2020): Space delimited pulse years. Pulse years must be included in the coordinates of your gmst/gmsl files
+- `--gases` (optional -- default: "CO2_Fossil"): Space delimited gases. Gases must be included in the coordinates of your gmst/gmsl files
+
+Once this config is created, the final step is to specify the "pulse conversion" for each gas. This conversion factor converts the final SC-GHG from `$ / pulse size of FaIR gas species` to `$ / tonne of GHG`. 
+
+To do this, modify the `gas_conversions` portion of the config. By default, this is:
+
+```
+gas_conversions:
+  CH4: 2.5e-08
+  CO2_Fossil: 2.72916487e-10
+  N2O: 6.36480131e-07
+```
+
+To add additional gases, create a new line and follow the formatting of the previous lines. New gases should match the coordinate values of your `gas` dimension in your gmst, gmsl, or ohc files. For example, the SCC default pulse size in DSCIM-FACTS-EPA is 1 GtC (1 gigatonne Carbon). To convert to $ / tonne CO2, molecular weights are used to convert C to CO2, and Gt is converted to tonnes: `1 / [((12+2*16)/12) * (1e9)] = 2.72916487e-10`
+
+Once this is done, proceed to the **Running SC-GHGs** step.
 
 ## Running FACTS
 
-If you will be running FACTS, ensure you have followed the **Formatting GMST/GMSL files** section above. We recommend installing or cloning FACTS v1.1.1 found [here](https://github.com/radical-collaboration/facts/releases/tag/v1.1.1). To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). If you are running on a Linux machine, proceed to the **Not Docker** section, otherwise proceed to the **Docker** section.
+If you will be running FACTS, ensure you have followed the **Formatting GMST/GMSL files** section above. 
+
+We recommend installing or cloning FACTS v1.1.2 found [here](https://github.com/radical-collaboration/facts/releases/tag/v1.1.2). To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). If you are running on a Linux machine (quickstart Section 1.1), proceed to the **Not Docker** section below. If you are running in a Container (quickstart Section 1.2), proceed to the **Docker** section below. We recommend reading these sections before following the FACTS quickstart. Note that to run `facts` for DSCIM-FACTS-EPA, you will *not* need to set up the `emulandice` module in facts.
 
 ### Docker
 
-If you are using a docker, you will need to additionally mount the `dscim-facts-epa` directory by modifying the command in the facts quickstart to:
+Once you have reached step 3 of section 1.2 in the FACTS quickstart, come back here and use the following `docker` command: 
 
 ```bash
 docker run -it --volume=$HOME/facts:/opt/facts --volume=$HOME/dscim-facts-epa:/opt/dscim-facts-epa -w /opt/dscim-facts-epa/scripts/facts.runs facts
 ```
-Replace `$HOME/dscim-facts-epa` and `$HOME/facts` with the path to your cloned `dscim-facts-epa` repository and facts repository, respectively. Now proceed to the **Running the bash script** step.
+Replace `$HOME/dscim-facts-epa` and `$HOME/facts` with the path to your cloned or downloaded `dscim-facts-epa` repository and facts repository, respectively. This command will start the container, mounting the `dscim-facts-epa` directory and the `facts` directory. Once the container is running, your working directory will be `/opt/dscim-facts-epa/scripts/facts.runs`.
+
+Now proceed to the **Running the bash script** step.
 
 ### Not Docker
 
@@ -118,12 +167,14 @@ and proceed to the next section.
 ### Running the bash script
 
 The user must now make modifications to the `scripts/facts.runs/facts_runs.sh` script to ensure all files are found and run specifications are set. Those changes are:
- - on line 3 of the script, change `pulse_years` to the desired pulse years to be run by FACTS
- - on line 4, change `gas` to the desired gases to be run by FACTS
- - on line 5, change `facts_dir` to where you have cloned your FACTS repository. Both this directory and the dscim-facts-epa directory will not need to be set if you are running in a docker
- - on line 5, change `dscim_facts_epa_dir` to where you have cloned this repository 
+ - on line 6 of the script, change `pulse_years` to the desired pulse years to be run by FACTS
+ - on line 7, change `gas` to the desired gases to be run by FACTS
+ 
+ If not running in the Docker Container:
+ - on line 8, change `facts_dir` to where you have cloned your FACTS repository
+ - on line 9, change `dscim_facts_epa_dir` to where you have cloned this repository 
 
-Now run:
+Assuming you are in the `dscim-facts-epa/scripts/facts.runs` folder run:
 
 ```bash
 bash facts_runs.sh 
@@ -139,21 +190,21 @@ If a docker was used, exit it once the run is complete using the `exit` command.
 
 After setting up the dscim-facts-epa environment and input data, activate the environment by typing `conda activate dscim-facts-epa`. You can run SC-GHG calculations under different conditions with or without a config file.
 
-If you want to run the cil-spec SC-GHGs, you can run:
+Assuming you are in the `dscim-facts-epa/scripts` folder, if you want to run the cil-spec SC-GHGs, you can run:
 ```bash
-python scripts/command_line_scghg.py
+python command_line_scghg.py
 ```
 
 Alternatively, if you have run FACTS, or are using a gmsl file of your own, you can run:
 ```bash
-python scripts/command_line_scghg.py name_of_config.yml
+python command_line_scghg.py name_of_config.yml
 ```
 
 and follow the on-screen prompts. When the selector is a carrot, you may only select one option. Use the arrow keys on your keyboard to highlight your desired option and click enter to submit. When you are presented with `X` and `o` selectors, you may use the spacebar to select (`X`) or deselect (`o`) then click enter to submit once you have chosen your desired number of parameters. Once you have completed all of the options, the DSCIM run will begin.
 
 ### Command line options
 
-Below is a short summary of what each command line option does. To view a more detailed description of what the run parameters do, see the [Documentation](https://impactlab.org/research/dscim-user-manual-version-092023-epa) for Data-driven Spatial Climate Impact Model (DSCIM). 
+Below is a short summary of what each command line option does. To view a more detailed description of what the run parameters do, see the [Documentation](https://impactlab.org/research/data-driven-spatial-climate-impact-model-user-manual-version-092023-epa/) for Data-driven Spatial Climate Impact Model (DSCIM). 
 
 #### Sector
 
@@ -192,4 +243,3 @@ Econ
 Damage Functions
 - Files containing a set of damage function coefficients for each RFF draw for each economic sector and valuation choice.
 - RFF damage function emulator weights: damage_function_weights.nc4
-
