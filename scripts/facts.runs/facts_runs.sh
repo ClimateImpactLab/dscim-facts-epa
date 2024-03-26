@@ -46,4 +46,4 @@ python3 create_config.py \
 --gmsl_file $gmsl_file \
 --gmst_file $gmst_file \
 --pulse_years "${pulse_years[@]}" \
---gases "${gases[@]}"  
+--gases "${gases[@]}" 
