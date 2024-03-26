@@ -5,21 +5,22 @@
 # example: gases=("CO2_Fossil" "CH4" "N2O")
 pulse_years=(2020)
 gases=("CO2_Fossil")
+# Desired control/pulse file paths
+gmst_file="/opt/dscim-facts-epa/scripts/input/climate/gmst_pulse.nc4"
+ohc_file="/opt/dscim-facts-epa/scripts/input/climate/ohc_pulse.nc4"
 # Desired GMSL pulse file path
-gmsl_file="/opt/inputs/climate/facts_gmsl_pulse.nc4"
+gmsl_file="/opt/dscim-facts-epa/scripts/input/climate/facts_gmsl_pulse.nc4"
 # Paths to directories
 facts_dir="/opt/facts"
 dscim_facts_epa_dir="/opt/dscim-facts-epa"
-# Creates symlink to all modules data
-ln -s $modules_dir/*.tar.gz $facts_dir/modules-data
 # Create FACTS experiments
 python3 prepare_facts.py \
  --dscim_repo "${dscim_facts_epa_dir}" \
  --facts_repo "${facts_dir}" \
  --pulse_years "${pulse_years[@]}" \
  --gases "${gases[@]}" \
- --gmst_file /opt/dscim-facts-epa/scripts/input/climate/gmst_pulse.nc4 \
- --ohc_file /opt/dscim-facts-epa/scripts/input/climate/ohc_pulse.nc4 
+ --gmst_file $gmst_file \
+ --ohc_file $ohc_file 
 # Loop through the pulse years
 for gas in "${gases[@]}"; do
     # Loop through the gases
@@ -43,6 +44,6 @@ cd $dscim_facts_epa_dir/scripts
 # Create config for dscim run
 python3 create_config.py \
 --gmsl_file $gmsl_file \
---gmst_file gmst_pulse.nc4 \
+--gmst_file $gmst_file \
 --pulse_years "${pulse_years[@]}" \
---gases "${gases[@]}" 
+--gases "${gases[@]}"  
