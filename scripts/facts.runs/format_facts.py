@@ -79,4 +79,3 @@ save = Path(os.getcwd())
 save = save.parent.absolute() / 'input' / 'climate'
 
 gmsl_ds.to_netcdf(gmsl_pulse, encoding = {"control_gmsl":{"dtype":"float64"},"pulse_gmsl":{"dtype":"float64"}})
-    

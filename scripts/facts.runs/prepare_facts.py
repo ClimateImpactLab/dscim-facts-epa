@@ -111,4 +111,3 @@ for pulse_year, gas in list(product(pulse_years,gases)) + [('control','control')
         "surface_temperature": {"dtype": "float64", "zlib": True, "complevel":4}})
     yearsds = xr.Dataset({"year": proj_years})
     yearsds.to_netcdf(input_dir / "climate.nc4", engine = 'netcdf4', format = 'NETCDF4', mode='a')
-    
