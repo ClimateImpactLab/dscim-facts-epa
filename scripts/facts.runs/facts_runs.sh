@@ -16,13 +16,13 @@ gmsl_file="/opt/dscim-facts-epa/scripts/input/climate/facts_gmsl_pulse.nc4"
 facts_dir="/opt/facts"
 dscim_facts_epa_dir="/opt/dscim-facts-epa"
 # Create FACTS experiments
-# python3 prepare_facts.py \
-#  --dscim_repo "${dscim_facts_epa_dir}" \
-#  --facts_repo "${facts_dir}" \
-#  --pulse_years "${pulse_years[@]}" \
-#  --gases "${gases[@]}" \
-#  --gmst_file $gmst_file \
-#  --ohc_file $ohc_file 
+python3 prepare_facts.py \
+ --dscim_repo "${dscim_facts_epa_dir}" \
+ --facts_repo "${facts_dir}" \
+ --pulse_years "${pulse_years[@]}" \
+ --gases "${gases[@]}" \
+ --gmst_file $gmst_file \
+ --ohc_file $ohc_file 
 # Loop through the pulse years
 for gas in "${gases[@]}"; do
     # Loop through the gases
