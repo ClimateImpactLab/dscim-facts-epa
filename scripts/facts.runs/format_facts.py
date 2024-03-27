@@ -17,7 +17,7 @@ parser = argparse.ArgumentParser(description='Process lists of gases and pulse y
 parser.add_argument('--facts_repo', help = 'Path to the FACTS repo')
 parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
 parser.add_argument('--gases', nargs='*', help='List of gases')
-parser.add_argument('--gmsl_file', help='gmsl pulse filename to save out')
+parser.add_argument('--gmsl_file', type=str, help='Full path for the GMSL pulse file, including filename')
 
 # Parse the command line arguments
 args = parser.parse_args()
@@ -71,6 +71,7 @@ control = (control
            .assign_coords({'runid':np.arange(1,nsamps + 1)})
            .drop(['lat','lon']))
 
+# Convert FACTS GMSL (mm) to dscim units (cm)
 gmsl_ds = xr.merge([control,pulse])/10
 
 save = Path(os.getcwd())

@@ -16,8 +16,8 @@ parser.add_argument('--facts_repo', help = 'Path to the FACTS repo')
 parser.add_argument('--dscim_repo', help = 'Path to the dscim-facts-epa repo')
 parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
 parser.add_argument('--gases', nargs='*', help='List of gases')
-parser.add_argument('--gmst_file', help='Path to GMST pulse file')
-parser.add_argument('--ohc_file', help='Path to OHC pulse file')
+parser.add_argument('--gmst_file', type=str, help='Full path for the GMST pulse file, including filename')
+parser.add_argument('--ohc_file', type=str, help='Full path for the OHC pulse file, including filename')
 
 
 # Parse the command line arguments

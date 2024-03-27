@@ -10,8 +10,8 @@ import argparse
 parser = argparse.ArgumentParser(description='Create config from gmsl and gmst pulse files')
 
 # Add named arguments for the lists
-parser.add_argument('--gmsl_file', type=str, help='Path to GMSL pulse file')
-parser.add_argument('--gmst_file', type=str, help='Path to GMST pulse file')
+parser.add_argument('--gmsl_file', type=str, help='Full path for the GMSL pulse file, including filename')
+parser.add_argument('--gmst_file', type=str, help='Full path for the GMST pulse file, including filename')
 parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
 parser.add_argument('--gases', nargs='*', help='List of gases')
 parser.add_argument('--input_dir', type=str, default="/opt/dscim-facts-epa/scripts/input", help='Path to inputs directory')
