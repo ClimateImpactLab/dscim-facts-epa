@@ -44,8 +44,6 @@ else:
 print("pulse_years:", pulse_years)
 print("gases:", gases)
 
-
-
 control = (0.5 * xr.open_dataset(facts_dir / '/rff.control.control/output/rff.control.control.total.workflow.wf1f.global.nc') +
     0.5 * xr.open_dataset(facts_dir / '/rff.control.control/output/rff.control.control.total.workflow.wf2f.global.nc'))
 
