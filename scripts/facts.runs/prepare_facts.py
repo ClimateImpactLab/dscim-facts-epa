@@ -9,13 +9,15 @@ import shutil
 import argparse
 
 # Create argument parser
-parser = argparse.ArgumentParser(description='Process two lists.')
+parser = argparse.ArgumentParser(description='Process repositories and gases/pulse_years to pass into FACTS.')
 
 # Add named arguments for the lists
-parser.add_argument('--facts_repo', nargs=1, help = 'Path to the FACTS repo')
-parser.add_argument('--dscim_repo', nargs=1, help = 'Path to the FACTS repo')
+parser.add_argument('--facts_repo', help = 'Path to the FACTS repo')
+parser.add_argument('--dscim_repo', help = 'Path to the dscim-facts-epa repo')
 parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
 parser.add_argument('--gases', nargs='*', help='List of gases')
+parser.add_argument('--gmst_file', type=str, help='Full path for the GMST pulse file, including filename')
+parser.add_argument('--ohc_file', type=str, help='Full path for the OHC pulse file, including filename')
 
 
 # Parse the command line arguments
@@ -24,8 +26,11 @@ args = parser.parse_args()
 # Access the lists using the argument names
 pulse_years = args.pulse_years
 gases = args.gases
-facts_dir = Path(args.facts_repo[0])
-dscim_dir = Path(args.dscim_repo[0])
+facts_dir = Path(args.facts_repo)
+dscim_dir = Path(args.dscim_repo)
+gmst_filepath = Path(args.gmst_file)
+ohc_filepath = Path(args.ohc_file)
+
 print("Facts_dir:", facts_dir)
 print("pulse_years:", pulse_years)
 print("gases:", gases)
@@ -59,8 +64,8 @@ for pulse_year, gas in list(product(pulse_years,gases)) + [('control','control')
             "Note": "Code provided by Kelly McCusker of Rhodium Group Climate Impact Lab and adapted for use in FACTS."
         }
 
-    temp_file = xr.open_dataset(dscim_dir/'scripts'/'input'/'climate'/'gmst_pulse.nc4')
-    ohc_file = xr.open_dataset(dscim_dir/'scripts'/'input'/'climate'/'ohc_pulse.nc4')
+    temp_file = xr.open_dataset(gmst_filepath)
+    ohc_file = xr.open_dataset(ohc_filepath)
     proj_years = temp_file.year.values.flatten()
 
     temp_file.close()
@@ -106,4 +111,3 @@ for pulse_year, gas in list(product(pulse_years,gases)) + [('control','control')
         "surface_temperature": {"dtype": "float64", "zlib": True, "complevel":4}})
     yearsds = xr.Dataset({"year": proj_years})
     yearsds.to_netcdf(input_dir / "climate.nc4", engine = 'netcdf4', format = 'NETCDF4', mode='a')
-    
