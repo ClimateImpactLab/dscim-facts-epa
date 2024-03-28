@@ -4,13 +4,28 @@ This repository is an implementation of DSCIM, referred to as DSCIM-FACTS-EPA, t
 
 This Python library enables the calculation of sector-specific partial social cost of greenhouse gases (SC-GHG) and SC-GHGs that are combined across sectors. The main purpose of this library is to parse the monetized spatial damages from different sectors and integrate them into SC-GHGs for different discount levels, pulse years, and greenhouse gases. 
 
-## Run cases
+## Outline
+This README is organized as follows:
 
-By default, DSCIM-FACTS-EPA can run SC-GHGs for carbon dioxide, methane, and nitrous oxide for pulse years 2020-2080 in 10 year increments for the Resources for the Future (RFF) emissions scenarios. For alternative gases or pulse years the user will need to provide new GMST and GMSL trajectories. The user can provide these trajectories directly, or can use the DSCIM-FACTS-EPA FACTS runner to generate GMSL from ocean heat content (OHC) and GMST. The intended use cases of this repository are thus:
+- Types of run cases
+- Run process overview
+- Installation and setup of `dscim-facts-epa`
+- Running `dscim-facts-epa` SC-GHG command line tool
+- Format of GMST, OHC, GMSL input files
+- FACTS-specific setup
+    - Installation of `facts`
+      - Docker (Windows, Mac OS)
+      - Not Docker (Linux)
+    - Running `facts` with bash run script
+- 
 
-1. The user wants to generate the Climate Impact Lab (CIL) RFF SC-GHGs themselves.
-2. The user has GMST and GMSL files following the guidelines below and wants to use the CIL damage functions to generate SC-GHGs based on those files.
-3. The user has GMST and OHC files following the guidelines below (usually directly from a simple climate model, such as FaIR) and wants to generate GMSL files from FACTS.
+## Types of run cases
+
+By default, DSCIM-FACTS-EPA can run SC-GHGs for carbon dioxide, methane, and nitrous oxide for pulse years 2020-2080 in 10 year increments for the Resources for the Future socioeconomic pathways (RFF-SPs). For alternative gases or pulse years, the user can provide new GMST and GMSL trajectories. The user can provide these trajectories directly as input files, or can use the DSCIM-FACTS-EPA FACTS runner to generate GMSL from ocean heat content (OHC) and GMST. The intended use cases of this repository are thus:
+
+1. The user wants to generate the default Climate Impact Lab (CIL) RFF SC-GHGs.
+2. The user has alternative GMST and GMSL files following the guidelines below and wants to use the CIL damage functions to generate SC-GHGs based on those files.
+3. The user has alternative GMST and OHC files following the guidelines below (usually directly from a simple climate model, such as FaIR) and wants to generate GMSL files from FACTS and use the CIL damage functions to generate SC-GHGs from those files.
   
 ```mermaid
 flowchart LR
@@ -29,8 +44,19 @@ G --> |3.| H(Creating a run config)
 H --> E{Running SC-GHGs}
 ```
 
+## Run process overview
+The general run process, ignoring environment setup, is summarized here. Detailed instructions for each step are provided later in the README.
+ 
+1. Format user GMST and OHC files manually as specified earlier
+2. Place formatted GMST/OHC files into `dscim-facts-epa/scripts/input/climate`
+   - There is a “feature” right now where the GMST and OHC filenames must be named “gmst_pulse.nc4” and “ohc_pulse.nc4” (from line 63 in `dscim-facts-epa/scripts/facts.runs/prepare_facts.py`). We will update this to be a user option.
+3. Set up Docker/Not Docker container/environment (see Installation of `facts`)
+4. Edit `dscim-facts-epa/scripts/facts.runs/facts_runs.sh` script to specify pulse years, gases, and directory locations
+5. Run `bash facts_runs.sh` to generatea a config file for running `dscim-facts-epa` command line tool
+6. Modify the generated config from step 5 to specify gas pulse conversions
+7. Run `dscim-facts-epa` command line tool with newly generated config
 
-## Setup
+## Installation and setup of `dscim-facts-epa`
 
 To begin, we assume you have a system with `conda` available from the command line, and some familiarity with it. A conda distribution is available from [miniconda](https://docs.conda.io/en/latest/miniconda.html), [Anaconda](https://www.anaconda.com/), or [mamba](https://mamba.readthedocs.io/en/latest/). This helps to ensure that required software packages are correctly compiled and installed, replicating the analysis environment. If you are using conda, we recommend following [this](https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community) guide to speed up environment solve time.
 
