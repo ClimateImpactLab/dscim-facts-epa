@@ -74,7 +74,4 @@ control = (control
 # Convert FACTS GMSL (mm) to dscim units (cm)
 gmsl_ds = xr.merge([control,pulse])/10
 
-save = Path(os.getcwd())
-save = save.parent.absolute() / 'input' / 'climate'
-
 gmsl_ds.to_netcdf(gmsl_pulse, encoding = {"control_gmsl":{"dtype":"float64"},"pulse_gmsl":{"dtype":"float64"}})
