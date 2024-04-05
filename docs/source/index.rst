@@ -35,7 +35,7 @@ and then activate the environment with
 
 Be sure that all commands and analyses are run from this conda environment.
 
-With the environment set up and active, the next step is downloading the required DSCIM-FACTS-EPA input data into the local directory. Assuming you are in the `dscim-facts-epa/scripts` directory, from the command line run:
+With the environment set up and active, the next step is downloading the required DSCIM-FACTS-EPA input data into the local directory. Assuming you are in the :code:`dscim-facts-epa/scripts` directory, from the command line run:
 
 .. code-block:: console
 
