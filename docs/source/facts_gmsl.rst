@@ -1,13 +1,4 @@
-Usage
-=====
+Generate GMSL by running GMST and OHC through FACTS
+===================================================
 
-.. _installation:
-
-Installation
-------------
-
-To use DSCIM, first install it using pip:
-
-.. code-block:: console
-
-   (.venv) $ pip install dscim
+To begin with, format your `GMSL`_ and `OHC`_ files.

@@ -1,5 +1,5 @@
-Usage
-=====
+DSCIM-FACTS-EPA default GMST and GMSL
+=====================================
 
 .. _installation:
 

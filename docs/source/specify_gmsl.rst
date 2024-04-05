@@ -1,5 +1,5 @@
-Usage
-=====
+User specified GMST and GMSL
+============================
 
 .. _installation:
 
