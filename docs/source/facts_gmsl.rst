@@ -1,4 +1,4 @@
 Generate GMSL by running GMST and OHC through FACTS
 ---------------------------------------------------
 
-To begin with, format your `files:GMSL`_ and `files:OHC`_ files.
+To begin with, format your :ref:`files:GMSL` and :ref:`OHC` files.
