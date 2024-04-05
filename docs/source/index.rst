@@ -4,14 +4,14 @@ Welcome to DSCIM documentation!
 DSCIM: The Data-driven Spatial Climate Impact Model
 ===================================================
 
-This repository is an implementation of DSCIM, referred to as DSCIM-FACTS-EPA, that implements the SC-GHG specification for the U.S. Environmental Protection Agency’s (EPA) September 2022 draft technical report, "Report on the Social Cost of Greenhouse Gases: Estimates Incorporating Recent Scientific Advances", and includes the option to input exogenous global mean surface temperature (GMST) and global mean sea level (GMSL) trajectories. DSCIM-FACTS-EPA currently provides instructions for installing and running the Framework for Assessing Changes To Sea-level (`FACTS <https://github.com/radical-collaboration/facts>`) to obtain GMSL from GMST.
+This repository is an implementation of DSCIM, referred to as DSCIM-FACTS-EPA, that implements the SC-GHG specification for the U.S. Environmental Protection Agency’s (EPA) September 2022 draft technical report, "Report on the Social Cost of Greenhouse Gases: Estimates Incorporating Recent Scientific Advances", and includes the option to input exogenous global mean surface temperature (GMST) and global mean sea level (GMSL) trajectories. DSCIM-FACTS-EPA currently provides instructions for installing and running the Framework for Assessing Changes To Sea-level (`FACTS <https://github.com/radical-collaboration/facts>`_) to obtain GMSL from GMST.
 
 This Python library enables the calculation of sector-specific partial social cost of greenhouse gases (SC-GHG) and SC-GHGs that are combined across sectors. The main purpose of this library is to parse the monetized spatial damages from different sectors and integrate them into SC-GHGs for different discount levels, pulse years, and greenhouse gases.
 
 Installation and setup of :code:`dscim-facts-epa`
 =================================================
 
-To begin, we assume you have a system with :code:`conda` available from the command line, and some familiarity with it. A conda distribution is available from `miniconda <https://docs.conda.io/en/latest/miniconda.html>`, `Anaconda <https://www.anaconda.com/>`, or `mamba <https://mamba.readthedocs.io/en/latest/>`. This helps to ensure that required software packages are correctly compiled and installed, replicating the analysis environment. If you are using conda, we recommend following `this <https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community>` guide to speed up environment solve time.
+To begin, we assume you have a system with :code:`conda` available from the command line, and some familiarity with it. A conda distribution is available from `miniconda <https://docs.conda.io/en/latest/miniconda.html>`_, `Anaconda <https://www.anaconda.com/>`_, or `mamba <https://mamba.readthedocs.io/en/latest/>`_. This helps to ensure that required software packages are correctly compiled and installed, replicating the analysis environment. If you are using conda, we recommend following `this <https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community>`_ guide to speed up environment solve time.
 
 Begin in the :code:`dscim-facts-epa` project directory, which can be downloaded and unzipped, or cloned with :code:`git` in a terminal. For example:
 
