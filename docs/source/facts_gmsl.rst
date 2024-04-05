@@ -49,27 +49,27 @@ Running FACTS
 ^^^^^^^^^^^^^
 
 .. warning::
-   Running FACTS is a relatively memory-intensive and disk-space-intensive process. To successfully run FACTS, you will need a moderately powerful workstation (or server) with at least 32 gigabytes of computer RAM. In addition, FACTS currently requires around 6 gigabytes of disk space per pulse year-gas, which means that 3 gases and 7 pulse years (a total of 22 runs including the control) will require approximately 132 gigabytes of disk space. Alternatively, one can run subsets of runs at a time and clear memory in between. To clear memory after a run has been completed, remove the subdirectories in the `~/radical.pilot.sandbox` folder.
+   Running FACTS is a relatively memory-intensive and disk-space-intensive process. To successfully run FACTS, you will need a moderately powerful workstation (or server) with at least 32 gigabytes of computer RAM. In addition, FACTS currently requires around 6 gigabytes of disk space per pulse year-gas, which means that 3 gases and 7 pulse years (a total of 22 runs including the control) will require approximately 132 gigabytes of disk space. Alternatively, one can run subsets of runs at a time and clear memory in between. To clear memory after a run has been completed, remove the subdirectories in the :code:`~/radical.pilot.sandbox` folder.
 
-The user must now make modifications to the `/opt/dscim-facts-epa/scripts/facts.runs/facts_runs.sh` script to ensure all files are found and run specifications are set. Those changes are:
- - if you want to rerun previous successful experiments (not recommended), change `overwrite` to 1
- - on line 8 of the script, change `pulse_years` to the desired pulse years to be run by FACTS
- - on line 9, change `gas` to the desired gases to be run by FACTS
+The user must now make modifications to the :code:`/opt/dscim-facts-epa/scripts/facts.runs/facts_runs.sh` script to ensure all files are found and run specifications are set. Those changes are:
+ - if you want to rerun previous successful experiments (not recommended), change :code:`overwrite` to 1
+ - on line 8 of the script, change :code:`pulse_years` to the desired pulse years to be run by FACTS
+ - on line 9, change :code:`gas` to the desired gases to be run by FACTS
  - on line 11, change the path to the path of your GMST file
  - on line 12, change the path to the path of your OHC file
  - on line 14, change the path to the path of your GMSL file (where you want the GMSL file to be saved)
  
  If not running in the Docker Container:
- - on line 16, change `facts_dir` to where you have cloned your FACTS repository
- - on line 17, change `dscim_facts_epa_dir` to where you have cloned this repository 
+ - on line 16, change :code:`facts_dir` to where you have cloned your FACTS repository
+ - on line 17, change :code:`dscim_facts_epa_dir` to where you have cloned this repository 
 
-Assuming you are in the `dscim-facts-epa/scripts/facts.runs` folder run:
+Assuming you are in the :code:`dscim-facts-epa/scripts/facts.runs` folder run:
 
 .. code-block:: console
    
    bash facts_runs.sh 
 
-Note that the more pulse year and gas dimensions your input climate files have, the longer this run will take as pulse year-gas combinations are run in sequence. On a fast machine, each combination can take approximately 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take 220 minutes. The run script will create the appropriate number of FACTS "experiments" (22 in the example case), run through them, and concatenate the outputs into the format expected by `dscim-facts-epa`. 
+Note that the more pulse year and gas dimensions your input climate files have, the longer this run will take as pulse year-gas combinations are run in sequence. On a fast machine, each combination can take approximately 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take 220 minutes. The run script will create the appropriate number of FACTS "experiments" (22 in the example case), run through them, and concatenate the outputs into the format expected by :code:`dscim-facts-epa`. 
 
 Modifying the auto-generated config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

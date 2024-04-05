@@ -32,7 +32,7 @@ To format your OHC, file you will
 Modifying config files
 """""""""""""""""""""""
 
-By default, :code:`dscim-facts-epa` includes a :code:`generated_conf.yml` file which can be used to generate 'default' SC-GHGs (CO2, CH4, and N2O) that replicate the EPA's September 2022 draft technical report. The alternative run processes specify the means to create custom configs that have alternative GMST and GMSL files. Once the custom config is created, the final step is to specify the "pulse conversion" for each gas. This conversion factor converts the final SC-GHG from `$ / pulse size of FaIR gas species` to `$ / tonne of GHG`. 
+By default, :code:`dscim-facts-epa` includes a :code:`generated_conf.yml` file which can be used to generate 'default' SC-GHGs (CO2, CH4, and N2O) that replicate the EPA's September 2022 draft technical report. The alternative run processes specify the means to create custom configs that have alternative GMST and GMSL files. Once the custom config is created, the final step is to specify the "pulse conversion" for each gas. This conversion factor converts the final SC-GHG from :code:`$ / pulse size of FaIR gas species` to :code:`$ / tonne of GHG`. 
 
 To do this, modify the `gas_conversions` portion of the config. By default, this is:
 
