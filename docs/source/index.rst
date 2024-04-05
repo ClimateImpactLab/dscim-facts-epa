@@ -1,5 +1,5 @@
-Welcome to DSCIM documentation!
-###############################
+DSCIM-FACTS-EPA documentation
+#############################
 
 DSCIM: The Data-driven Spatial Climate Impact Model
 ===================================================
