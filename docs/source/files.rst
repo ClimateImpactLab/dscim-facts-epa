@@ -45,4 +45,4 @@ To do this, modify the `gas_conversions` portion of the config. By default, this
 To add additional gases, create a new line and follow the formatting of the previous lines. New gases should match the coordinate values of your `gas` dimension in your gmst, gmsl, or ohc files. For example, the SCC default pulse size in DSCIM-FACTS-EPA is 1 GtC (1 gigatonne Carbon). To convert to $ / tonne CO2, molecular weights are used to convert C to CO2, and Gt is converted to tonnes: 
 
 .. math::
-    1 / [((12+2*16)/12) * (1e9)] = 2.72916487e-10
+    \frac{1}{((12+2*16)/12)} \frac{1}{1e9} = 2.72916487e-10
