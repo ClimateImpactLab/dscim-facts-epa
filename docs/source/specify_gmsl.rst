@@ -25,13 +25,13 @@ With your alternative GMSL and GMST files, it is recommended to run them through
         --config_dir /path/to/dscim-facts-epa/configs
 
 Description of arguments:
-- :code:`--gmst_file`: The path to your GMST file
-- :code:`--gmsl_file`: The path to your GMSL file
-- :code:`--pulse_years`  (optional -- default: 2020): Space delimited pulse years. Pulse years must be included in the coordinates of your gmst/gmsl files
-- :code:`--gases` (optional -- default: "CO2_Fossil"): Space delimited gases. Gases must be included in the coordinates of your gmst/gmsl files
-- :code:`--input_dir` (optional -- default: the :code:`dscim-facts-epa/scripts/input` that the :code:`config.py` script belongs to) path to the inputs that were installed from the :code:`directory_setup.py` script
-- :code:`--output_dir` (optional -- default: the :code:`dscim-facts-epa/scripts/output` that the :code:`config.py` script belongs to) path to the output directory where the SC-GHGs will be saved
-- :code:`--config_dir` (optional -- default: the same directory that the :code:`config.py` script belongs to) path to the save directory for the generated config
+    - :code:`--gmst_file`: The path to your GMST file
+    - :code:`--gmsl_file`: The path to your GMSL file
+    - :code:`--pulse_years`  (optional -- default: 2020): Space delimited pulse years. Pulse years must be included in the coordinates of your gmst/gmsl files
+    - :code:`--gases` (optional -- default: "CO2_Fossil"): Space delimited gases. Gases must be included in the coordinates of your gmst/gmsl files
+    - :code:`--input_dir` (optional -- default: the :code:`dscim-facts-epa/scripts/input` that the :code:`config.py` script belongs to) path to the inputs that were installed from the :code:`directory_setup.py` script
+    - :code:`--output_dir` (optional -- default: the :code:`dscim-facts-epa/scripts/output` that the :code:`config.py` script belongs to) path to the output directory where the SC-GHGs will be saved
+    - :code:`--config_dir` (optional -- default: the same directory that the :code:`config.py` script belongs to) path to the save directory for the generated config
 
 Once your config has been generated, proceed to the next step.
 
