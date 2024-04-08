@@ -13,6 +13,8 @@ Formatting GMST control/pulse file
 
 To format your GMST, file you will 
 
+.. image:: images/gmst.png
+
 .. _GMSL:
 
 Formatting GMSL control/pulse file
@@ -20,12 +22,16 @@ Formatting GMSL control/pulse file
 
 To format your GMSL, file you will 
 
+.. image:: images/gmsl.png
+
 .. _OHC:
 
 Formatting OHC control/pulse file
 """""""""""""""""""""""""""""""""
 
 To format your OHC, file you will 
+
+.. image:: images/ohc.png
 
 .. _config:
 
