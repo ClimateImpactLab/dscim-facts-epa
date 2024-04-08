@@ -1,13 +1,9 @@
 DSCIM-FACTS-EPA default GMST and GMSL
-=====================================
+-------------------------------------
 
-.. _installation:
+Running SC-GHGs
+^^^^^^^^^^^^^^^
 
-Installation
-------------
+After the :code:`directory_setup.py` script has been run, you can immediately generate default SC-GHGs. To do so:
 
-To use DSCIM, first install it using pip:
-
-.. code-block:: console
-
-   (.venv) $ pip install dscim
+:ref:`SCGHG`

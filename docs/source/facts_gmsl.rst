@@ -78,3 +78,7 @@ If all of the prior steps have run successfully, this process will have created 
 
 Running SC-GHGs
 ^^^^^^^^^^^^^^^
+
+Finally, you are ready to generate SC-GHGs:
+
+:ref:`SCGHG`
