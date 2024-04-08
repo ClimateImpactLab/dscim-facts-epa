@@ -61,9 +61,9 @@ To do this, modify the :code:`gas_conversions` portion of the config. By default
 .. code-block:: yaml
 
     gas_conversions:
-    CH4: 2.5e-08
-    CO2_Fossil: 2.72916487e-10
-    N2O: 6.36480131e-07
+        CH4: 2.5e-08
+        CO2_Fossil: 2.72916487e-10
+        N2O: 6.36480131e-07
 
 To add additional gases, create a new line and follow the formatting of the previous lines. New gases should match the coordinate values of your :code:`gas` dimension in your gmst, gmsl, or ohc files. For example, the SCC default pulse size in DSCIM-FACTS-EPA is 1 GtC (1 gigatonne Carbon). To convert to $ / tonne CO2, molecular weights are used to convert C to CO2, and Gt is converted to tonnes: 
 
