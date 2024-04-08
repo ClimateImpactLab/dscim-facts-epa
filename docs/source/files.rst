@@ -4,14 +4,19 @@ File formats
 Formatting your control/pulse input files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Depending on your DSCIM-FACTS-EPA run, you may need to format GMST, GMSL, or OHC control/pulse files.
+Depending on your DSCIM-FACTS-EPA run, you may need to format GMST, GMSL, or OHC control/pulse files. To ensure that both :code:`FACTS` and :code:`dscim-facts-epa` can read new GMST, GMSL, and OHC files, a strict format must be adopted.
 
 .. _GMST:
 
 Formatting GMST control/pulse file
 """"""""""""""""""""""""""""""""""
 
-To format your GMST, file you will 
+We require that there be a control and pulse version of the appropriate variable. For GMST, these are `control_temperature` and `pulse_temperature`. All control/pulse files must follow the following format: 
+1. Any combination of gases and pulse years can be supplied. SC-GHGs will then be runnable for those gases and pulse years. 
+2. We expect `year` to be at minimum from 2000-2300. Climate inputs are automatically made relative to 2001-2010 in `dscim-facts-epa` to be consistent with the damage functions. 
+3. The `runid` dimension corresponds to the FaIR parameters and RFF-SPs crosswalk specified for EPA's September 2022 draft technical report, "Report on the Social Cost of Greenhouse Gases: Estimates Incorporating Recent Scientific Advances". Thus, each runid is associated with an RFF-SP index and a climate parameter index. We expect 10000 `runids` from 1 to 10000.
+
+An example of the format of this file is found in the image below:
 
 .. image:: images/gmst.png
 
@@ -20,7 +25,12 @@ To format your GMST, file you will
 Formatting GMSL control/pulse file
 """"""""""""""""""""""""""""""""""
 
-To format your GMSL, file you will 
+We require that there be a control and pulse version of the appropriate variable. For GMSL, these are `control_gmsl` and `pulse_gmsl`. All control/pulse files must follow the following format: 
+1. Any combination of gases and pulse years can be supplied. SC-GHGs will then be runnable for those gases and pulse years. 
+2. We expect `year` to be at minimum from 2000-2300. Climate inputs are automatically made relative to 2001-2010 in `dscim-facts-epa` to be consistent with the damage functions. 
+3. The `runid` dimension corresponds to the FaIR parameters and RFF-SPs crosswalk specified for EPA's September 2022 draft technical report, "Report on the Social Cost of Greenhouse Gases: Estimates Incorporating Recent Scientific Advances". Thus, each runid is associated with an RFF-SP index and a climate parameter index. We expect 10000 `runids` from 1 to 10000.
+
+An example of the format of this file is found in the image below:
 
 .. image:: images/gmsl.png
 
@@ -29,7 +39,13 @@ To format your GMSL, file you will
 Formatting OHC control/pulse file
 """""""""""""""""""""""""""""""""
 
-To format your OHC, file you will 
+We require that there be a control and pulse version of the appropriate variable. For OHC, these are `control_ocean_heat_content` and `pulse_ocean_heat_content`. All control/pulse files must follow the following format: 
+1. Any combination of gases and pulse years can be supplied. SC-GHGs will then be runnable for those gases and pulse years. 
+2. We expect `year` to be at minimum from 2000-2300. Climate inputs are automatically made relative to 2001-2010 in `dscim-facts-epa` to be consistent with the damage functions. 
+3. The `runid` dimension corresponds to the FaIR parameters and RFF-SPs crosswalk specified for EPA's September 2022 draft technical report, "Report on the Social Cost of Greenhouse Gases: Estimates Incorporating Recent Scientific Advances". Thus, each runid is associated with an RFF-SP index and a climate parameter index. We expect 10000 `runids` from 1 to 10000.
+
+An example of the format of this file is found in the image below:
+
 
 .. image:: images/ohc.png
 
