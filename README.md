@@ -21,11 +21,11 @@ This README is organized as follows:
 
 ## Types of run cases
 
-By default, DSCIM-FACTS-EPA can run SC-GHGs for carbon dioxide, methane, and nitrous oxide for pulse years 2020-2080 in 10 year increments for the Resources for the Future socioeconomic pathways (RFF-SPs). For alternative gases or pulse years, the user can provide new GMST and GMSL trajectories. The user can provide these trajectories directly as input files, or can use the DSCIM-FACTS-EPA FACTS runner to generate GMSL from ocean heat content (OHC) and GMST. The intended use cases of this repository are thus:
+By default, DSCIM-FACTS-EPA can run SC-GHGs for carbon dioxide, methane, and nitrous oxide for pulse years 2020-2080 in 10 year increments for the Resources for the Future socioeconomic pathways (RFF-SPs). For alternative gases or pulse years, the user can provide new GMST and GMSL trajectories. The user can provide these trajectories directly as input files, or can use the DSCIM-FACTS-EPA FACTS runner to generate GMSL from ocean heat content (OHC) and GMST. The potential use cases of this repository are thus:
 
-1. The user wants to generate the default Climate Impact Lab (CIL) RFF SC-GHGs.
-2. The user has alternative GMST and GMSL files following the guidelines below and wants to use the CIL damage functions to generate SC-GHGs based on those files.
-3. The user has alternative GMST and OHC files following the guidelines below (usually directly from a simple climate model, such as FaIR) and wants to generate GMSL files from FACTS and use the CIL damage functions to generate SC-GHGs from those files.
+1. The user wants to generate the default Climate Impact Lab (CIL) RFF SC-GHGs. _This is the same functionality as `dscim-epa`._
+2. The user has alternative GMST and OHC files following the guidelines below (usually directly from a simple climate model, such as FaIR) and wants to generate GMSL files from FACTS and use the CIL damage functions to generate SC-GHGs from those files. _This is the primary use-case of this repository._
+3. The user has alternative GMST and GMSL files following the guidelines below and wants to use the CIL damage functions to generate SC-GHGs based on those files. _This is expected to be an unlikely use-case but we list it for completeness._
   
 ```mermaid
 flowchart LR
@@ -45,7 +45,7 @@ H --> E{Running SC-GHGs}
 ```
 
 ## Run process overview
-The general run process, ignoring environment setup, is summarized here. Detailed instructions for each step are provided later in the README.
+The general run process for use-case 2, ignoring environment setup, is summarized here. Detailed instructions for each step are provided later in the README.
  
 1. Format user GMST and OHC files manually as specified earlier
 2. Place formatted GMST/OHC files into `dscim-facts-epa/scripts/input/climate`
