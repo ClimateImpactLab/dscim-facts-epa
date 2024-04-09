@@ -126,6 +126,10 @@ python command_line_scghg.py name_of_config.yml
 and follow the on-screen prompts. When the selector is a carrot, you may only select one option. Use the arrow keys on your keyboard to highlight your desired option and click enter to submit. When you are presented with `X` and `o` selectors, you may use the spacebar to select (`X`) or deselect (`o`) then click enter to submit once you have chosen your desired number of parameters. Once you have completed all of the options, the DSCIM run will begin.
 
 <!-- WOULD BE GREAT TO BE ABLE TO COLLAPSE COMMAND LINE OPTIONS -->
+<details>
+
+<summary><b>Command line options</b></summary>
+
 ### Command line options
 
 Below is a short summary of what each command line option does. To view a more detailed description of what the run parameters do, see the [Documentation](https://impactlab.org/research/data-driven-spatial-climate-impact-model-user-manual-version-092023-epa/) for Data-driven Spatial Climate Impact Model (DSCIM). 
@@ -149,11 +153,13 @@ The default is a global SC-GHG accounting for global damages in response to a pu
 #### Optional files
 
 By default, the script will produce the expected SC-GHGs as a `.csv`. The user also has the option to save the full distribution of 10,000 SC-GHGs -- across emissions, socioeconomics, and climate uncertainty -- as a `.csv`, and the option to save global consumption net of baseline climate damages ("global_consumption_no_pulse") as a netcdf `.nc4` file.
+</details>
 
 <!-- Consider adding a section that suggests a test run of the default SC-GHGs. -->
 
 <!-- Consider splitting the next sections into their own markdown README file -->
-## DSCIM + FACTS Run process overview
+
+# DSCIM + FACTS Run process overview
 Ignoring environment setup for a moment, the general run process for use-case 2 -- running DSCIM-FACTS-EPA with exogenous climate inputs and using FACTS to generate GMSL from GMST and OHC files -- is summarized here. Detailed instructions for each step are provided later in the README.
  
 1. Format user GMST and OHC files manually as specified earlier (See [Formatting files](#formatting-files))
