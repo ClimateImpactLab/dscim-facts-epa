@@ -1,4 +1,7 @@
 #!/bin/bash
+# Stop script when non-facts error occurs
+set -e
+
 # Set overwrite to 1 to overwrite previous results (if they exist), 0 otherwise
 overwrite=0
 # Define arrays for pulse years and gases
