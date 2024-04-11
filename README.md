@@ -180,7 +180,7 @@ To ensure that both `FACTS` and `dscim-facts-epa` can read new GMST, GMSL, and O
     - For GMSL, these are `control_gmsl` and `pulse_gmsl`
     - For OHC, these are `control_ocean_heat_content` and `pulse_ocean_heat_content`
 2. Any combination of gases and pulse years can be supplied. SC-GHGs will then be runnable for those gases and pulse years.
-3. We expect `year` to be at minimum from 2000-2300. Climate inputs are automatically made relative to 2001-2010 in `dscim-facts-epa` to be consistent with the damage functions.
+3. We expect `year` to be at minimum from 1850-2300. Climate inputs are automatically made relative to 2001-2010 in `dscim-facts-epa` to be consistent with the damage functions.
 4. The `runid` dimension corresponds to the FaIR parameters and RFF-SPs crosswalk specified for EPA's September 2022 draft technical report, "Report on the Social Cost of Greenhouse Gases: Estimates Incorporating Recent Scientific Advances". Thus, each runid is associated with an RFF-SP index and a climate parameter index. We expect 10000 `runids` from 1 to 10000. The `runid` crosswalk can be obtained from [here](https://github.com/USEPA/scghg/blob/main/GIVE/input/rffsp_fair_sequence.csv)
 
 ### Converting GMST and OHC .csv files into .nc4 files
