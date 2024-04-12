@@ -10,6 +10,7 @@ This README is organized as follows:
 - [Types of run cases](#types-of-run-cases)
 - [Installation and setup of `dscim-facts-epa`](#installation-and-setup-of-dscim-facts-epa)
 - [Creating a `dscim-facts-epa` run config](#creating-a-dscim-facts-epa-run-config)
+- [Modifying a generated config](#modifying-the-auto-generated-config)
 - [Running `dscim-facts-epa` SC-GHG command line tool out of the box](#running-sc-ghgs)
 - [DSCIM + FACTS run process overview](#dscim--facts-run-process-overview)
 - [Format of GMST, OHC, GMSL input files](#formatting-files)
@@ -77,34 +78,6 @@ python directory_setup.py
 
 Note that this will download several gigabytes of data and may take several minutes, depending on your connection speed.
 
-## Creating a `dscim-facts-epa` run config
-<!-- NEED TO EDIT THIS SECTION -->
-If you already have alternative GMSL and GMST files, it is recommended to run them through the `create_config.py`. This script will generate a config that will allow you to directly begin running `dscim-facts-epa` using the user-specified GMST and GMSL inputs, gases, and pulse_years. To run this script, you will need to specify your correctly formatted gmst and gmsl files:
-
-```bash
-python create_config.py --gmst_file GMST_filename.nc4 --gmsl_file GMSL_filename.nc4 --pulse_years pulseyear1 pulseyear2 ... --gases gas1 gas2 ...
-```
-
-Description of arguments:
-- `--gmst_file`: The name of your GMST file placed in `dscim-facts-epa/scripts/input/climate`
-- `--gmsl_file`: The name of your GMSL file placed in `dscim-facts-epa/scripts/input/climate`
-- `--pulse_years`  (optional -- default: 2020): Space delimited pulse years. Pulse years must be included in the coordinates of your gmst/gmsl files
-- `--gases` (optional -- default: "CO2_Fossil"): Space delimited gases. Gases must be included in the coordinates of your gmst/gmsl files
-
-Once this config is created, the final step is to specify the "pulse conversion" for each gas. This conversion factor converts the final SC-GHG from `$ / pulse size of FaIR gas species` to `$ / tonne of GHG`. 
-
-To do this, modify the `gas_conversions` portion of the config. By default, this is:
-
-```
-gas_conversions:
-  CH4: 2.5e-08
-  CO2_Fossil: 2.72916487e-10
-  N2O: 6.36480131e-07
-```
-
-To add additional gases, create a new line and follow the formatting of the previous lines. New gases should match the coordinate values of your `gas` dimension in your gmst, gmsl, or ohc files. For example, the SCC default pulse size in DSCIM-FACTS-EPA is 1 GtC (1 gigatonne Carbon). To convert to $ / tonne CO2, molecular weights are used to convert C to CO2, and Gt is converted to tonnes: `1 / [((12+2*16)/12) * (1e9)] = 2.72916487e-10`
-
-Once this is done, proceed to the **Running SC-GHGs** step.
 
 
 ## Running SC-GHGs
@@ -378,9 +351,24 @@ Running FACTS is a relatively memory-intensive and disk-space-intensive process.
 
 Note that the more pulse year and gas dimensions your input climate files have, the longer this run will take as pulse year-gas combinations are run in sequence. On a fast machine, each combination can take approximately 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take 220 minutes. 
 
-The run script will create the appropriate number of FACTS "experiments" (22 in the example case), run through them, and concatenate the outputs into the format expected by `dscim-facts-epa`. The output GMSL file is automatically placed in the correct directory in `dscim-facts-epa`.
+The run script will create the appropriate number of FACTS "experiments" (22 in the example case), run through them, and concatenate the outputs into the format expected by `dscim-facts-epa`. The output GMSL file is automatically placed in the directory specified in the `facts_runs.sh` file.
 
-If a docker was used, exit it once the run is complete using the `exit` command.
+If a docker was used, exit it once the run is complete using the `exit` command. 
+
+### Modifying the auto-generated config
+
+Part of the `facts_runs.sh` script will automatically generate a config `.yml` file and print the filename to the terminal. If you have custom GMST and OHC files, you will need to specify the pulse size of the gas. This conversion factor converts the final SC-GHG from `$ / pulse size of FaIR gas species` to `$ / tonne of GHG`.  To do this, modify the `gas_conversions` portion of the config. By default, this is:
+
+```
+gas_conversions:
+  CH4: 2.5e-08
+  CO2_Fossil: 2.72916487e-10
+  N2O: 6.36480131e-07
+```
+
+To add additional gases, create a new line and follow the formatting of the previous lines. New gases should match the coordinate values of your `gas` dimension in your gmst, gmsl, or ohc files. For example, the SCC default pulse size in DSCIM-FACTS-EPA is 1 GtC (1 gigatonne Carbon). To convert to $ / tonne CO2, molecular weights are used to convert C to CO2, and Gt is converted to tonnes: `1 / [((12+2*16)/12) * (1e9)] = 2.72916487e-10`
+
+Once this is done, proceed to the [**Running SC-GHGs**](#running-sc-ghgs) step.
 
 <!-- ## Running SC-GHGs
 
@@ -423,6 +411,33 @@ The default is a global SC-GHG accounting for global damages in response to a pu
 By default, the script will produce the expected SC-GHGs as a `.csv`. The user also has the option to save the full distribution of 10,000 SC-GHGs -- across emissions, socioeconomics, and climate uncertainty -- as a `.csv`, and the option to save global consumption net of baseline climate damages ("global_consumption_no_pulse") as a netcdf `.nc4` file. -->
 
 ## Further Information
+
+### Creating a `dscim-facts-epa` run config
+<!-- NEED TO EDIT THIS SECTION -->
+If you already have alternative GMSL and GMST files, it is recommended to run them through the `create_config.py`. This script will generate a config that will allow you to directly begin running `dscim-facts-epa` using the user-specified GMST and GMSL inputs, gases, and pulse_years. To run this script, you will need to specify your correctly formatted gmst and gmsl files:
+
+```bash
+python create_config.py \
+  --gmst_file /path/to/GMST_filename.nc4 \
+  --gmsl_file /path/to/GMSL_filename.nc4 \
+  --pulse_years pulseyear1 pulseyear2 ... \
+  --gases gas1 gas2 ... \
+  --input_dir /path/to/dscim-facts-epa/input \
+  --output_dir /path/to/dscim-facts-epa/output \
+  --config_dir /path/to/dscim-facts-epa/configs
+```
+
+Description of arguments:
+  - `--gmst_file`: The path to your GMST file
+  - `--gmsl_file`: The path to your GMSL file
+  - `--pulse_years`  (optional -- default: 2020): Space delimited pulse years. Pulse years must be included in the coordinates of your gmst/gmsl files
+  - `--gases` (optional -- default: "CO2_Fossil"): Space delimited gases. Gases must be included in the coordinates of your gmst/gmsl files
+  - `--input_dir` (optional -- default: the `dscim-facts-epa/scripts/input` that the `config.py` script belongs to) path to the inputs that were installed from the `directory_setup.py` script
+  - `--output_dir` (optional -- default: the `dscim-facts-epa/scripts/output` that the `config.py` script belongs to) path to the output directory where the SC-GHGs will be saved
+  - `--config_dir` (optional -- default: the same directory that the `config.py` script belongs to) path to the save directory for the generated config
+ 
+Once this config is created, the final step is to specify the "pulse conversion" for each gas by [modifying the config](#modifying-the-auto-generated-config).
+
 
 #### Input Files
 These files are installed during the above Setup process and take up 4.65 GB of disk space.
