@@ -14,17 +14,17 @@ import shutil
 parser = argparse.ArgumentParser(description='Process lists of gases and pulse years to get experiments from FACTS')
 
 # Add named arguments for the lists
-parser.add_argument('--facts_repo', nargs=1, help = 'Path to the FACTS repo')
+parser.add_argument('--facts_repo', help = 'Path to the FACTS repo')
 parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
 parser.add_argument('--gases', nargs='*', help='List of gases')
-parser.add_argument('--gmsl_pulse', nargs=1, help='gmsl pulse filename to save out')
+parser.add_argument('--gmsl_file', type=str, help='Full path for the GMSL pulse file, including filename')
 
 # Parse the command line arguments
 args = parser.parse_args()
 
 # Access the lists using the argument names
-facts_dir = args.facts_repo[0]
-gmsl_pulse = args.gmsl_pulse[0]
+facts_dir = Path(args.facts_repo)
+gmsl_pulse = Path(args.gmsl_file)
 
 if args.pulse_years:
     pulse_years = list(map(int, args.pulse_years))
@@ -44,18 +44,16 @@ else:
 print("pulse_years:", pulse_years)
 print("gases:", gases)
 
-
-
-control = (0.5 * xr.open_dataset(facts_dir + '/rff.control.control/output/rff.control.control.total.workflow.wf1f.global.nc') +
-    0.5 * xr.open_dataset(facts_dir + '/rff.control.control/output/rff.control.control.total.workflow.wf2f.global.nc'))
+control = (0.5 * xr.open_dataset(facts_dir / 'experiments/rff.control.control/output/rff.control.control.total.workflow.wf1f.global.nc') +
+    0.5 * xr.open_dataset(facts_dir / 'experiments/rff.control.control/output/rff.control.control.total.workflow.wf2f.global.nc'))
 
 nsamps = len(control.samples.values)
      
 pulse_gas = []
 for pulse_year, gas in list(product(pulse_years,gases)):
     gas_exp = gas.replace('_','.')
-    pulse = ((0.5 * xr.open_dataset(facts_dir + f'/rff.{pulse_year}.{gas_exp}/output/rff.{pulse_year}.{gas_exp}.total.workflow.wf1f.global.nc') +
-        0.5 * xr.open_dataset(facts_dir + f'/rff.{pulse_year}.{gas_exp}/output/rff.{pulse_year}.{gas_exp}.total.workflow.wf2f.global.nc'))
+    pulse = ((0.5 * xr.open_dataset(facts_dir / f'experiments/rff.{pulse_year}.{gas_exp}/output/rff.{pulse_year}.{gas_exp}.total.workflow.wf1f.global.nc') +
+        0.5 * xr.open_dataset(facts_dir / f'experiments/rff.{pulse_year}.{gas_exp}/output/rff.{pulse_year}.{gas_exp}.total.workflow.wf2f.global.nc'))
              .rename({'samples':'runid','sea_level_change':'pulse_gmsl','years':'year'})
              .assign_coords({'runid':np.arange(1,nsamps + 1),'gas':gas, 'pulse_year':int(pulse_year)})
              .expand_dims(['gas','pulse_year'])
@@ -73,10 +71,7 @@ control = (control
            .assign_coords({'runid':np.arange(1,nsamps + 1)})
            .drop(['lat','lon']))
 
+# Convert FACTS GMSL (mm) to dscim units (cm)
 gmsl_ds = xr.merge([control,pulse])/10
 
-save = Path(os.getcwd())
-save = save.parent.absolute() / 'input' / 'climate'
-
-gmsl_ds.to_netcdf(save / gmsl_pulse, encoding = {"control_gmsl":{"dtype":"float64"},"pulse_gmsl":{"dtype":"float64"}})
-    
+gmsl_ds.to_netcdf(gmsl_pulse, encoding = {"control_gmsl":{"dtype":"float64"},"pulse_gmsl":{"dtype":"float64"}})

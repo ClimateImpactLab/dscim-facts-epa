@@ -231,12 +231,12 @@ THIS SEEMS OUT OF PLACE. AND ONLY PARTS OF IT ARE NECESSARY IF FACTS WAS ALEADY 
 If you already have alternative GMSL and GMST files, it is recommended to run them through the `create_config.py`. This script will generate a config that will allow you to directly begin running `dscim-facts-epa` using the user-specified GMST and GMSL inputs, gases, and pulse_years. To run this script, you will need to specify your correctly formatted gmst and gmsl files:
 
 ```bash
-python create_config.py --gmst_file GMST_filename.nc4 --gmsl_file GMSL_filename.nc4 --pulse_years pulseyear1 pulseyear2 ... --gases gas1 gas2 ...
+python create_config.py --gmst_file /path/to/GMST_filename.nc4 --gmsl_file /path/to/GMSL_filename.nc4 --pulse_years pulseyear1 pulseyear2 ... --gases gas1 gas2 ...
 ```
 
 Description of arguments:
-- `--gmst_file`: The name of your GMST file placed in `dscim-facts-epa/scripts/input/climate`
-- `--gmsl_file`: The name of your GMSL file placed in `dscim-facts-epa/scripts/input/climate`
+- `--gmst_file`: The path to your GMST file
+- `--gmsl_file`: The path to your GMSL file
 - `--pulse_years`  (optional -- default: 2020): Space delimited pulse years. Pulse years must be included in the coordinates of your gmst/gmsl files
 - `--gases` (optional -- default: "CO2_Fossil"): Space delimited gases. Gases must be included in the coordinates of your gmst/gmsl files
 
@@ -354,13 +354,19 @@ pip install radical.entk==1.41.0
 
 ### Running the bash script
 
+
 The user must now make modifications to the `dscim-facts-epa/scripts/facts.runs/facts_runs.sh` script to ensure all files are found and run specifications are set. Those changes are:
- - on line 6 of the script, change `pulse_years` to the desired pulse years to be run by FACTS
- - on line 7, change `gas` to the desired gases to be run by FACTS
+ - if you want to rerun previous successful experiments (not recommended), change `overwrite` to 1
+ - on line 8 of the script, change `pulse_years` to the desired pulse years to be run by FACTS
+ - on line 9, change `gas` to the desired gases to be run by FACTS
+ - on line 11, change the path to the path of your GMST file
+ - on line 12, change the path to the path of your OHC file
+ - on line 14, change the path to the path of your GMSL file (where you want the GMSL file to be saved)
+
  
  If not running in the Docker Container:
- - on line 8, change `facts_dir` to where you have cloned your FACTS repository
- - on line 9, change `dscim_facts_epa_dir` to where you have cloned this repository 
+ - on line 16, change `facts_dir` to where you have cloned your FACTS repository
+ - on line 17, change `dscim_facts_epa_dir` to where you have cloned this repository 
 
 Assuming you are in the `dscim-facts-epa/scripts/facts.runs` folder run:
 

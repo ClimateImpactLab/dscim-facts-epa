@@ -10,17 +10,22 @@ import argparse
 parser = argparse.ArgumentParser(description='Create config from gmsl and gmst pulse files')
 
 # Add named arguments for the lists
-parser.add_argument('--gmsl_file', nargs=1, help='Path to GMSL pulse file')
-parser.add_argument('--gmst_file', nargs=1, help='Path to GMST pulse file')
+parser.add_argument('--gmsl_file', type=str, help='Full path for the GMSL pulse file, including filename')
+parser.add_argument('--gmst_file', type=str, help='Full path for the GMST pulse file, including filename')
 parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
 parser.add_argument('--gases', nargs='*', help='List of gases')
+parser.add_argument('--input_dir', type=str, default="/opt/dscim-facts-epa/scripts/input", help='Path to inputs directory')
+parser.add_argument('--output_dir', type=str, default="/opt/dscim-facts-epa/scripts/output", help='Path to outputs directory')
+parser.add_argument('--config_dir', type=str, default="/opt/dscim-facts-epa/scripts", help='Path to config directory')
 
 # Parse the command line arguments
 args = parser.parse_args()
-
 # Access the lists using the argument names
-gmsl_pulsename = args.gmsl_file
-gmst_pulsename = args.gmst_file
+gmsl_path = Path(args.gmsl_file)
+gmst_path = Path(args.gmst_file)
+input_dir = Path(args.input_dir)
+output_dir = Path(args.output_dir)
+config_dir = Path(args.config_dir)
 
 if args.pulse_years:
     pulse_years = list(map(int, args.pulse_years))
@@ -47,9 +52,9 @@ currentYear = datetime.now().year
 # We may want to read these files in to make sure they exist/have the correct format
 
 base = os.getcwd()
-input = Path(base) / "input"  
-output = Path(base) / "output"  
-
+input = input_dir 
+output = output_dir
+config = config_dir
 
 climate_inputs = input / "climate"
 econ_inputs = input / "econ"
@@ -60,8 +65,8 @@ conf_base = {'mortality_version': 1,
              'rff_climate': {'gases': gases,
                              'gmsl_path': '',
                              'gmst_path': '',
-                             'gmst_fair_path': str(climate_inputs) + "/" + gmst_pulsename[0],
-                             'gmsl_fair_path': str(climate_inputs) + "/" + gmsl_pulsename[0],
+                             'gmst_fair_path': str(gmst_path),
+                             'gmsl_fair_path': str(gmsl_path),
                              'damages_pulse_conversion_path': str(climate_inputs) + '/conversion_v5.03_Feb072022.nc4',
                              'ecs_mask_path': None,
                              'emission_scenarios': None},
@@ -82,7 +87,7 @@ conf_base = {'mortality_version': 1,
                  'N2O': 6.36480131e-07}}
 
 
-if os.path.exists(f"facts_conf_{currentDay}-{currentMonth}-{currentYear}.yaml"):
+if os.path.exists(config / f"facts_conf_{currentDay}-{currentMonth}-{currentYear}.yaml"):
     files = os.listdir('.')
 
     def find_filenum(f):
@@ -91,9 +96,9 @@ if os.path.exists(f"facts_conf_{currentDay}-{currentMonth}-{currentYear}.yaml"):
 
     i = max(map(find_filenum, files)) + 1
 
-    config_file = f"facts_conf_{currentDay}-{currentMonth}-{currentYear}_{i}.yaml"
+    config_file = config / f"facts_conf_{currentDay}-{currentMonth}-{currentYear}_{i}.yaml"
 else:
-    config_file = f"facts_conf_{currentDay}-{currentMonth}-{currentYear}.yaml"
+    config_file = config / f"facts_conf_{currentDay}-{currentMonth}-{currentYear}.yaml"
 
 
 with open(config_file, 'w') as outfile:
