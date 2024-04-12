@@ -125,7 +125,6 @@ python command_line_scghg.py name_of_config.yml
 
 and follow the on-screen prompts. When the selector is a carrot, you may only select one option. Use the arrow keys on your keyboard to highlight your desired option and click enter to submit. When you are presented with `X` and `o` selectors, you may use the spacebar to select (`X`) or deselect (`o`) then click enter to submit once you have chosen your desired number of parameters. Once you have completed all of the options, the DSCIM run will begin.
 
-<!-- WOULD BE GREAT TO BE ABLE TO COLLAPSE COMMAND LINE OPTIONS -->
 <details>
 
 <summary><b>Command line options</b></summary>
@@ -165,7 +164,7 @@ Ignoring environment setup for a moment, the general run process for use-case 2 
 1. Format user GMST and OHC files manually as specified earlier (See [Formatting files](#formatting-files))
 <!-- Check this next one (#2) is still correct/necessary -->
 2. Place formatted GMST/OHC files into `dscim-facts-epa/scripts/input/climate`
-3. Set up Docker/Not Docker container/environment (see [Running FACTS](#running-facts))
+3. Set up Docker/Not Docker container/environment (see [Installing and Running FACTS](#installing-and-running-facts))
 4. Edit `dscim-facts-epa/scripts/facts.runs/facts_runs.sh` script to specify pulse years, gases, and directory locations (See [Running the bash script](#running-the-bash-script))
 5. Run `bash facts_runs.sh` to generatea a config file for running `dscim-facts-epa` command line tool (See [Running the bash script](#running-the-bash-script))
 6. Modify the generated config from step 5 to specify gas pulse conversions
@@ -184,7 +183,7 @@ To ensure that both `FACTS` and `dscim-facts-epa` can read new GMST, GMSL, and O
 4. The `runid` dimension corresponds to the FaIR parameters and RFF-SPs crosswalk specified for EPA's September 2022 draft technical report, "Report on the Social Cost of Greenhouse Gases: Estimates Incorporating Recent Scientific Advances". Thus, each runid is associated with an RFF-SP index and a climate parameter index. We expect 10000 `runids` from 1 to 10000. The `runid` crosswalk can be obtained from [here](https://github.com/USEPA/scghg/blob/main/GIVE/input/rffsp_fair_sequence.csv)
 
 ### Converting GMST and OHC .csv files into .nc4 files
-Assuming the csv files (showing OHC here) have the following format,
+Here we provide a code example for formatting and creating DSCIM-FACTS-EPA input climate `.nc4` files from `.csv` files. It assumes the csv files (showing OHC here) have the following format (leftmost column that is unlabeled is a `pandas` index):
 ```
 	runid	pulse_year	gas	year	control_ocean_heat_content	pulse_ocean_heat_content
 281	  1	    2030	    co2	2031	75.956955	                75.956956
@@ -193,8 +192,11 @@ Assuming the csv files (showing OHC here) have the following format,
 284	  1	    2030	    co2	2034	79.999884	                79.999886
 285	  1	    2030	    co2	2035	81.406942	                81.406944
 ```
-with one `pulse_year` and one `gas`, the following code can be used to generate climate files of the correct format for DSCIM-FACTS-EPA:
+The following code should work if there is one `pulse_year` and one `gas` in the input `.csv` but may not generalize. It is meant to give a sense for how to work with the `xarray` package in Python to produce netcdf files of the correct format for DSCIM-FACTS-EPA.
 ```
+import pandas as pd
+import xarray as xr
+
 # dictionary mapping var name in the filename to var name in the data
 vardt = {"gmst":"temperature",
          "ohc": "ocean_heat_content"
@@ -213,7 +215,7 @@ for var in vardt.keys():
     # merge together into one xr.Dataset before saving
     xr.merge([ctl,pls]).to_netcdf(f"{var}_pulse.nc4")
 ```
-Below are examples of the structure of the climate files when read in using the `xarray` Python package.
+Below are examples of the structure of the default climate files when read in using `xarray`.
 ### GMST
 ![gmst_pulse_720](https://github.com/ClimateImpactLab/dscim-facts-epa/assets/5862128/9631c307-6cb0-417f-9e1c-4835d5293c05)
 
@@ -253,36 +255,106 @@ To add additional gases, create a new line and follow the formatting of the prev
 
 Once this is done, proceed to the **Running SC-GHGs** step. -->
 
-## Running FACTS
+## Installing and Running FACTS
 
-If you will be running FACTS, ensure you have followed the [Formatting GMST/GMSL files](#formatting-files) section above. 
+If you will be running FACTS to generate GMSL, ensure you have followed the [Formatting GMST/GMSL files](#formatting-files) section above. 
 
-We recommend installing or cloning FACTS v1.1.2 found [here](https://github.com/radical-collaboration/facts/releases/tag/v1.1.2). To get started with FACTS, follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). If you are running on a Linux machine (quickstart Section 1.1), proceed to the **Not Docker** section below. If you are running in a Container (quickstart Section 1.2), proceed to the **Docker** section below. We recommend reading these sections before following the FACTS quickstart. Note that to run `facts` for DSCIM-FACTS-EPA, you will *not* need to set up the `emulandice` module in facts.
+We recommend installing or cloning FACTS v1.1.2 found [here](https://github.com/radical-collaboration/facts/releases/tag/v1.1.2). To get started with FACTS, we <i>copy the relevant steps from the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html) here</i> and adapt for use with `dscim-facts-epa`. FACTS can be set up to run in a Docker container (recommended) or to run on a Linux workstation. After cloning the repository, expand the option for your run environment below (<b>Docker</b> or <b>Not Docker</b>) and follow the steps.
 
-### Docker
+<!-- follow the [FACTS quick start instructions](https://fact-sealevel.readthedocs.io/en/latest/quickstart.html). If you are running on a Linux machine (quickstart Section 1.1), proceed to the **Not Docker** section below. If you are running in a Container (quickstart Section 1.2), proceed to the **Docker** section below. We recommend reading these sections before following the FACTS quickstart. Note that to run `facts` for DSCIM-FACTS-EPA, you will *not* need to set up the `emulandice` module in facts. -->
 
-Once you have reached step 3 of section 1.2 in the FACTS quickstart, come back here and use the following `docker` command: 
+1. clone the FACTS repository:
+```
+git clone https://github.com/radical-collaboration/facts.git --branch v1.1.2
+```
+FACTS will be run in "global only" mode to produce GMSL outputs from GMST and OHC inputs. This does not require setting up the `facts` `emulandice` module.
 
-```bash
+<details>
+
+<summary><b>Docker (Recommended)</b></summary>
+
+### Docker (Recommended)
+<i>The RADICAL toolkit does not support MacOS or Windows. Therefore, to run on a Mac or Windows (the latter with [Windows Subsystem for Linux; WSL2](https://learn.microsoft.com/en-us/windows/wsl/install)), you need to run within a Linux virtual machine or container. On Windows, once you have installed WSL2, type "ubuntu" in the Command Prompt to open a linux terminal for the remaining commands.
+
+FACTS provides a [Docker](https://www.docker.com/) container in the `docker/` directory. This container provides the Linux, Python, R, and RADICAL toolkit environment needed for FACTS to run. FACTS itself does not reside within the container because of needs related to storage space for module data, persistence of changes, and writability. The instructions below assume FACTS resides outside the container in `$HOME/facts` and mounts it within the container as `/opt/facts`. At the moment, the docker environment appears to work fairly reliably when using localhost as the resource, but working with remote resources will require additional configuration.
+
+The sandbox directory resides within the container at `/home/jovyan/radical.pilot.sandbox`. You will likely wish to keep an eye on the size of this directory if you are doing runs that involve large files.</i>
+
+To install FACTS through Docker please follow the steps below after downloading or cloning `facts`:
+
+2. Download modules-data:
+```
+wget -P facts/modules-data -i facts/modules-data/modules-data.global-only.urls.txt
+```
+If you don’t have `wget`, another option for file downloads is `curl`: First, make sure you are in `$HOME/facts/modules-data` and then run:
+```
+xargs -n 1 curl -L -O < $HOME/facts/modules-data/modules-data.global_only.urls.txt
+```
+Replace `$HOME/facts` with the path to your cloned or downloaded `facts` repository. This may take a few minutes depending on your connection speed. As of December 2022, the data for stable FACTS modules are available on Zenodo at https://doi.org/10.5281/zenodo.7478191 and https://doi.org/10.5281/zenodo.7478447 (note, split between two Zenodo entries because of size limitations). Because we are only doing global projections with the modules used in the Kopp et al. (2023) manuscript, this downloads only a subset of the total FACTS data. 
+
+3. Build the docker container. Make sure the Docker application is already running first by opening the Docker application. It is also recommended to have the `dscim-facts-epa` conda environment activated when building the docker container. Then, run the following: 
+```
+cd facts/docker
+sh develop.sh
+```
+
+This will build the Docker image from the instructions in `develop.sh`. When you run `facts`, you will first start the `facts` image, which creates a container (usually with a randomly-generated name) for running in. Outputs saved within the container do not persist once the container is deleted. Therefore, when starting the docker image, a few directories are mounted so that inputs, outputs, and logs will persist beyond the session.
+
+4. Start the `facts` docker image:
+```
 docker run -it --volume=$HOME/facts:/opt/facts --volume=$HOME/dscim-facts-epa:/opt/dscim-facts-epa -w /opt/dscim-facts-epa/scripts/facts.runs facts
 ```
-Replace `$HOME/dscim-facts-epa` and `$HOME/facts` with the path to your cloned or downloaded `dscim-facts-epa` repository and facts repository, respectively. This command will start the container, mounting the `dscim-facts-epa` directory and the `facts` directory. Once the container is running, your working directory will be `/opt/dscim-facts-epa/scripts/facts.runs`.
 
-Now proceed to the **Running the bash script** step.
+Replace `$HOME/dscim-facts-epa` and `$HOME/facts` with the path to your cloned or downloaded `dscim-facts-epa` repository and facts repository, respectively. This command will start the container, mounting the `dscim-facts-epa` directory and the `facts` directory. Once the container is running, your working directory will be `/opt/dscim-facts-epa/scripts/facts.runs`. If you additionally want to mount the radical.sandbox (recommended), the command is:
+
+```
+docker run -it --volume=$HOME/facts:/opt/facts --volume=$HOME/dscim-facts-epa:/opt/dscim-facts-epa --volume=$HOME/tmp/radical.pilot.sandbox:/home/jovyan/radical.pilot.sandbox -w /opt/dscim-facts-epa/scripts/facts.runs facts
+```
+Mounting the sandbox will persist the `facts` run session output logs even after the container is shutdown and deleted.
+
+5. You are ready to run FACTS. Proceed to [Running the bash script](#running-the-bash-script)
+</details>
+
+<details>
+<summary><b>Not Docker</b></summary>
 
 ### Not Docker
 
-To run FACTS outside of a docker, the user can use the `dscim-facts-epa` environment installed above. Activate the environment by typing `conda activate dscim-facts-epa` and install an additional python package:
-
-```bash
-pip install radical.entk==1.41.0
+<i>2. Download global-only modules-data from Zenodo:
+```
+wget -P facts/modules-data -i facts/modules-data/modules-data.global-only.urls.txt
 ```
 
-and proceed to the next section.
+As of December 2022, the data for stable FACTS modules are available on Zenodo at https://doi.org/10.5281/zenodo.7478191 and https://doi.org/10.5281/zenodo.7478447 (note, split between two Zenodo entries because of size limitations). Because we are only doing global projections with the modules used in the Kopp et al. (2023) manuscript, this downloads only a subset of the total FACTS data. 
+
+3. Create and activate a Python virtual environment, and install FACTS’s Python dependences in it. You can use venv, conda or virtualenv to create your Python virtual environment. See these instructions for further details. Using venv:
+```
+python3 -m venv ve3
+. ve3/bin/activate
+pip install --upgrade setuptools pip wheel
+pip install radical.entk pyyaml
+```
+4. Test your install by running the dummy experiment:
+```
+cd facts
+python3 runFACTS.py experiments/dummy
+```
+Note that all the input files for the experiment (which can be tens of GB if you are doing local sea-level projections that rely upon CMIP output) will get copied to a sandbox created for each run. If you are running FACTS using localhost as a resource, this sandbox directory is `~/radical.pilot.sandbox`. If you have space limits on your home directory, you may want to make this a symlink to a directory with fewer space limits prior to running FACTS. The task-level `.out` and `.err` files in the sandbox are key to debugging module-level code failures; thus, this sandbox is not deleted by default. However, if you wish to save space and do not need these files for debugging, you may wish to save space by deleting the subdirectories of the sandbox folder after each run.
+Note that the data files for a FACTS experiment are transfered to the compute resource with each experiment run. Thus, while it might in principle be possible to run FACTS on your desktop and use a remote HPC resource, you probably don’t want to do this. Most likely, you want to install and run FACTS directly on the remote resource. At a minimum, you will want to have a fast, high-capacity network connection to the resource.
+If you need to run on a HPC resource not previously configured for RADICAL-Pilot (see the RADICAL-Pilot documentation) , the resource will need to be configured. To get assistance with this, create an issue on the RADICAL-Pilot repo.</i>
+
+5. To run FACTS outside of a docker, the user can use the `dscim-facts-epa` environment installed above. Activate the environment by typing `conda activate dscim-facts-epa` and install an additional python package:
+```
+pip install radical.entk==1.41.0
+```
+6. You are ready to run FACTS. Proceed to [Running the bash script](#running-the-bash-script)
+
+
+</details>
 
 ### Running the bash script
 
-The user must now make modifications to the `scripts/facts.runs/facts_runs.sh` script to ensure all files are found and run specifications are set. Those changes are:
+The user must now make modifications to the `dscim-facts-epa/scripts/facts.runs/facts_runs.sh` script to ensure all files are found and run specifications are set. Those changes are:
  - on line 6 of the script, change `pulse_years` to the desired pulse years to be run by FACTS
  - on line 7, change `gas` to the desired gases to be run by FACTS
  
@@ -298,7 +370,9 @@ bash facts_runs.sh
 
 Running FACTS is a relatively memory-intensive and disk-space-intensive process. To successfully run FACTS, you will need a moderately powerful workstation (or server) with at least 32 gigabytes of computer RAM. By default, FACTS uses two CPU cores and is not particularly sensitive to clock speed or number of CPU cores. In addition, FACTS currently requires around 30 gigabytes of disk space per pulse year-gas, which means that 3 gases and 7 pulse years (a total of 22 runs including the control) will require approximately 660 gigabytes of disk space. Alternatively, one can run subsets of runs at a time and clear memory in between. To clear memory after a run has been completed, remove the subdirectories in the `~/radical.pilot.sandbox` folder.
 
-Note that the more pulse year and gas dimensions your input climate files have, the longer this run will take as pulse year-gas combinations are run in sequence. On a fast machine, each combination can take approximately 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take 220 minutes. The run script will create the appropriate number of FACTS "experiments" (22 in the example case), run through them, and concatenate the outputs into the format expected by `dscim-facts-epa`.
+Note that the more pulse year and gas dimensions your input climate files have, the longer this run will take as pulse year-gas combinations are run in sequence. On a fast machine, each combination can take approximately 10 minutes, meaning that for a run of 3 gases for 7 pulse years, the run will take 220 minutes. 
+
+The run script will create the appropriate number of FACTS "experiments" (22 in the example case), run through them, and concatenate the outputs into the format expected by `dscim-facts-epa`. The output GMSL file is automatically placed in the correct directory in `dscim-facts-epa`.
 
 If a docker was used, exit it once the run is complete using the `exit` command.
 
