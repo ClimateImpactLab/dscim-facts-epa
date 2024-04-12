@@ -152,7 +152,7 @@ To ensure that both `FACTS` and `dscim-facts-epa` can read new GMST, GMSL, and O
     - For GMSL, these are `control_gmsl` and `pulse_gmsl`
     - For OHC, these are `control_ocean_heat_content` and `pulse_ocean_heat_content`
 2. Any combination of gases and pulse years can be supplied. SC-GHGs will then be runnable for those gases and pulse years.
-3. We expect `year` to be at minimum from 1850-2300. Climate inputs are automatically made relative to 2001-2010 in `dscim-facts-epa` to be consistent with the damage functions.
+3. We expect `year` to be at minimum from 1850-2300. Climate inputs are automatically made relative to 1990-2010 in `dscim-facts-epa` to be consistent with the damage functions.
 4. The `runid` dimension corresponds to the FaIR parameters and RFF-SPs crosswalk specified for EPA's September 2022 draft technical report, "Report on the Social Cost of Greenhouse Gases: Estimates Incorporating Recent Scientific Advances". Thus, each runid is associated with an RFF-SP index and a climate parameter index. We expect 10000 `runids` from 1 to 10000. The `runid` crosswalk can be obtained from [here](https://github.com/USEPA/scghg/blob/main/GIVE/input/rffsp_fair_sequence.csv)
 
 ### Converting GMST and OHC .csv files into .nc4 files
@@ -247,7 +247,7 @@ FACTS will be run in "global only" mode to produce GMSL outputs from GMST and OH
 <summary><b>Docker (Recommended)</b></summary>
 
 ### Docker (Recommended)
-<i>The RADICAL toolkit does not support MacOS or Windows. Therefore, to run on a Mac or Windows (the latter with [Windows Subsystem for Linux; WSL2](https://learn.microsoft.com/en-us/windows/wsl/install)), you need to run within a Linux virtual machine or container. On Windows, once you have installed WSL2, type "ubuntu" in the Command Prompt to open a linux terminal for the remaining commands.
+<i>The RADICAL toolkit does not support MacOS or Windows. Therefore, to run on a Mac or Windows (the latter with [Windows Subsystem for Linux; WSL2](https://learn.microsoft.com/en-us/windows/wsl/install)), you need to run within a Linux virtual machine or container. On Windows, once you have installed WSL2, type "ubuntu" in the Command Prompt to open a linux terminal for the remaining commands. For both Windows and Mac, we recommend installing [Docker Desktop](https://docs.docker.com/engine/install/), which should be opened prior to the following steps.
 
 FACTS provides a [Docker](https://www.docker.com/) container in the `docker/` directory. This container provides the Linux, Python, R, and RADICAL toolkit environment needed for FACTS to run. FACTS itself does not reside within the container because of needs related to storage space for module data, persistence of changes, and writability. The instructions below assume FACTS resides outside the container in `$HOME/facts` and mounts it within the container as `/opt/facts`. At the moment, the docker environment appears to work fairly reliably when using localhost as the resource, but working with remote resources will require additional configuration.
 
@@ -293,6 +293,8 @@ Mounting the sandbox will persist the `facts` run session output logs even after
 
 ### Not Docker
 
+To run outside of Docker, FACTS must be run on a Linux machine.
+
 <i>2. Download global-only modules-data from Zenodo:
 ```
 wget -P facts/modules-data -i facts/modules-data/modules-data.global-only.urls.txt
@@ -300,27 +302,25 @@ wget -P facts/modules-data -i facts/modules-data/modules-data.global-only.urls.t
 
 As of December 2022, the data for stable FACTS modules are available on Zenodo at https://doi.org/10.5281/zenodo.7478191 and https://doi.org/10.5281/zenodo.7478447 (note, split between two Zenodo entries because of size limitations). Because we are only doing global projections with the modules used in the Kopp et al. (2023) manuscript, this downloads only a subset of the total FACTS data. 
 
-3. Create and activate a Python virtual environment, and install FACTS’s Python dependences in it. You can use venv, conda or virtualenv to create your Python virtual environment. See these instructions for further details. Using venv:
+3. To run FACTS outside of a docker, the user can use the `dscim-facts-epa` environment installed above. Activate the environment by typing `conda activate dscim-facts-epa` and install additional python packages:
 ```
-python3 -m venv ve3
-. ve3/bin/activate
-pip install --upgrade setuptools pip wheel
-pip install radical.entk pyyaml
+conda install radical.entk==1.42.0 radical.saga==1.47.0 radical.utils==1.47.0 radical.pilot==1.47.0 radical.gtod==1.47.0 -c conda-forge
 ```
+
 4. Test your install by running the dummy experiment:
 ```
 cd facts
 python3 runFACTS.py experiments/dummy
 ```
+
+There are known issues with the software underlying FACTS that may cause this experiment to hang or crash. For some solutions, see the page [here](scripts/facts.runs/FACTS_TROUBLESHOOTING.md)
+
 Note that all the input files for the experiment (which can be tens of GB if you are doing local sea-level projections that rely upon CMIP output) will get copied to a sandbox created for each run. If you are running FACTS using localhost as a resource, this sandbox directory is `~/radical.pilot.sandbox`. If you have space limits on your home directory, you may want to make this a symlink to a directory with fewer space limits prior to running FACTS. The task-level `.out` and `.err` files in the sandbox are key to debugging module-level code failures; thus, this sandbox is not deleted by default. However, if you wish to save space and do not need these files for debugging, you may wish to save space by deleting the subdirectories of the sandbox folder after each run.
-Note that the data files for a FACTS experiment are transfered to the compute resource with each experiment run. Thus, while it might in principle be possible to run FACTS on your desktop and use a remote HPC resource, you probably don’t want to do this. Most likely, you want to install and run FACTS directly on the remote resource. At a minimum, you will want to have a fast, high-capacity network connection to the resource.
+Note that the data files for a FACTS experiment are transferred to the compute resource with each experiment run. Thus, while it might in principle be possible to run FACTS on your desktop and use a remote HPC resource, you probably don’t want to do this. Most likely, you want to install and run FACTS directly on the remote resource. At a minimum, you will want to have a fast, high-capacity network connection to the resource.
 If you need to run on a HPC resource not previously configured for RADICAL-Pilot (see the RADICAL-Pilot documentation) , the resource will need to be configured. To get assistance with this, create an issue on the RADICAL-Pilot repo.</i>
 
-5. To run FACTS outside of a docker, the user can use the `dscim-facts-epa` environment installed above. Activate the environment by typing `conda activate dscim-facts-epa` and install an additional python package:
-```
-pip install radical.entk==1.41.0
-```
-6. You are ready to run FACTS. Proceed to [Running the bash script](#running-the-bash-script)
+
+5. You are ready to run FACTS. Proceed to [Running the bash script](#running-the-bash-script)
 
 
 </details>
