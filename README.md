@@ -354,11 +354,11 @@ Note that the more pulse year and gas dimensions your input climate files have, 
 
 The run script will create the appropriate number of FACTS "experiments" (22 in the example case), run through them, and concatenate the outputs into the format expected by `dscim-facts-epa`. The output GMSL file is automatically placed in the directory specified in the `facts_runs.sh` file.
 
-If a docker was used, exit it once the run is complete using the `exit` command. 
+If a docker was used, exit it once the run is complete using the `exit` command. Part of the `facts_runs.sh` script will automatically generate a config `.yml` file and print the filename to the terminal. You will need to specify the pulse size of the gas to do so, proceed to the next section ([Modifying the auto-generated config](#modifying-the-auto-generated-config)).
 
 ### Modifying the auto-generated config
 
-Part of the `facts_runs.sh` script will automatically generate a config `.yml` file and print the filename to the terminal. If you have custom GMST and OHC files, you will need to specify the pulse size of the gas. This conversion factor converts the final SC-GHG from `$ / pulse size of FaIR gas species` to `$ / tonne of GHG`.  To do this, modify the `gas_conversions` portion of the config. By default, this is:
+For any non-default gases, you will need to specify the pulse size of the gas. This conversion factor converts the final SC-GHG from `$ / pulse size of FaIR gas species` to `$ / tonne of GHG`.  To do this, modify the `gas_conversions` portion of the config. By default, this is:
 
 ```
 gas_conversions:
