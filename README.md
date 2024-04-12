@@ -428,8 +428,9 @@ By default, the script will produce the expected SC-GHGs as a `.csv`. The user a
 These files are installed during the above Setup process and take up 4.65 GB of disk space.
 
 Climate
-- Global mean surface temperature (GMST) trajectories output from FaIR: gmst_pulse.nc
-- Global mean sea level (GMSL) trajectories derived from FaIR GMST: gmsl_pulse.zarr
+- Global mean surface temperature (GMST) trajectories output from FaIR: gmst_pulse.nc4
+- Ocean heat content (OHC) trajectories output from FaIR: ohc_pulse.nc4
+- Global mean sea level (GMSL) trajectories derived from FACTS run from the above GMST and OHC files: gmsl_pulse.nc4
 - Conversion factors to convert SC-GHGs to $/tonne of GHG: conversion_v5.03_Feb072022.nc4
 
 Econ
