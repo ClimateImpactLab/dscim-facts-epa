@@ -140,7 +140,7 @@ Ignoring environment setup for a moment, the general run process for use-case 2 
 3. Set up Docker/Not Docker container/environment (see [Installing and Running FACTS](#installing-and-running-facts))
 4. Edit `dscim-facts-epa/scripts/facts.runs/facts_runs.sh` script to specify pulse years, gases, and directory locations (See [Running the bash script](#running-the-bash-script))
 5. Run `bash facts_runs.sh` to generatea a config file for running `dscim-facts-epa` command line tool (See [Running the bash script](#running-the-bash-script))
-6. Modify the generated config from step 5 to specify gas pulse conversions
+6. Modify the generated config from step 5 to specify gas pulse conversions (See [Modifying the auto-generated config](#modifying-the-auto-generated-config))
 7. Run `dscim-facts-epa` command line tool with newly generated config (Follow steps above in [Running SC-GHGs](#running-sc-ghgs))
 
 
