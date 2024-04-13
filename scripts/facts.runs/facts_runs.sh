@@ -1,6 +1,10 @@
 #!/bin/bash
+# Stop script when non-facts error occurs
+set -e
+
 # Set overwrite to 1 to overwrite previous results (if they exist), 0 otherwise
 overwrite=0
+
 # Define arrays for pulse years and gases
 # Additional pulse years and gases can be appended with spaces in between
 # example: pulse_years=(2020 2030 2040)

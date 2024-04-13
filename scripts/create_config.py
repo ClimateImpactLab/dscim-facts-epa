@@ -9,14 +9,16 @@ import argparse
 # Create argument parser
 parser = argparse.ArgumentParser(description='Create config from gmsl and gmst pulse files')
 
+current_dir = Path(__file__).parent.absolute()
+
 # Add named arguments for the lists
 parser.add_argument('--gmsl_file', type=str, help='Full path for the GMSL pulse file, including filename')
 parser.add_argument('--gmst_file', type=str, help='Full path for the GMST pulse file, including filename')
 parser.add_argument('--pulse_years', nargs='*', help='List of pulse years')
 parser.add_argument('--gases', nargs='*', help='List of gases')
-parser.add_argument('--input_dir', type=str, default="/opt/dscim-facts-epa/scripts/input", help='Path to inputs directory')
-parser.add_argument('--output_dir', type=str, default="/opt/dscim-facts-epa/scripts/output", help='Path to outputs directory')
-parser.add_argument('--config_dir', type=str, default="/opt/dscim-facts-epa/scripts", help='Path to config directory')
+parser.add_argument('--input_dir', type=str, default=current_dir / "input", help='Path to inputs directory')
+parser.add_argument('--output_dir', type=str, default=current_dir / "output", help='Path to outputs directory')
+parser.add_argument('--config_dir', type=str, default=current_dir, help='Path to config directory')
 
 # Parse the command line arguments
 args = parser.parse_args()
