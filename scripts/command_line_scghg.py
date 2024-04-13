@@ -343,13 +343,13 @@ def epa_scghgs(sectors,
     # Each run of the outer loop saves one set of SCGHGs
     # The inner loop combines all SCGHG runs for that file
     for j, pulse_year in product(risk_combos, pulse_years):
-        # These arrays will be populated with data arrays to be combined
-        all_arrays_uscghg = []
-        all_arrays_gcnp = []
 
         discount_type= j[1]
         menu_option = j[0]
         for i, sector in product(etas_rhos, sectors):
+            # These arrays will be populated with data arrays to be combined
+            all_arrays_uscghg = []
+            all_arrays_gcnp = []
             
             if re.split("_",sector)[0]=="CAMEL":
                 sector_short = "combined"
@@ -386,48 +386,48 @@ def epa_scghgs(sectors,
         
             attrs = merge_meta(attrs,meta)
         
-        print("Processing...")
-        df_full_scghg = xr.combine_by_coords(all_arrays_uscghg)
-        df_full_gcnp = xr.combine_by_coords(all_arrays_gcnp)
-        
-        # Changes coordinate names of gases
-        df_full_scghg = df_full_scghg.assign_coords(gas=[gas_conversion_dict[gas] for gas in df_full_scghg.gas.values])
-        
-        # Splits SCGHGs by gas and saves them out separately
-        # For uncollapsed SCGHGs
-        if conf_name != "generated_conf.yml":
-            conf_savename = re.split('\.', conf_name)[0] + "-"
-        else:
-            conf_savename = ""
-        gases = conf["rff_climate"]["gases"]
-        if uncollapsed:    
+            print("Processing...")
+            df_full_scghg = xr.combine_by_coords(all_arrays_uscghg)
+            df_full_gcnp = xr.combine_by_coords(all_arrays_gcnp)
+            
+            # Changes coordinate names of gases
+            df_full_scghg = df_full_scghg.assign_coords(gas=[gas_conversion_dict[gas] for gas in df_full_scghg.gas.values])
+            
+            # Splits SCGHGs by gas and saves them out separately
+            # For uncollapsed SCGHGs
+            if conf_name != "generated_conf.yml":
+                conf_savename = re.split('\.', conf_name)[0] + "-"
+            else:
+                conf_savename = ""
+            gases = conf["rff_climate"]["gases"]
+            if uncollapsed:    
+                for gas in gases:
+                    out_dir = Path(conf['save_path']) / f"{'territorial_us' if terr_us else 'global'}_scghgs" / 'full_distributions' / gas 
+                    makedir(out_dir)
+                    uncollapsed_gas_scghgs = df_full_scghg.sel(gas = gas_conversion_dict[gas], drop = True).to_dataframe().reindex()
+                    print(f"Saving {'territorial U.S.' if terr_us else 'global'} uncollapsed {sector_short} sc-{gas} \n pulse year: {pulse_year}")
+                    uncollapsed_gas_scghgs.to_csv(out_dir / f"{conf_savename}sc-{gas}-dscim-{sector_short}-{pulse_year}-n10000.csv")
+                    attrs_save = attrs.copy()
+                    attrs_save['gases'] = gas
+                    with open(out_dir / f"{conf_savename}attributes-{gas}-{sector_short}.txt", 'w') as f: 
+                        for key, value in attrs_save.items(): 
+                            f.write('%s:%s\n' % (key, value))
+
+            # Applies the adjustment factor to convert to certainty equivalent SCGHGs
+            df_full_scghg = (df_full_scghg.adjustment_factor * df_full_scghg.scghg).mean(dim = 'runid')
+
+            # Splits and saves collapsed SCGHGs
             for gas in gases:
-                out_dir = Path(conf['save_path']) / f"{'territorial_us' if terr_us else 'global'}_scghgs" / 'full_distributions' / gas 
+                out_dir = Path(conf['save_path']) / f"{'territorial_us' if terr_us else 'global'}_scghgs"   
                 makedir(out_dir)
-                uncollapsed_gas_scghgs = df_full_scghg.sel(gas = gas_conversion_dict[gas], drop = True).to_dataframe().reindex()
-                print(f"Saving {'territorial U.S.' if terr_us else 'global'} uncollapsed {sector_short} sc-{gas} \n pulse year: {pulse_year}")
-                uncollapsed_gas_scghgs.to_csv(out_dir / f"{conf_savename}sc-{gas}-dscim-{sector_short}-{pulse_year}-n10000.csv")
-                attrs_save = attrs.copy()
-                attrs_save['gases'] = gas
-                with open(out_dir / f"{conf_savename}attributes-{gas}-{sector_short}.txt", 'w') as f: 
-                    for key, value in attrs_save.items(): 
-                        f.write('%s:%s\n' % (key, value))
+                collapsed_gas_scghg = df_full_scghg.sel(gas = gas_conversion_dict[gas], drop = True).rename('scghg').to_dataframe().reindex() 
+                print(f"Saving {'territorial U.S.' if terr_us else 'global'} collapsed {sector_short} sc-{gas} \n pulse year: {pulse_year}")
+                collapsed_gas_scghg.to_csv(out_dir / f"{conf_savename}sc-{gas}-dscim-{sector_short}-{pulse_year}.csv") 
 
-        # Applies the adjustment factor to convert to certainty equivalent SCGHGs
-        df_full_scghg = (df_full_scghg.adjustment_factor * df_full_scghg.scghg).mean(dim = 'runid')
-
-        # Splits and saves collapsed SCGHGs
-        for gas in gases:
-            out_dir = Path(conf['save_path']) / f"{'territorial_us' if terr_us else 'global'}_scghgs"   
-            makedir(out_dir)
-            collapsed_gas_scghg = df_full_scghg.sel(gas = gas_conversion_dict[gas], drop = True).rename('scghg').to_dataframe().reindex() 
-            print(f"Saving {'territorial U.S.' if terr_us else 'global'} collapsed {sector_short} sc-{gas} \n pulse year: {pulse_year}")
-            collapsed_gas_scghg.to_csv(out_dir / f"{conf_savename}sc-{gas}-dscim-{sector_short}-{pulse_year}.csv") 
-
-        # Creates attribute files 
-        with open(out_dir / f"{conf_savename}attributes-{sector_short}.txt", 'w') as f: 
-            for key, value in attrs.items(): 
-                f.write('%s:%s\n' % (key, value))
+            # Creates attribute files 
+            with open(out_dir / f"{conf_savename}attributes-{sector_short}.txt", 'w') as f: 
+                for key, value in attrs.items(): 
+                    f.write('%s:%s\n' % (key, value))
     
     # Saves global consumption no pulse
     # Fewer GCNPs are saved because they vary across fewer dimensions than SCGHGs
@@ -450,7 +450,7 @@ print(f"... dscim-facts-epa version {VERSION} ...")
 pulse_years = conf["rffdata"]["pulse_years"]
 pulse_year_choices = [(str(i), i) for i in pulse_years]
 questions = [
-    inquirer.List("sector",
+    inquirer.Checkbox("sector",
         message= 'Select sector',
         choices= [
             ('Combined',CAMEL_v),
@@ -460,7 +460,12 @@ questions = [
             ('Energy','energy'),
             ('Labor','labor'),
         ],
-        default = [CAMEL_v]),
+        default = [CAMEL_v,
+                   'coastal_v' + coastal_v,
+                   'agriculture',
+                   'mortality_v' + mortality_v,
+                   'energy',
+                   'labor']),
     inquirer.Checkbox("eta_rhos",
         message= 'Select discount rates',
         choices= [
@@ -484,12 +489,13 @@ questions = [
         message= 'Select pulse years',
         choices= pulse_year_choices,
         default = pulse_years),
-    inquirer.List("U.S.",
+    inquirer.Checkbox("U.S.",
         message= 'Select valuation type',
         choices= [
             ('Global',False),
             ('Territorial U.S.',True)
-        ]),
+        ],
+        default = [False, True]),
     inquirer.Checkbox("files",
         message= 'Optional files to save (will increase runtime substantially)',
         choices= [
@@ -507,21 +513,29 @@ questions = [
 
 answers = inquirer.prompt(questions)
 etas_rhos = answers['eta_rhos']
-sector = [answers['sector']]
+sector = answers['sector']
 pulse_years = answers['pulse_year']
-terr_us = answers['U.S.']
+terr_us_ls = answers['U.S.']
 gcnp = True if 'gcnp' in answers['files'] else False
 uncollapsed = True if 'uncollapsed' in answers['files'] else False
 
-if terr_us:
-    sector = [i + "_USA" for i in sector]
+
 
 if len(etas_rhos) == 0:
     raise ValueError('You must select at least one eta, rho combination')
 
 risk_combos = [['risk_aversion', 'euler_ramsey']] # Default
 gases = ['CO2_Fossil', 'CH4', 'N2O'] # Default
-epa_scghgs(sector,
+
+for terr_us in terr_us_ls:
+    locale = "Domestic" if terr_us else "Global"
+    print("=========================")
+    print(f"Generating {locale} SCCs")
+    print("=========================")
+    print("")
+    if terr_us:
+        sector = [i + "_USA" for i in sector]
+    epa_scghgs(sector,
          terr_us,
          etas_rhos,
          risk_combos,
