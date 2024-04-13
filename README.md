@@ -142,15 +142,15 @@ and proceed to the next section.
 
 The user must now make modifications to the `scripts/facts.runs/facts_runs.sh` script to ensure all files are found and run specifications are set. Those changes are:
  - if you want to rerun previous successful experiments (not recommended), change `overwrite` to 1
- - on line 8 of the script, change `pulse_years` to the desired pulse years to be run by FACTS
- - on line 9, change `gas` to the desired gases to be run by FACTS
- - on line 11, change the path to the path of your GMST file
- - on line 12, change the path to the path of your OHC file
- - on line 14, change the path to the path of your GMSL file (where you want the GMSL file to be saved)
+ - on line 12 of the script, change `pulse_years` to the desired pulse years to be run by FACTS
+ - on line 13, change `gas` to the desired gases to be run by FACTS
+ - on line 15, change the path to the path of your GMST file
+ - on line 16, change the path to the path of your OHC file
+ - on line 18, change the path to the path of your GMSL file (where you want the GMSL file to be saved)
  
  If not running in the Docker Container:
- - on line 16, change `facts_dir` to where you have cloned your FACTS repository
- - on line 17, change `dscim_facts_epa_dir` to where you have cloned this repository 
+ - on line 20, change `facts_dir` to where you have cloned your FACTS repository
+ - on line 21, change `dscim_facts_epa_dir` to where you have cloned this repository 
 
 Assuming you are in the `dscim-facts-epa/scripts/facts.runs` folder run:
 
