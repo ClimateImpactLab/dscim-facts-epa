@@ -1,10 +1,10 @@
 global-options:
     nsamps: 10000
     scenario: ssp245
-    pyear_start: 2020
+    pyear_start: 2010
     pyear_end: 2300
     pyear_step: 1
-    baseyear: 2005
+    baseyear: 2000
     pipeline_file: 'pipeline.global.yml'
 
 
