@@ -53,6 +53,8 @@ Now you are ready to run FACTS again.
 
 </details>
 
+<details>
+
 <summary><b>FACTS crashes shortly after "Setting up ZMQ queues"</b></summary>
 
 FACTS (specifically `radical`, the engine underlying FACTS) sets up its own virtual environment as a part of the run process. If FACTS crashes, it may be because this environment has failed to install some packages. Sometimes recreating this environment manually is necessary. First locate the environment, usually located:
