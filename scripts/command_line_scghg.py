@@ -16,7 +16,7 @@ from datetime import date
 import sys
 
 # EDIT this line upon each release of dscim-facts-epa
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 args = sys.argv
 if len(args) == 1:
@@ -445,7 +445,7 @@ def epa_scghgs(sectors,
 # Command line interface for DSCIM-epa runs        
 f = Figlet(font='slant', width=100)
 print(f.renderText('DSCIM'))
-print(f"... dscim-facts-epa version {VERSION} ...")
+print(f"\n... dscim-facts-epa version {VERSION} ...")
 
 pulse_years = conf["rffdata"]["pulse_years"]
 pulse_year_choices = [(str(i), i) for i in pulse_years]
