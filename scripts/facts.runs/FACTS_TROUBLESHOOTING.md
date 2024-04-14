@@ -10,7 +10,7 @@ FACTS (specifically `radical`, the engine underlying FACTS) sets up its own virt
 ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>
 ```
 
-In this folder, there should be a file:
+Make sure to record the exact path to the virtual environment, as we will recreate the environment in the same location shortly.In this folder, there should be a file:
 
 ```
 ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>/bin/activate
@@ -63,7 +63,7 @@ FACTS (specifically `radical`, the engine underlying FACTS) sets up its own virt
 ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>
 ```
 
-First delete the old environment then make the new one with the following commands:
+Make sure to record the exact path to the virtual environment, as we will recreate the environment in the same location shortly.Delete the old environment then make the new one with the following commands:
 
 ```bash
 rm -r ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>
