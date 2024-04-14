@@ -62,7 +62,8 @@ for pulse_year, gas in list(product(pulse_years,gases)):
 pulse = xr.combine_by_coords(pulse_gas)
     
 pulse = (pulse
-         .drop(['lat','lon','locations'])
+         .squeeze(drop = True)
+         .drop(['lat','lon'])
         )
 
 control = (control
