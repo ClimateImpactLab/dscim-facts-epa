@@ -186,3 +186,16 @@ Now you are ready to run the `facts_runs.sh` script again.
 
 </details>
 
+<details>
+
+<summary><b>FACTS prints error messages the first time it is run</b></summary>
+
+Problem:
+
+When FACTS is first run, it starts printing messages related to modules being successfully completed, but suddenly begins printing one or more error messages.
+
+Potential solution:
+
+Sometimes when FACTS is first run in a new environment, it steps on its own toes by attempting to install the same package (or a package and its dependancy) on separate cores. This can cause FACTS to start printing error messages. Force stopping this run (or waiting for it to stop) and immediately running FACTS again (via the `bash facts_runs.sh` command) without changing anything else often resolves this issue.
+
+</details>
