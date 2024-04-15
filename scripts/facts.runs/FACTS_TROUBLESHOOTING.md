@@ -6,9 +6,9 @@
 
 Problem: 
 
-When running FACTS outside of a container, the output messages stop after "Setting up ZMQ queues" and FACTS seems to hang.
+When running FACTS, the output messages stop after "Setting up ZMQ queues" and FACTS seems to hang.
 
-Potential Solution: 
+Potential Solution:
 
 FACTS (specifically `radical`, the engine underlying FACTS) sets up its own virtual environment as a part of the run process. Some systems have specific versions of applications that cause the installation to fail. It is a known issue in `radical` that this failure will cause FACTS to hang. To check if this virtual environment has failed to install, wherever you are running FACTS (docker container or on your linux machine), find the default location of the engine at 
 
@@ -37,22 +37,21 @@ ls ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>/bin/
 
 We now need to install some packages into this new environment so it runs correctly. Make sure that you deactivate the conda environment or python environment before activating the new environment:
 
+<details>
+
+<summary><b>conda environment/ not docker</b></summary>
+
 ```bash
-conda deactivate OR deactivate
+conda deactivate
 . ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>/bin/activate
 ```
 
 Then install the packages:
 
 ```bash
-pip install radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
+pip install setuptools==69.0.2 radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
 ```
-
-
-<details>
-
-<summary><b>conda environment/ not docker</b></summary>
-
+With the packages installed, deactivate this environment and activate your run environment again:
 
 ```bash
 deactivate
@@ -67,7 +66,17 @@ or if you are running in the docker container:
 
 <summary><b>docker container</b></summary>
 
+```bash
+deactivate
+. ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>/bin/activate
+```
 
+Then install the packages:
+
+```bash
+pip install setuptools==69.0.2 radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
+```
+With the packages installed, deactivate this environment and activate your run environment again:
 ```bash
 deactivate
 . /factsVe/bin/activate
@@ -75,7 +84,7 @@ deactivate
 
 </details>
 
-Now you are ready to run the `run_facts.sh` script again.
+Now you are ready to run the `facts_runs.sh` script again.
 
 </details>
 
@@ -122,8 +131,12 @@ ls ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>/bin/
 
 We now need to install some packages into this new environment so it runs correctly. Make sure that your run environment before activating the new environment:
 
+<details>
+
+<summary><b>conda environment/ not docker</b></summary>
+
 ```bash
-conda deactivate OR deactivate
+conda deactivate
 . ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>/bin/activate
 ```
 
@@ -134,11 +147,6 @@ pip install setuptools==69.0.2 radical.entk==1.42.0 radical.pilot==1.47.0 radica
 ```
 
 With the packages installed, deactivate this environment and activate your run environment again:
-
-<details>
-
-<summary><b>conda environment/ not docker</b></summary>
-
 
 ```bash
 deactivate
@@ -153,6 +161,18 @@ or if you are running in the docker container:
 
 <summary><b>docker container</b></summary>
 
+```bash
+deactivate
+. ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>/bin/activate
+```
+
+Then install the packages:
+
+```bash
+pip install setuptools==69.0.2 radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
+```
+
+With the packages installed, deactivate this environment and activate your run environment again:
 
 ```bash
 deactivate
@@ -162,7 +182,7 @@ deactivate
 </details>
 
 
-Now you are ready to run the `run_facts.sh` script again.
+Now you are ready to run the `facts_runs.sh` script again.
 
 </details>
 
