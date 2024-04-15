@@ -10,7 +10,7 @@ When running FACTS outside of a container, the output messages stop after "Setti
 
 Potential Solution: 
 
-FACTS (specifically `radical`, the engine underlying FACTS) sets up its own virtual environment as a part of the run process. Some systems have specific versions of applications that cause the installation to fail. It is a known issue in `radical` that this failure will cause FACTS to hang. To check if this virtual environment has failed to install, find the default location of the engine at 
+FACTS (specifically `radical`, the engine underlying FACTS) sets up its own virtual environment as a part of the run process. Some systems have specific versions of applications that cause the installation to fail. It is a known issue in `radical` that this failure will cause FACTS to hang. To check if this virtual environment has failed to install, wherever you are running FACTS (docker container or on your linux machine), find the default location of the engine at 
 
 ```
 ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>
@@ -48,19 +48,32 @@ Then install the packages:
 pip install radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
 ```
 
-With the packages installed, deactivate this environment and activate your run environment again:
 
-```
+<details>
+
+<summary><b>conda environment/ not docker</b></summary>
+
+
+```bash
 deactivate
 conda activate dscim-facts-epa
 ```
 
+</details>
+
 or if you are running in the docker container:
+
+<details>
+
+<summary><b>docker container</b></summary>
+
 
 ```bash
 deactivate
 . /factsVe/bin/activate
 ```
+
+</details>
 
 Now you are ready to run the `run_facts.sh` script again.
 
@@ -72,7 +85,7 @@ Now you are ready to run the `run_facts.sh` script again.
 
 Problem: 
 
-When running FACTS in a container, the run fails shortly after the output message "Setting up ZMQ queues". Initial exceptions in the stack trace vary but usually the stack trace ends with something like:
+When running FACTS, the run fails shortly after the output message "Setting up ZMQ queues". Initial exceptions in the stack trace vary but usually the stack trace ends with something like:
 ```
 The above exception was the direct cause of the following exception:
 
@@ -88,7 +101,7 @@ radical.entk.exceptions.EnTKError
 
 Potential Solution: 
 
-FACTS (specifically `radical`, the engine underlying FACTS) sets up its own virtual environment as a part of the run process. If FACTS crashes, it may be because this environment has failed to install some packages. Sometimes recreating this environment manually is necessary. In the place you are running FACTS in, locate the environment, usually located:
+FACTS (specifically `radical`, the engine underlying FACTS) sets up its own virtual environment as a part of the run process. If FACTS crashes, it may be because this environment has failed to install some packages. Sometimes recreating this environment manually is necessary. Wherever you are running FACTS (docker container or on your linux machine), locate the environment, usually located:
 
 ```
 ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>
@@ -122,17 +135,32 @@ pip install setuptools==69.0.2 radical.entk==1.42.0 radical.pilot==1.47.0 radica
 
 With the packages installed, deactivate this environment and activate your run environment again:
 
-```
+<details>
+
+<summary><b>conda environment/ not docker</b></summary>
+
+
+```bash
 deactivate
 conda activate dscim-facts-epa
 ```
 
+</details>
+
 or if you are running in the docker container:
+
+<details>
+
+<summary><b>docker container</b></summary>
+
 
 ```bash
 deactivate
 . /factsVe/bin/activate
 ```
+
+</details>
+
 
 Now you are ready to run the `run_facts.sh` script again.
 
