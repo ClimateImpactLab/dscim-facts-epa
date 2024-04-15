@@ -16,7 +16,7 @@ FACTS (specifically `radical`, the engine underlying FACTS) sets up its own virt
 ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>
 ```
 
-Make sure to record the exact path to the virtual environment, as we will recreate the environment in the same location shortly.In this folder, there should be a file:
+Make sure to record the exact path to the virtual environment, as we will recreate the environment in the same location shortly. In this folder, there should be a file:
 
 ```
 ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>/bin/activate
@@ -35,10 +35,10 @@ Now the file that was missing before should exist. To verify, make sure `activat
 ls ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>/bin/
 ```
 
-We now need to install some packages into this new environment so it runs correctly. Make sure that you deactivate the conda environment before activating the new environment:
+We now need to install some packages into this new environment so it runs correctly. Make sure that you deactivate the conda environment or python environment before activating the new environment:
 
 ```bash
-conda deactivate
+conda deactivate OR deactivate
 . ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>/bin/activate
 ```
 
@@ -48,7 +48,7 @@ Then install the packages:
 pip install radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
 ```
 
-With the packages installed, deactivate this environment and activate your conda environment again:
+With the packages installed, deactivate this environment and activate your run environment again:
 
 ```
 deactivate
@@ -87,7 +87,7 @@ FACTS (specifically `radical`, the engine underlying FACTS) sets up its own virt
 ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>
 ```
 
-Make sure to record the exact path to the virtual environment, as we will recreate the environment in the same location shortly.Delete the old environment then make the new one with the following commands:
+Make sure to record the exact path to the virtual environment, as we will recreate the environment in the same location shortly. Delete the old environment then make the new one with the following commands:
 
 ```bash
 rm -r ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>
@@ -100,10 +100,10 @@ To verify that the environment has built properly, make sure `activate` is in th
 ls ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>/bin/
 ```
 
-We now need to install some packages into this new environment so it runs correctly. Make sure that you deactivate the conda environment before activating the new environment:
+We now need to install some packages into this new environment so it runs correctly. Make sure that your run environment before activating the new environment:
 
 ```bash
-conda deactivate
+conda deactivate OR deactivate
 . ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>/bin/activate
 ```
 
@@ -113,7 +113,7 @@ Then install the packages:
 pip install setuptools==69.0.2 radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
 ```
 
-With the packages installed, deactivate this environment and activate your conda environment again:
+With the packages installed, deactivate this environment and activate your run environment again:
 
 ```
 deactivate
