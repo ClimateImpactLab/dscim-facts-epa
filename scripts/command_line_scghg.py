@@ -351,13 +351,13 @@ def epa_scghgs(sectors,
             all_arrays_uscghg = []
             all_arrays_gcnp = []
 
+            if re.split("_",sector)[0]=="CAMEL":
+                sector_short = "combined"
+            else:
+                sector_short = re.split("_",sector)[0]
+
             for i in etas_rhos:
-            
-                if re.split("_",sector)[0]=="CAMEL":
-                    sector_short = "combined"
-                else:
-                    sector_short = re.split("_",sector)[0]
-                    
+                
                 eta = i[0]
                 rho = i[1]
 
