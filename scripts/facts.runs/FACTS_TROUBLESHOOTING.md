@@ -4,6 +4,12 @@
 
 <summary><b>FACTS hangs after "Setting up ZMQ queues"</b></summary>
 
+Problem: 
+
+When running FACTS outside of a container, the output messages stop after "Setting up ZMQ queues" and FACTS seems to hang.
+
+Potential Solution: 
+
 FACTS (specifically `radical`, the engine underlying FACTS) sets up its own virtual environment as a part of the run process. Some systems have specific versions of applications that cause the installation to fail. It is a known issue in `radical` that this failure will cause FACTS to hang. To check if this virtual environment has failed to install, find the default location of the engine at 
 
 ```
@@ -56,6 +62,24 @@ Now you are ready to run FACTS again.
 <details>
 
 <summary><b>FACTS crashes shortly after "Setting up ZMQ queues"</b></summary>
+
+Problem: 
+
+When running FACTS in a container, the run fails shortly after the output message "Setting up ZMQ queues". Initial exceptions in the stack trace vary but usually the stack trace ends with something like:
+```
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "runFACTS.py", line 193, in <module>
+    run_experiment(args.edir, args.debug, args.alt_id, resourcedir=args.resourcedir, makeshellscript = args.shellscript, globalopts = args.global_options)
+  File "runFACTS.py", line 86, in run_experiment
+    amgr.run()
+  File "/usr/local/lib/python3.8/dist-packages/radical/entk/appman/appmanager.py", line 485, in run
+    raise EnTKError(ex) from ex
+radical.entk.exceptions.EnTKError
+```
+
+Potential Solution: 
 
 FACTS (specifically `radical`, the engine underlying FACTS) sets up its own virtual environment as a part of the run process. If FACTS crashes, it may be because this environment has failed to install some packages. Sometimes recreating this environment manually is necessary. First locate the environment, usually located:
 
