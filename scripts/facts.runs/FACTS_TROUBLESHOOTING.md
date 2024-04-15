@@ -81,7 +81,7 @@ radical.entk.exceptions.EnTKError
 
 Potential Solution: 
 
-FACTS (specifically `radical`, the engine underlying FACTS) sets up its own virtual environment as a part of the run process. If FACTS crashes, it may be because this environment has failed to install some packages. Sometimes recreating this environment manually is necessary. First locate the environment, usually located:
+FACTS (specifically `radical`, the engine underlying FACTS) sets up its own virtual environment as a part of the run process. If FACTS crashes, it may be because this environment has failed to install some packages. Sometimes recreating this environment manually is necessary. In the place you are running FACTS in, locate the environment, usually located:
 
 ```
 ~/radical.pilot.sandbox/ve.local.localhost.<RADICAL.ENTK VERSION>
