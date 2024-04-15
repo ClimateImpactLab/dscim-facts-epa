@@ -55,7 +55,14 @@ deactivate
 conda activate dscim-facts-epa
 ```
 
-Now you are ready to run FACTS again.
+or if you are running in the docker container:
+
+```bash
+deactivate
+. /factsVe/bin/activate
+```
+
+Now you are ready to run the `run_facts.sh` script again.
 
 </details>
 
@@ -120,7 +127,14 @@ deactivate
 conda activate dscim-facts-epa
 ```
 
-Now you are ready to run FACTS again.
+or if you are running in the docker container:
+
+```bash
+deactivate
+. /factsVe/bin/activate
+```
+
+Now you are ready to run the `run_facts.sh` script again.
 
 </details>
 
