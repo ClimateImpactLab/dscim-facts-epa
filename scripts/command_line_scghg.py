@@ -346,43 +346,45 @@ def epa_scghgs(sectors,
 
         discount_type= j[1]
         menu_option = j[0]
-        for i, sector in product(etas_rhos, sectors):
+        for sector in sectors:
             # These arrays will be populated with data arrays to be combined
             all_arrays_uscghg = []
             all_arrays_gcnp = []
-            
+
             if re.split("_",sector)[0]=="CAMEL":
                 sector_short = "combined"
             else:
                 sector_short = re.split("_",sector)[0]
+
+            for i in etas_rhos:
                 
-            eta = i[0]
-            rho = i[1]
+                eta = i[0]
+                rho = i[1]
 
-            print(f"Calculating {'territorial U.S.' if terr_us else 'global'} {sector_short} scghgs {'and gcnp' if gcnp else ''} \n discount rate: {discount_conversion_dict[str(eta) + '_' + str(rho)]} \n pulse year: {pulse_year}")
-            df_single_scghg, df_single_gcnp, meta = epa_scghg(sector = sector,
-                                                          terr_us = terr_us,
-                                                          discount_type = discount_type,
-                                                          menu_option = menu_option,
-                                                          eta = eta,
-                                                          rho = rho,
-                                                          pulse_year = pulse_year,
-                                                          conf = conf)
-            
-            # Creates new coordinates to differentiate between runs
-            # For SCGHGs
-            df_scghg = df_single_scghg.assign_coords(discount_rate =  discount_conversion_dict[str(eta) + "_" + str(rho)], menu_option = menu_option, sector = sector_short)
-            df_scghg_expanded = df_scghg.expand_dims(['discount_rate','menu_option', 'sector'])
-            if 'simulation' in df_scghg_expanded.dims:
-                df_scghg_expanded = df_scghg_expanded.drop_vars('simulation')
-            all_arrays_uscghg = all_arrays_uscghg + [df_scghg_expanded]
+                print(f"Calculating {'territorial U.S.' if terr_us else 'global'} {sector_short} scghgs {'and gcnp' if gcnp else ''} \n discount rate: {discount_conversion_dict[str(eta) + '_' + str(rho)]} \n pulse year: {pulse_year}")
+                df_single_scghg, df_single_gcnp, meta = epa_scghg(sector = sector,
+                                                            terr_us = terr_us,
+                                                            discount_type = discount_type,
+                                                            menu_option = menu_option,
+                                                            eta = eta,
+                                                            rho = rho,
+                                                            pulse_year = pulse_year,
+                                                            conf = conf)
+                
+                # Creates new coordinates to differentiate between runs
+                # For SCGHGs
+                df_scghg = df_single_scghg.assign_coords(discount_rate =  discount_conversion_dict[str(eta) + "_" + str(rho)], menu_option = menu_option, sector = sector_short)
+                df_scghg_expanded = df_scghg.expand_dims(['discount_rate','menu_option', 'sector'])
+                if 'simulation' in df_scghg_expanded.dims:
+                    df_scghg_expanded = df_scghg_expanded.drop_vars('simulation')
+                all_arrays_uscghg = all_arrays_uscghg + [df_scghg_expanded]
 
-            # For global consumption no pulse
-            df_gcnp = df_single_gcnp.assign_coords(discount_rate =  discount_conversion_dict[str(eta) + "_" + str(rho)], menu_option = menu_option, sector = sector_short)
-            df_gcnp_expanded = df_gcnp.expand_dims(['discount_rate','menu_option', 'sector'])
-            if 'simulation' in df_gcnp_expanded.dims:
-                df_gcnp_expanded = df_gcnp_expanded.drop_vars('simulation')
-            all_arrays_gcnp = all_arrays_gcnp + [df_gcnp_expanded]    
+                # For global consumption no pulse
+                df_gcnp = df_single_gcnp.assign_coords(discount_rate =  discount_conversion_dict[str(eta) + "_" + str(rho)], menu_option = menu_option, sector = sector_short)
+                df_gcnp_expanded = df_gcnp.expand_dims(['discount_rate','menu_option', 'sector'])
+                if 'simulation' in df_gcnp_expanded.dims:
+                    df_gcnp_expanded = df_gcnp_expanded.drop_vars('simulation')
+                all_arrays_gcnp = all_arrays_gcnp + [df_gcnp_expanded]    
         
             attrs = merge_meta(attrs,meta)
         
