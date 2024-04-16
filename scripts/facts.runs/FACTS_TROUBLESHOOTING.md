@@ -49,6 +49,10 @@ conda deactivate
 Then install the packages:
 
 ```bash
+pip install wheel
+```
+then
+```bash
 pip install setuptools==69.0.2
 ```
 and then
@@ -76,6 +80,10 @@ deactivate
 ```
 
 Then install the packages:
+```bash
+pip install wheel
+```
+then
 ```bash
 pip install setuptools==69.0.2
 ```
@@ -148,7 +156,10 @@ conda deactivate
 ```
 
 Then install the packages:
-
+```bash
+pip install wheel
+```
+then
 ```bash
 pip install setuptools==69.0.2
 ```
@@ -178,7 +189,10 @@ deactivate
 ```
 
 Then install the packages:
-
+```bash
+pip install wheel
+```
+then
 ```bash
 pip install setuptools==69.0.2
 ```
