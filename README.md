@@ -229,7 +229,7 @@ To install FACTS through Docker please follow the steps below after downloading 
 
 2. Download modules-data:
 ```
-wget -P facts/modules-data -i facts/modules-data/modules-data.global-only.urls.txt
+wget -P facts/modules-data -i facts/modules-data/modules-data.global_only.urls.txt
 ```
 If you don’t have `wget`, another option for file downloads is `curl`: First, make sure you are in `$HOME/facts/modules-data` and then run:
 ```
