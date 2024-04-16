@@ -49,7 +49,15 @@ conda deactivate
 Then install the packages:
 
 ```bash
-pip install setuptools==69.0.2 radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
+pip install wheel
+```
+then
+```bash
+pip install setuptools==69.0.2
+```
+and then
+```bash
+pip install radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
 ```
 With the packages installed, deactivate this environment and activate your run environment again:
 
@@ -72,9 +80,16 @@ deactivate
 ```
 
 Then install the packages:
-
 ```bash
-pip install setuptools==69.0.2 radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
+pip install wheel
+```
+then
+```bash
+pip install setuptools==69.0.2
+```
+and then
+```bash
+pip install radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
 ```
 With the packages installed, deactivate this environment and activate your run environment again:
 ```bash
@@ -141,9 +156,16 @@ conda deactivate
 ```
 
 Then install the packages:
-
 ```bash
-pip install setuptools==69.0.2 radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
+pip install wheel
+```
+then
+```bash
+pip install setuptools==69.0.2
+```
+and then
+```bash
+pip install radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
 ```
 
 With the packages installed, deactivate this environment and activate your run environment again:
@@ -167,9 +189,16 @@ deactivate
 ```
 
 Then install the packages:
-
 ```bash
-pip install setuptools==69.0.2 radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
+pip install wheel
+```
+then
+```bash
+pip install setuptools==69.0.2
+```
+and then
+```bash
+pip install radical.entk==1.42.0 radical.pilot==1.47.0 radical.utils==1.47.0 radical.saga==1.47.0 radical.gtod==1.47.0
 ```
 
 With the packages installed, deactivate this environment and activate your run environment again:
@@ -194,8 +223,26 @@ Problem:
 
 When FACTS is first run, it starts printing messages related to modules being successfully completed, but suddenly begins printing one or more error messages.
 
-Potential solution:
+Potential solution (simple):
 
-Sometimes when FACTS is first run in a new environment, it steps on its own toes by attempting to install the same package (or a package and its dependancy) on separate cores. This can cause FACTS to start printing error messages. Force stopping this run (or waiting for it to stop) and immediately running FACTS again (via the `bash facts_runs.sh` command) without changing anything else often resolves this issue.
+Sometimes when FACTS is first run in a new environment, it steps on its own toes by attempting to install the same package (or a package and its dependancy) on separate cores. This can cause FACTS to start printing error messages. To resolve the issue, force the run to stop (or wait for it to end) and immediately run FACTS again (via the `bash facts_runs.sh` command) without changing anything else.
 
-</details>
+Potential solution (advanced):
+
+These errors can often be avoided altogether by forcing the offending `facts` module to install its dependencies right away. To do this, add a `python_dependencies` line to `facts/modules/facts/dummy/pipeline.yml` so that the file looks like:
+
+```
+# FACTS dummy pipeline
+
+preprocess:
+  task1:
+    executable: "python"
+    python_dependencies: "numpy scipy netCDF4 pyyaml matplotlib h5py xarray dask[array]"
+    script: "facts_dummy_preprocess.py"
+    options:
+      - "pipeline_id"
+    #climate_output_data:
+    #global_total_files:
+    #local_total_files:
+
+```
