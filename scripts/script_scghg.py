@@ -13,12 +13,9 @@ if __name__ == "__main__":
 
     ####################
     # EDIT these parameters:
-    pulse_years = conf["rffdata"]["pulse_years"]
-    etas_rhos = [
-        "1.5% Ramsey",
-        "2.0% Ramsey",
-        "2.5% Ramsey",
-    ]
+    
+    # Which sectors to save out from: 
+    # "combined", "coastal", "agriculture", "mortality", "energy", "labor",
     sectors = [
         "combined",
         "coastal",
@@ -27,8 +24,32 @@ if __name__ == "__main__":
         "energy",
         "labor",
     ]
-    terr_us_ls = [False, True]
+
+    # Pulse years to save out
+    # pulse years should be present in climate files
+    pulse_years = [
+        2020,
+        2030,
+        2040,
+        2050,
+    ]
+
+    # Target discount rates from:
+    # "1.5% Ramsey", "2.0% Ramsey", "2.5% Ramsey",
+    target_disc = [
+        "1.5% Ramsey",
+        "2.0% Ramsey",
+        "2.5% Ramsey",
+    ]
+
+    # List of whether to run Global/Domestic SCGHGs
+    # Can be "domestic" and/or "global"
+    terr_us = ["domestic", "global"]
+    
+    # Whether to save out global consumption no pulse
     gcnp = True
+
+    # Whether to save out uncollapsed SCGHGs
     uncollapsed = True
     ####################
 
@@ -46,6 +67,15 @@ if __name__ == "__main__":
             sector.append("mortality_v" + mortality_v)
         else:
             sector.append(sec)
+    
+    terr_us_ls = []
+    for dom in terr_us:
+        if dom == "domestic":
+            terr_us_ls.append(True)
+        elif dom == "global":
+            terr_us_ls.append(False)
+        else:
+            raise ValueError("Invalid choice for terr_us, values in list should be \"domestic\" or \"global\"")
 
     eta_rho_conversion_dict = {
         "1.5% Ramsey": [1.016010255, 9.149608e-05],
@@ -54,7 +84,7 @@ if __name__ == "__main__":
     }
 
     eta_rhos = []
-    for er in etas_rhos:
+    for er in target_disc:
         if er in eta_rho_conversion_dict:
             eta_rhos.append(eta_rho_conversion_dict[er])
         else:
