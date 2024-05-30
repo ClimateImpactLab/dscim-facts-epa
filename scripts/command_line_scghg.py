@@ -99,7 +99,7 @@ if __name__ == "__main__":
     risk_combos = [["risk_aversion", "euler_ramsey"]]  # Default
 
     for terr_us in terr_us_ls:
-        locale = "Domestic" if terr_us else "Global"
+        locale = "Territory US" if terr_us else "Global"
         print("=========================")
         print(f"Generating {locale} SCCs")
         print("=========================")
