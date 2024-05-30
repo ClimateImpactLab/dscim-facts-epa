@@ -42,9 +42,9 @@ if __name__ == "__main__":
         "2.5% Ramsey",
     ]
 
-    # List of whether to run Global/Domestic SCGHGs
-    # Can be "domestic" and/or "global"
-    terr_us = ["domestic", "global"]
+    # List of whether to run Global/Territory US SCGHGs
+    # Can be "terr_us" and/or "global"
+    terr_us = ["terr_us", "global"]
     
     # Whether to save out global consumption no pulse
     gcnp = True
@@ -70,12 +70,12 @@ if __name__ == "__main__":
     
     terr_us_ls = []
     for dom in terr_us:
-        if dom == "domestic":
+        if dom == "terr_us":
             terr_us_ls.append(True)
         elif dom == "global":
             terr_us_ls.append(False)
         else:
-            raise ValueError("Invalid choice for terr_us, values in list should be \"domestic\" or \"global\"")
+            raise ValueError("Invalid choice for terr_us, values in list should be \"terr_us\" or \"global\"")
 
     eta_rho_conversion_dict = {
         "1.5% Ramsey": [1.016010255, 9.149608e-05],
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     risk_combos = [["risk_aversion", "euler_ramsey"]]  # Default
 
     for terr_us in terr_us_ls:
-        locale = "Domestic" if terr_us else "Global"
+        locale = "Territory US" if terr_us else "Global"
         print("=========================")
         print(f"Generating {locale} SCCs")
         print("=========================")
