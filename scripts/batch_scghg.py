@@ -43,8 +43,8 @@ if __name__ == "__main__":
     ]
 
     # List of whether to run Global/Territory US SCGHGs
-    # Can be "terr_us" and/or "global"
-    terr_us = ["terr_us", "global"]
+    # Can be "global", "terr_us", or both
+    domains = ["global",]
     
     # Whether to save out global consumption no pulse
     gcnp = True
@@ -68,14 +68,14 @@ if __name__ == "__main__":
         else:
             sector.append(sec)
     
-    terr_us_ls = []
-    for dom in terr_us:
+    domains_ls = []
+    for dom in domains:
         if dom == "terr_us":
-            terr_us_ls.append(True)
+            domains_ls.append(True)
         elif dom == "global":
-            terr_us_ls.append(False)
+            domains_ls.append(False)
         else:
-            raise ValueError("Invalid choice for terr_us, values in list should be \"terr_us\" or \"global\"")
+            raise ValueError("Invalid choice for domains, values in list should be \"terr_us\" or \"global\"")
 
     eta_rho_conversion_dict = {
         "1.5% Ramsey": [1.016010255, 9.149608e-05],
@@ -105,20 +105,20 @@ if __name__ == "__main__":
 
     risk_combos = [["risk_aversion", "euler_ramsey"]]  # Default
 
-    for terr_us in terr_us_ls:
-        locale = "Territory US" if terr_us else "Global"
+    for dom in domains_ls:
+        locale = "Territory US" if dom else "Global"
         print("=========================")
         print(f"Generating {locale} SCCs")
         print("=========================")
         print("")
-        if terr_us:
+        if dom:
             sector = [i + "_USA" for i in sector]
         epa_scghgs(
             sector,
             conf,
             conf_name,
             gas_conversion_dict,
-            terr_us,
+            dom,
             eta_rhos,
             risk_combos,
             pulse_years=pulse_years,
