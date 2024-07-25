@@ -136,7 +136,7 @@ By default, the script will produce the expected SC-GHGs as a `.csv`. The user a
 
 DSCIM-FACTS-EPA can be run non-interactively, without using the command line tool, using `scripts/batch_scghg.py`. 
 
-1. Modify the script to include the outputs desired:
+1. Modify `scripts/batch_scghg.py` to include the outputs desired from your run:
 ```python
 ####################
     # EDIT these parameters:
