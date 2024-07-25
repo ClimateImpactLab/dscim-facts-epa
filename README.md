@@ -10,6 +10,7 @@ This README is organized as follows:
 - [Types of run cases](#types-of-run-cases)
 - [Installation and setup of `dscim-facts-epa`](#installation-and-setup-of-dscim-facts-epa)
 - [Running `dscim-facts-epa` SC-GHG command line tool out of the box](#running-sc-ghgs)
+- [Running `dscim-facts-epa` SC-GHGs in batch mode](#running-sc-ghgs-in-batch-mode)
 - [DSCIM + FACTS run process overview](#dscim--facts-run-process-overview)
 - [Format of GMST, OHC, GMSL input files](#formatting-files)
 - FACTS-specific setup
