@@ -10,6 +10,7 @@ This README is organized as follows:
 - [Types of run cases](#types-of-run-cases)
 - [Installation and setup of `dscim-facts-epa`](#installation-and-setup-of-dscim-facts-epa)
 - [Running `dscim-facts-epa` SC-GHG command line tool out of the box](#running-sc-ghgs)
+- [Running `dscim-facts-epa` SC-GHGs in batch mode](#running-sc-ghgs-in-batch-mode)
 - [DSCIM + FACTS run process overview](#dscim--facts-run-process-overview)
 - [Format of GMST, OHC, GMSL input files](#formatting-files)
 - FACTS-specific setup
@@ -87,7 +88,7 @@ Default SC-GHGs (CO2, CH4, N2O for pulse years 2020, 2030, 2040, 2050, 2060, 207
 
 After setting up the dscim-facts-epa environment and input data, if not already active, activate the environment by typing `conda activate dscim-facts-epa`. You can run SC-GHG calculations under different conditions with or without a config file.
 
-Assuming you are in the `dscim-facts-epa/scripts` folder, if you want to run the cil-spec (default) SC-GHGs, you can run:
+Assuming you are in the `dscim-facts-epa/scripts` folder, if you want to run the CIL spec (default) SC-GHGs, you can run:
 ```bash
 python command_line_scghg.py
 ```
@@ -130,7 +131,73 @@ By default, the script will produce the expected SC-GHGs as a `.csv`. The user a
 
 <!-- Consider adding a section that suggests a test run of the default SC-GHGs. -->
 
+
+## Running SC-GHGs in batch mode
+
+DSCIM-FACTS-EPA can be run non-interactively, without using the command line tool, using `scripts/batch_scghg.py`. 
+
+1. Modify `scripts/batch_scghg.py` to include the outputs desired from your run:
+```python
+    ####################
+    # EDIT these parameters:
+    
+    # Which sectors to save out from: 
+    # "combined", "coastal", "agriculture", "mortality", "energy", "labor",
+    sectors = [
+        "combined",
+        "coastal",
+        "agriculture",
+        "mortality",
+        "energy",
+        "labor",
+    ]
+
+    # Pulse years to save out
+    # pulse years should be present in climate files
+    pulse_years = [
+        2020,
+        2030,
+        2040,
+        2050,
+    ]
+
+    # Target discount rates from:
+    # "1.5% Ramsey", "2.0% Ramsey", "2.5% Ramsey",
+    target_disc = [
+        "1.5% Ramsey",
+        "2.0% Ramsey",
+        "2.5% Ramsey",
+    ]
+
+    # List of whether to run Global/Territory US SCGHGs
+    # Can be "global", "terr_us", or both
+    terr_us = ["global",]
+    
+    # Whether to save out global consumption no pulse
+    gcnp = True
+
+    # Whether to save out uncollapsed SCGHGs
+    uncollapsed = True
+    ####################
+```
+2. After setting up the dscim-facts-epa environment and input data, if not already active, activate the environment by typing `conda activate dscim-facts-epa`. You can run SC-GHG calculations under different conditions with or without a config file.
+3. Run the SC-GHG computation. Assuming you are in the `dscim-facts-epa/scripts` folder, if you want to run the CIL spec (default) SC-GHGs, you can run:
+```bash
+python batch_scghg.py
+```
+If you have run FACTS, or are using a GMSL file of your own, make sure to edit the script to point to the correct config file before running the above command: 
+```python
+    ####################
+    # EDIT path and filename to config if necessary.
+    # Path to the config for this run. Default is "current working directory", cwd
+    conf_name = "generated_conf.yml"
+    fullpath = Path(os.getcwd()) / conf_name
+    conf = read_replace_conf(fullpath)
+
+```
+
 <!-- Consider splitting the next sections into their own markdown README file -->
+
 
 # DSCIM + FACTS Run process overview
 Ignoring environment setup for a moment, the general run process for use-case 2 -- running DSCIM-FACTS-EPA with exogenous climate inputs and using FACTS to generate GMSL from GMST and OHC files -- is summarized here. Detailed instructions for each step are provided later in the README.
