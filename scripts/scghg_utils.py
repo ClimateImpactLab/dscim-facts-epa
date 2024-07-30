@@ -12,7 +12,7 @@ import subprocess
 from datetime import date
 
 # EDIT this line upon each release of dscim-facts-epa
-VERSION = "0.2.0"
+VERSION = "0.4.0"
 
 discount_conversion_dict = {
     "1.016010255_9.149608e-05": "1.5% Ramsey",
@@ -92,7 +92,7 @@ def generate_meta(
         dict(
             machine=machine_name,
             commit=gitlabel,
-            url=f"https://github.com/ClimateImpactLab/dscim-epa/commit/{gitlabel}",
+            url=f"https://github.com/ClimateImpactLab/dscim-facts-epa/commit/{gitlabel}",
         )
     )
 
@@ -184,7 +184,7 @@ def epa_scghg(
 ):
 
     if menu_option != "risk_aversion":
-        raise Exception("DSCIM-EPA provides only 'risk_aversion' SCGHGs")
+        raise Exception("DSCIM-FACTS-EPA provides only 'risk_aversion' SCGHGs")
 
     # Manually add other config parameters that are not meant to change run to run
     conf["global_parameters"] = {

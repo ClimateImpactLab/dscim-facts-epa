@@ -35,11 +35,11 @@ if __name__ == "__main__":
             ],
             default=[
                 CAMEL_v,
-                "coastal_v" + coastal_v,
-                "agriculture",
-                "mortality_v" + mortality_v,
-                "energy",
-                "labor",
+                # "coastal_v" + coastal_v,
+                # "agriculture",
+                # "mortality_v" + mortality_v,
+                # "energy",
+                # "labor",
             ],
         ),
         inquirer.Checkbox(
@@ -66,7 +66,9 @@ if __name__ == "__main__":
             "U.S.",
             message="Select valuation type",
             choices=[("Global", False), ("Territorial U.S.", True)],
-            default=[False, True],
+            default=[False, 
+                    #  True
+                     ],
         ),
         inquirer.Checkbox(
             "files",
