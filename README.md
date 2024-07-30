@@ -189,7 +189,7 @@ If you have run FACTS, or are using a GMSL file of your own, make sure to edit t
 ```python
     ####################
     # EDIT path and filename to config if necessary.
-    # Path to the config for this run
+    # Path to the config for this run. Default is "current working directory", cwd
     conf_name = "generated_conf.yml"
     fullpath = Path(os.getcwd()) / conf_name
     conf = read_replace_conf(fullpath)
