@@ -6,10 +6,12 @@ from scghg_utils import read_replace_conf, epa_scghgs, VERSION
 
 if __name__ == "__main__":
 
-    # Path to the config for this run
+    ####################
+    # EDIT path and filename to config if necessary.
+    # Path to the config for this run. Default is "current working directory", cwd
     conf_name = "generated_conf.yml"
-    master = Path(os.getcwd()) / conf_name
-    conf = read_replace_conf(master)
+    fullpath = Path(os.getcwd()) / conf_name
+    conf = read_replace_conf(fullpath)
 
     ####################
     # EDIT these parameters:

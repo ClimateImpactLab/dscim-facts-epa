@@ -138,7 +138,7 @@ DSCIM-FACTS-EPA can be run non-interactively, without using the command line too
 
 1. Modify `scripts/batch_scghg.py` to include the outputs desired from your run:
 ```python
-####################
+    ####################
     # EDIT these parameters:
     
     # Which sectors to save out from: 
@@ -185,9 +185,15 @@ DSCIM-FACTS-EPA can be run non-interactively, without using the command line too
 ```bash
 python batch_scghg.py
 ```
-Alternatively, if you have run FACTS, or are using a GMSL file of your own, you can run:
-```bash
-python batch_scghg.py name_of_config.yml
+If you have run FACTS, or are using a GMSL file of your own, make sure to edit the script to point to the correct config file before running the above command: 
+```python
+    ####################
+    # EDIT path and filename to config if necessary.
+    # Path to the config for this run
+    conf_name = "generated_conf.yml"
+    fullpath = Path(os.getcwd()) / conf_name
+    conf = read_replace_conf(fullpath)
+
 ```
 
 <!-- Consider splitting the next sections into their own markdown README file -->
