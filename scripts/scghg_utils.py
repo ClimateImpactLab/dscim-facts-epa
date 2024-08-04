@@ -12,7 +12,7 @@ import subprocess
 from datetime import date
 
 # EDIT this line upon each release of dscim-facts-epa
-VERSION = "0.2.0"
+VERSION = "0.4.0"
 
 discount_conversion_dict = {
     "1.016010255_9.149608e-05": "1.5% Ramsey",
@@ -92,7 +92,7 @@ def generate_meta(
         dict(
             machine=machine_name,
             commit=gitlabel,
-            url=f"https://github.com/ClimateImpactLab/dscim-epa/commit/{gitlabel}",
+            url=f"https://github.com/ClimateImpactLab/dscim-facts-epa/commit/{gitlabel}",
         )
     )
 
@@ -184,7 +184,7 @@ def epa_scghg(
 ):
 
     if menu_option != "risk_aversion":
-        raise Exception("DSCIM-EPA provides only 'risk_aversion' SCGHGs")
+        raise Exception("DSCIM-FACTS-EPA provides only 'risk_aversion' SCGHGs")
 
     # Manually add other config parameters that are not meant to change run to run
     conf["global_parameters"] = {
@@ -520,18 +520,23 @@ def epa_scghgs(
                 for key, value in attrs.items():
                     f.write("%s:%s\n" % (key, value))
 
-    # Saves global consumption no pulse
-    # Fewer GCNPs are saved because they vary across fewer dimensions than SCGHGs
-    if gcnp:
-        out_dir = Path(conf["save_path"]) / "gcnp"
-        makedir(out_dir)
-        df_full_gcnp.attrs = attrs
-        print(f"Saving {sector_short} global consumption no pulse (gcnp)")
-        df_full_gcnp.to_netcdf(
-            out_dir / f"{conf_savename}gcnp-dscim-{sector_short}.nc4"
-        )
-        print(f"gcnp is available in {str(out_dir)}")
+            # save global consumption no pulse for each sector. Does not vary by pulse_year
+            if pulse_year == pulse_years[0]:
+                # Fewer GCNPs are saved because they vary across fewer dimensions than SCGHGs
+                if gcnp:
+                    out_dir = Path(conf["save_path"]) / "gcnp"
+                    makedir(out_dir)
+                    df_full_gcnp.attrs = attrs
+                    print(f"Saving {sector_short} global consumption no pulse (gcnp)")
+                    df_full_gcnp.to_netcdf(
+                        out_dir / f"{conf_savename}gcnp-dscim-{sector_short}.nc4"
+                    )
+                    print(f"gcnp is available in {str(out_dir)}")
 
     print(
         f"{'territorial_us' if terr_us else 'global'}_scghgs are available in {str(Path(conf['save_path']))}/{'territorial_us' if terr_us else 'global'}_scghgs"
     )
+    if uncollapsed:
+        print(
+            f"Full distributions of {'territorial_us' if terr_us else 'global'}_scghgs are available in {str(Path(conf['save_path']))}/{'territorial_us' if terr_us else 'global'}_scghgs/full_distributions"
+        )
