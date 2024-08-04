@@ -120,4 +120,4 @@ if __name__ == "__main__":
             gcnp=gcnp,
             uncollapsed=uncollapsed,
         )
-    print(f"Full results are available in {str(Path(conf['save_path']))}")
+    print(f"All results are available in {str(Path(conf['save_path']))}")

@@ -520,18 +520,23 @@ def epa_scghgs(
                 for key, value in attrs.items():
                     f.write("%s:%s\n" % (key, value))
 
-    # Saves global consumption no pulse
-    # Fewer GCNPs are saved because they vary across fewer dimensions than SCGHGs
-    if gcnp:
-        out_dir = Path(conf["save_path"]) / "gcnp"
-        makedir(out_dir)
-        df_full_gcnp.attrs = attrs
-        print(f"Saving {sector_short} global consumption no pulse (gcnp)")
-        df_full_gcnp.to_netcdf(
-            out_dir / f"{conf_savename}gcnp-dscim-{sector_short}.nc4"
-        )
-        print(f"gcnp is available in {str(out_dir)}")
+            # save global consumption no pulse for each sector. Does not vary by pulse_year
+            if pulse_year == pulse_years[0]:
+                # Fewer GCNPs are saved because they vary across fewer dimensions than SCGHGs
+                if gcnp:
+                    out_dir = Path(conf["save_path"]) / "gcnp"
+                    makedir(out_dir)
+                    df_full_gcnp.attrs = attrs
+                    print(f"Saving {sector_short} global consumption no pulse (gcnp)")
+                    df_full_gcnp.to_netcdf(
+                        out_dir / f"{conf_savename}gcnp-dscim-{sector_short}.nc4"
+                    )
+                    print(f"gcnp is available in {str(out_dir)}")
 
     print(
         f"{'territorial_us' if terr_us else 'global'}_scghgs are available in {str(Path(conf['save_path']))}/{'territorial_us' if terr_us else 'global'}_scghgs"
     )
+    if uncollapsed:
+        print(
+            f"Full distributions of {'territorial_us' if terr_us else 'global'}_scghgs are available in {str(Path(conf['save_path']))}/{'territorial_us' if terr_us else 'global'}_scghgs/full_distributions"
+        )

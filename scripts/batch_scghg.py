@@ -85,10 +85,10 @@ if __name__ == "__main__":
         "2.5% Ramsey": [1.421158116, 0.00461878399],
     }
 
-    eta_rhos = []
+    etas_rhos = []
     for er in target_disc:
         if er in eta_rho_conversion_dict:
-            eta_rhos.append(eta_rho_conversion_dict[er])
+            etas_rhos.append(eta_rho_conversion_dict[er])
         else:
             raise ValueError("Invalid etas_rhos selection")
 
@@ -121,10 +121,10 @@ if __name__ == "__main__":
             conf_name,
             gas_conversion_dict,
             dom,
-            eta_rhos,
+            etas_rhos,
             risk_combos,
             pulse_years=pulse_years,
             gcnp=gcnp,
             uncollapsed=uncollapsed,
         )
-    print(f"Full results are available in {str(Path(conf['save_path']))}")
+    print(f"All results are available in {str(Path(conf['save_path']))}")
