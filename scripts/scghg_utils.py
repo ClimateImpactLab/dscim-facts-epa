@@ -183,9 +183,6 @@ def epa_scghg(
     menu_option="risk_aversion",
 ):
 
-    if menu_option != "risk_aversion":
-        raise Exception("DSCIM-FACTS-EPA provides only 'risk_aversion' SCGHGs")
-
     # Manually add other config parameters that are not meant to change run to run
     conf["global_parameters"] = {
         "fair_aggregation": ["uncollapsed"],
@@ -271,6 +268,21 @@ def epa_scghg(
                 )
             else:
                 return self.damage_function["params"]
+            
+    # very poor design. copied this overloaded class to also work for adding_up recipe
+    class Baseline(dscim.menu.baseline.Baseline):
+        @property
+        def damage_function_coefficients(self) -> xr.Dataset:
+            """
+            Load damage function coefficients if the coefficients are provided by the user.
+            Otherwise, compute them.
+            """
+            if self.damage_function_path is not None:
+                return xr.open_dataset(
+                    f"{self.damage_function_path}/{self.NAME}_{self.discounting_type}_eta{round(self.eta,3)}_rho{round(self.rho,3)}_dfc.nc4"
+                )
+            else:
+                return self.damage_function["params"]
 
     # List of kwargs to add to kwargs read in from the config file for global discounting and damages
     add_kwargs = {
@@ -299,12 +311,18 @@ def epa_scghg(
         kwargs_global.update({k: v})
 
     # For both territorial U.S. and global SCGHGs, endogenous Ramsey discounting based on global socioeconomics is used
-    menu_item_global = RiskAversionRecipe(**kwargs_global)
+    if menu_option == "risk_aversion":
+        menu_item_global = RiskAversionRecipe(**kwargs_global)
+    elif menu_option == "risk_neutral": #"adding_up":
+        menu_item_global = Baseline(**kwargs_global)
     df = menu_item_global.uncollapsed_discount_factors
 
     # Compute damages for global or U.S. runs
     if terr_us:
-        menu_item_terr_us = RiskAversionRecipe(**kwargs_terr_us)
+        if menu_option == "risk_aversion":
+            menu_item_terr_us = RiskAversionRecipe(**kwargs_terr_us)
+        elif menu_option == "risk_neutral": #"adding_up":
+            menu_item_terr_us = Baseline(**kwargs_terr_us)
         md = menu_item_terr_us.uncollapsed_marginal_damages
     else:
         md = menu_item_global.uncollapsed_marginal_damages
@@ -476,7 +494,7 @@ def epa_scghgs(
                     )
                     uncollapsed_gas_scghgs.to_csv(
                         out_dir
-                        / f"{conf_savename}sc-{gas}-dscim-{sector_short}-{pulse_year}-n10000.csv"
+                        / f"{conf_savename}sc-{gas}-dscim-{menu_option}-{sector_short}-{pulse_year}-n10000.csv"
                     )
                     attrs_save = attrs.copy()
                     attrs_save["gases"] = gas
@@ -510,7 +528,7 @@ def epa_scghgs(
                 )
                 collapsed_gas_scghg.to_csv(
                     out_dir
-                    / f"{conf_savename}sc-{gas}-dscim-{sector_short}-{pulse_year}.csv"
+                    / f"{conf_savename}sc-{gas}-dscim-{menu_option}-{sector_short}-{pulse_year}.csv"
                 )
 
             # Creates attribute files

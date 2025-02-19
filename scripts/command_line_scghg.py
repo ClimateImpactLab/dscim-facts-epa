@@ -43,6 +43,17 @@ if __name__ == "__main__":
             ],
         ),
         inquirer.Checkbox(
+            "menu_option",
+            message="Select risk type",
+            choices=[
+                ("Risk Aversion", "risk_aversion"),
+                ("Risk Neutral", "risk_neutral"),
+            ],
+            default=[
+                "risk_aversion",
+            ],
+        ),
+        inquirer.Checkbox(
             "eta_rhos",
             message="Select discount rates",
             choices=[
@@ -83,6 +94,7 @@ if __name__ == "__main__":
     answers = inquirer.prompt(questions)
     eta_rhos = answers["eta_rhos"]
     sector = answers["sector"]
+    menu_options = answers["menu_option"]
     pulse_years = answers["pulse_year"]
     terr_us_ls = answers["U.S."]
     gcnp = True if "gcnp" in answers["files"] else False
@@ -98,7 +110,7 @@ if __name__ == "__main__":
         if gas not in gas_conversion_dict.keys():
             gas_conversion_dict[gas] = gas
 
-    risk_combos = [["risk_aversion", "euler_ramsey"]]  # Default
+    risk_combos = [[mo, "euler_ramsey"] for mo in menu_options]
 
     for terr_us in terr_us_ls:
         locale = "Territory US" if terr_us else "Global"
