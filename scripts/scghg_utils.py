@@ -405,6 +405,11 @@ def epa_scghgs(
             all_arrays_uscghg = []
             all_arrays_gcnp = []
 
+            if (menu_option == "risk_neutral") and ("CAMEL" not in sector):
+                import warnings
+                warnings.warn(f"Risk neutral SCGHGs are only available for the Combined sector. Skipping {sector}...")
+                continue
+            
             if re.split("_", sector)[0] == "CAMEL":
                 sector_short = "combined"
             else:
