@@ -23,6 +23,17 @@ if __name__ == "__main__":
     pulse_year_choices = [(str(i), i) for i in pulse_years]
     questions = [
         inquirer.Checkbox(
+            "menu_option",
+            message="Select risk type (If choosing Risk Neutral, the only available sector is Combined)",
+            choices=[
+                ("Risk Aversion", "risk_aversion"),
+                ("Risk Neutral", "risk_neutral"),
+            ],
+            default=[
+                "risk_aversion",
+            ],
+        ),
+        inquirer.Checkbox(
             "sector",
             message="Select sector",
             choices=[
@@ -40,17 +51,6 @@ if __name__ == "__main__":
                 # "mortality_v" + mortality_v,
                 # "energy",
                 # "labor",
-            ],
-        ),
-        inquirer.Checkbox(
-            "menu_option",
-            message="Select risk type",
-            choices=[
-                ("Risk Aversion", "risk_aversion"),
-                ("Risk Neutral", "risk_neutral"),
-            ],
-            default=[
-                "risk_aversion",
             ],
         ),
         inquirer.Checkbox(
