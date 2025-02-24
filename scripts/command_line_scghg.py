@@ -2,6 +2,8 @@ import inquirer
 from pathlib import Path
 from pyfiglet import Figlet
 import os
+import sys
+
 from scghg_utils import read_replace_conf, epa_scghgs, VERSION
 
 if __name__ == "__main__":
@@ -10,8 +12,13 @@ if __name__ == "__main__":
     print(f.renderText("DSCIM"))
     print(f"... dscim-facts-epa version {VERSION} ...")
 
+    args = sys.argv
+    if len(args) == 1:
+        conf_name = "generated_conf.yml"
+    else:
+        conf_name = args[1]
+
     # Path to the config for this run
-    conf_name = "generated_conf.yml"
     master = Path(os.getcwd()) / conf_name
     conf = read_replace_conf(master)
 
