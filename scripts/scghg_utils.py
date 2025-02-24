@@ -12,7 +12,7 @@ import subprocess
 from datetime import date
 
 # EDIT this line upon each release of dscim-facts-epa
-VERSION = "0.4.0"
+VERSION = "0.5.0"
 
 discount_conversion_dict = {
     "1.016010255_9.149608e-05": "1.5% Ramsey",
