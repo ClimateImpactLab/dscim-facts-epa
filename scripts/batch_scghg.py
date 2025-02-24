@@ -27,6 +27,9 @@ if __name__ == "__main__":
         "labor",
     ]
 
+    # Risk options to save out
+    risk_options = ["risk_aversion", "risk_neutral", ]
+
     # Pulse years to save out
     # pulse years should be present in climate files
     pulse_years = [
@@ -105,8 +108,8 @@ if __name__ == "__main__":
     if len(etas_rhos) == 0:
         raise ValueError("You must select at least one eta, rho combination")
 
-    risk_combos = [["risk_aversion", "euler_ramsey"]]  # Default
-
+    risk_combos = [[ro, "euler_ramsey"] for ro in risk_options]
+ 
     for dom in domains_ls:
         locale = "Territory US" if dom else "Global"
         print("=========================")
