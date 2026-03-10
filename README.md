@@ -460,8 +460,6 @@ Damage Functions
 
 This section describes the pre-computed damage function coefficients for computing the Social Cost of Greenhouse Gases (SC-GHG) with DSCIM-FACTS-EPA. The coefficients are quadratic regressions of globally-aggregated climate damages on temperature and sea level, estimated year by year across 10,000 probabilistic socioeconomic-climate draws.
 
-For methodological details, see [References](#references).
-
 ### Directory structure
 
 ```
