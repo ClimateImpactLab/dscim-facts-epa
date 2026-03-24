@@ -458,9 +458,9 @@ Damage Functions
 
 ## Damage function coefficients
 
-The `input/damage_functions/` directory contains pre-computed damage function coefficients used to translate climate projections into monetized damages. The coefficients are quadratic regressions of globally-aggregated climate damages on temperature and sea level, estimated year by year across 10,000 probabilistic socioeconomic-climate draws.
+The `input/damage_functions/` directory contains pre-computed damage function coefficients used to translate climate projections into monetized damages. The coefficients are quadratic regressions of globally- or sub-globally-aggregated climate damages on global mean temperature and sea level, estimated for each year and socioeconomics pathway**. (**Note, damage functions are initially estimated on damages based on Shared Socioeconomic Pathways, or SSPs. Those damage functions are then used to emulate damage functions for Resources for the Future Socioeconomic Pathways, or RFF-SPs, provided here).
 
-For details on units, climate variable baselines, discounting, recipe definitions, and guidance on integrating the coefficients into other models, see the companion documentation in [`DAMAGE_FUNCTIONS.md`](DAMAGE_FUNCTIONS.md).
+For references and details on units, climate variable baselines, recipe definitions, and guidance on using the coefficients, see the companion documentation in [`DAMAGE_FUNCTIONS.md`](DAMAGE_FUNCTIONS.md).
 
 
 ### Directory structure
@@ -468,8 +468,8 @@ For details on units, climate variable baselines, discounting, recipe definition
 ```
 damage_functions/
 |-- damage_function_weights.nc4       # Emulator weights
-|-- CAMEL_m1_c0.20/                   # Combined sector, global
-|-- CAMEL_m1_c0.20_USA/               # Combined sector, USA
+|-- CAMEL_m1_c0.20/                   # Combined sectors, global
+|-- CAMEL_m1_c0.20_USA/               # Combined sectors, USA
 |-- agriculture/                      # Agriculture, global
 |-- agriculture_USA/                  # Agriculture, USA
 |-- coastal_v0.20/                    # Coastal, global
@@ -482,26 +482,19 @@ damage_functions/
 |-- mortality_v1_USA/                 # Mortality, USA
 ```
 
-**CAMEL** (Coastal, Agriculture, Mortality, Energy, Labor) is the combined multi-sector aggregate and the primary output for computing SC-GHGs. The suffix `m1_c0.20` indicates mortality version 1 and coastal version 0.20. Mortality v1 uses VSL (Value of Statistical Life) valuation with ISO-level deaths and impact-region-level costs, and is the EPA main specification. Coastal v0.20 is the original EPA specification using FACTS-based sea level projections (Kopp et al. 2023). Each sector also has a `_USA` variant for territorial U.S. damages.
+**CAMEL** (Coastal, Agriculture, Mortality, Energy, Labor) is the combined multi-sector aggregate and the primary output for computing SC-GHGs. The suffix `m1_c0.20` indicates specific mortality and coastal versions used in the main EPA specification here. Each sector also has a `_USA` variant for territorial U.S. damages.
 
 
 ### File naming and parameters
 
-Files follow the pattern `{recipe}_euler_ramsey_eta{eta}_rho{rho}_dfc.nc4`, where `recipe` is either `risk_aversion` (primary EPA specification) or `adding_up` (CAMEL only).
-
-| Near-term discount rate | eta     | rho     |
-|------------------------|---------|---------|
-| 1.5% Ramsey            | 1.016   | 0.0     |
-| 2.0% Ramsey            | 1.244   | 0.002   |
-| 2.5% Ramsey            | 1.421   | 0.005   |
-| 3.0% Ramsey            | 1.568   | 0.008   |
+Files follow the pattern `{recipe}_euler_ramsey_eta{eta}_rho{rho}_dfc.nc4`, where `recipe` is either `risk_aversion` (primary EPA specification) or `adding_up` (CAMEL only). `risk_aversion` damage functions include the price of uncertainty in the underlying statistical relationships between impact region damages and weather, whereas `adding_up` damage functions do not (they are risk neutral). NOTE: `euler_ramsey` and `rho` in the filenames can be ignored - damage functions do not vary by these traits. `eta` can additionally be ignored in the `adding_up` filenames for the same reason - those damage functions do not vary by `eta`.
 
 
 ### Data variables
 
 Each `.nc4` file has dimensions `year` (2020 to 2300), `runid` (1 to 10,000), and `discount_type` (1). The data variables are:
 
-| Variable               | Sectors | Description |
+| Variable Name          | Sectors | Description |
 |------------------------|---------|-------------|
 | `anomaly`              | Temperature-driven, CAMEL | Linear GMST coefficient |
 | `np.power(anomaly, 2)` | Temperature-driven, CAMEL | Quadratic GMST coefficient |
@@ -514,10 +507,10 @@ Each `.nc4` file has dimensions `year` (2020 to 2300), `runid` (1 to 10,000), an
 The damage functions are quadratic regressions without intercept. For CAMEL:
 
 ```
-damages = beta_anomaly * T + beta_anomaly2 * T^2 + beta_gmsl * S + beta_gmsl2 * S^2
+damages = beta_gmst * T + beta_gmst2 * T^2 + beta_gmsl * S + beta_gmsl2 * S^2
 ```
 
-where `T` is GMST anomaly in Celsius (relative to 2001-2010) and `S` is GMSL in centimeters (relative to 1991-2009). The result is in 2019 PPP-adjusted USD.
+where `T` is GMST anomaly in Celsius (relative to 2001-2010) and `S` is GMSL in centimeters (relative to 1991-2009). The result is in 2019 PPP-adjusted USD. Here's an example of calculating CAMEL damages for one year and one RFF-SP-climate draw (`runid`), given a GMST and GMSL value:
 
 ```python
 import xarray as xr
@@ -527,13 +520,15 @@ ds = xr.open_dataset(
     "risk_aversion_euler_ramsey_eta1.244_rho0.002_dfc.nc4"
 )
 
-beta_T  = ds["anomaly"].sel(year=2050, runid=1).values
-beta_T2 = ds["np.power(anomaly, 2)"].sel(year=2050, runid=1).values
-beta_S  = ds["gmsl"].sel(year=2050, runid=1).values
-beta_S2 = ds["np.power(gmsl, 2)"].sel(year=2050, runid=1).values
+# select one year and one runid from the damage function coefficients 
+# to demonstrate the damage calculation
+beta_gmst  = ds["anomaly"].sel(year=2050, runid=1).values
+beta_gmst2 = ds["np.power(anomaly, 2)"].sel(year=2050, runid=1).values
+beta_gmsl  = ds["gmsl"].sel(year=2050, runid=1).values
+beta_gmsl2 = ds["np.power(gmsl, 2)"].sel(year=2050, runid=1).values
 
 T = 2.0   # GMST anomaly in Celsius relative to 2001-2010
 S = 30.0  # GMSL in cm relative to 1991-2009
-damages = beta_T * T + beta_T2 * T**2 + beta_S * S + beta_S2 * S**2
+damages = beta_gmst * T + beta_gmst2 * T**2 + beta_gmsl * S + beta_gmsl2 * S**2
 # Result is in 2019 PPP-adjusted USD
 ```

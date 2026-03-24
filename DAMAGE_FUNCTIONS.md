@@ -2,7 +2,7 @@
 
 This document provides detailed documentation for the pre-computed damage function coefficients distributed with DSCIM-FACTS-EPA. These coefficients are the core input for translating climate projections (global mean surface temperature and global mean sea level) into monetized climate damages used to compute the Social Cost of Greenhouse Gases (SC-GHG).
 
-The damage functions were estimated by the Climate Impact Lab (CIL) using the Data-driven Spatial Climate Impact Model (DSCIM). The underlying model computes sector-specific climate damages at roughly 24,000 impact regions worldwide, then aggregates them to the global (or national) level. The coefficients provided here are the result of fitting quadratic regression functions to those globally aggregated damages, year by year, for each of 10,000 probabilistic socioeconomic-climate parameter draws.
+The damage functions were estimated by the Climate Impact Lab (CIL) using the Data-driven Spatial Climate Impact Model (DSCIM). The underlying model computes sector-specific climate damages at roughly 24,000 impact regions worldwide, then aggregates them to the global (or national) level. The coefficients provided here are the result of fitting quadratic regression functions to those aggregated damages, year by year for each socioeconomics pathway**. (**Note, damage functions are initially estimated on damages based on Shared Socioeconomic Pathways, or SSPs. Those damage functions are then used to emulate damage functions for Resources for the Future Socioeconomic Pathways, or RFF-SPs, provided here).
 
 For methodological details, see [References](#references).
 
@@ -14,8 +14,8 @@ After running `directory_setup.py` (or downloading and unzipping the input data)
 ```
 damage_functions/
 |-- damage_function_weights.nc4       # Emulator weights
-|-- CAMEL_m1_c0.20/                   # Combined sector, global
-|-- CAMEL_m1_c0.20_USA/               # Combined sector, USA
+|-- CAMEL_m1_c0.20/                   # Combined sectors, global
+|-- CAMEL_m1_c0.20_USA/               # Combined sectors, USA
 |-- agriculture/                      # Agriculture, global
 |-- agriculture_USA/                  # Agriculture, USA
 |-- coastal_v0.20/                    # Coastal, global
@@ -28,7 +28,7 @@ damage_functions/
 |-- mortality_v1_USA/                 # Mortality, USA
 ```
 
-Each sector directory contains NetCDF4 files with damage function coefficients for different combinations of valuation recipe and Ramsey discount rate parameters.
+Each sector directory contains NetCDF4 files with damage function coefficients for different combinations of valuation recipe and `eta` (elasticity of marginal utility of consumption) parameters.
 
 
 ## Sectors
@@ -42,14 +42,13 @@ Each sector directory contains NetCDF4 files with damage function coefficients f
 | `mortality_v1`     | Mortality damages (version 1) |
 | `CAMEL_m1_c0.20`   | **Combined**: all five sectors above, aggregated |
 
-**CAMEL** stands for Coastal, Agriculture, Mortality, Energy, and Labor. The suffix `m1_c0.20` indicates mortality version 1 and coastal version 0.20. Mortality v1 uses VSL (Value of Statistical Life) valuation with ISO-level deaths and impact-region-level costs, and is the EPA main specification. Coastal v0.20 is the original EPA specification using FACTS-based sea level projections (Kopp et al. 2023). CAMEL is the combined multi-sector damage function and is the primary output for computing aggregate SC-GHGs.
-
-There is also an intermediate aggregate, **AMEL** (Agriculture, Mortality, Energy, Labor, i.e. CAMEL without the coastal component), which appears in the codebase configuration but does not have pre-computed coefficient files.
+**CAMEL** stands for Coastal, Agriculture, Mortality, Energy, and Labor. The suffix `m1_c0.20` indicates mortality version 1 and coastal version 0.20. Mortality v1 uses VSL (Value of Statistical Life) valuation with ISO-level VSL applied to deaths and impact-region-level VSL applied to adaptation costs, and is the EPA main specification. Coastal v0.20 is the original EPA specification using FACTS-based sea level projections (Kopp et al. 2023). CAMEL is the combined multi-sector damage function and is the primary output for computing aggregate SC-GHGs.
 
 Each sector has a `_USA` variant containing coefficients for damages restricted to the United States, used for computing territorial U.S. SC-GHGs.
 
-
 ## File naming convention
+
+> Note: the damage function coefficient filenames have many quirks that can be confusing, so we aim to be transparent about those here. The quirks are a function of the way settings are handled and filenames are set up in the `dscim` library. We are planning to improve output names among other things in a future release.
 
 Files follow this pattern:
 
@@ -60,29 +59,11 @@ Files follow this pattern:
 Where:
 
 - **recipe**: The valuation approach. Either `risk_aversion` or `adding_up`.
-  - `risk_aversion`: Certainty-equivalent damages accounting for risk aversion across climate and socioeconomic uncertainty. This is the primary recipe used in the EPA specification.
-  - `adding_up`: A simpler approach that sums damages across regions without certainty-equivalent adjustments. Only available for the CAMEL sector.
-- **euler_ramsey**: The discounting framework (Euler equation with Ramsey discounting). All files use this framework.
-- **eta**: Elasticity of marginal utility of consumption (the concavity of the CRRA utility function).
-- **rho**: Pure rate of time preference.
-
-### Available parameter combinations
-
-| Near-term discount rate | eta     | rho     |
-|------------------------|---------|---------|
-| 1.5% Ramsey            | 1.016   | 0.0     |
-| 2.0% Ramsey            | 1.244   | 0.002   |
-| 2.5% Ramsey            | 1.421   | 0.005   |
-| 3.0% Ramsey            | 1.568   | 0.008   |
-
-These four (eta, rho) pairs correspond to the near-term certainty-equivalent discount rates described in the EPA technical report. The label (e.g. "2.0% Ramsey") is approximate and used for identification only. The actual discount rate varies over time because it is computed from the realized consumption growth rate of each draw, following stochastic Ramsey discounting (Section 5.1 of the DSCIM User Manual, eq. 11):
-
-```
-SDF_ky = product over tau from u to y of exp( -(rho + eta * g_c_k_tau) )
-```
-
-where `g_c_k_tau = ln(c_k_tau / c_k_tau-1)` is the consumption growth rate of draw `k` in year `tau`, and `c_k_tau` is global GDP minus climate damages in that draw and year.
-
+  - `risk_aversion`: Indicates the damage functions were fit on certainty-equivalent damages accounting for uncertainty in the underlying statistical relationships between impact region damages and weather. This is the primary recipe used in the EPA specification.
+  - `adding_up`: Indicates the damage functions were fit on mean, not certainty equivalent, damages. This is also known as "risk neutral". Only available for the CAMEL sector.
+- **euler_ramsey**: Discount method. **This can be ignored** - damage functions do not vary by discount type. 
+- **eta**: Elasticity of marginal utility of consumption (the concavity of the CRRA utility function) used in the certainty-equivalent calculation. This setting is **only applicable to `risk_aversion` damage functions**. Although there exists an `adding_up` file for each `eta` in the directory, they are exactly the same.
+- **rho**: Pure rate of time preference. **This can be ignored** - damage functions do not vary by `rho`. 
 
 ## Data structure of coefficient files
 
@@ -92,7 +73,7 @@ Each `.nc4` file is a NetCDF4 dataset with the following structure:
 
 | Dimension        | Size   | Description |
 |-----------------|--------|-------------|
-| `discount_type` | 1      | Discounting framework (always `"euler_ramsey"`) |
+| `discount_type` | 1      | Discounting framework (always `"euler_ramsey"`) **Should be ignored** |
 | `year`          | 281    | Year of the damage function, from 2020 to 2300 |
 | `runid`         | 10,000 | RFF socioeconomic pathway draw index (1 to 10,000) |
 
@@ -128,19 +109,13 @@ The data variables are the **regression coefficients** (betas) of the damage fun
 
 ## Formulas
 
-The damage functions are quadratic regressions (without intercept) of global damages on climate variables. For each sector, year, and SSP-growth model combination, the damage function is estimated by OLS across the 33 GCMs and 2 RCP emissions scenarios (Section 4.2 of the DSCIM User Manual, eq. 4):
-
-```
-damages_slpyj = beta1_syj * dGMST_ylp + beta2_syj * dGMST_ylp^2 + error
-```
-
-where `l` indexes the climate model, `p` the emissions scenario, `y` the year, `j` the SSP-growth model, and `dGMST` is the temperature anomaly relative to the 2001-2010 average. An analogous equation is estimated for the coastal sector with `dGMSL` in place of `dGMST`. These SSP-based damage functions are then emulated for each of the 10,000 RFF-SP draws (see Appendix B of the User Manual), producing the coefficients stored in these files.
+The damage functions are quadratic regressions (without intercept) of global damages on climate variables. For each sector, year, and SSP-growth model combination, the damage function is estimated by ordinary least-squares regression across the 33 GCMs and 2 RCP emissions scenarios (Section 4.2 of the DSCIM User Manual). These SSP-based damage functions are then used to emulate damage functions for each of the 10,000 RFF-SP draws (see Appendix B of the User Manual), producing the coefficients stored in these files.
 
 The regression specification for each sector type is:
 
 **Temperature-driven sectors:**
 ```
-damages = beta_anomaly * T + beta_anomaly2 * T^2
+damages = beta_gmst * T + beta_gmst2 * T^2
 ```
 
 **Coastal sector:**
@@ -150,12 +125,12 @@ damages = beta_gmsl * S + beta_gmsl2 * S^2
 
 **CAMEL (combined):**
 ```
-damages = beta_anomaly * T + beta_anomaly2 * T^2 + beta_gmsl * S + beta_gmsl2 * S^2
+damages = beta_gmst * T + beta_gmst2 * T^2 + beta_gmsl * S + beta_gmsl2 * S^2
 ```
 
 Where:
 - `T` is the global mean surface temperature (GMST) anomaly
-- `S` is global mean sea level (GMSL)
+- `S` is global mean sea level (GMSL) anomaly
 - The beta coefficients are the variables stored in the `.nc4` files
 
 The formulas have no intercept, meaning that zero climate change implies zero damages.
@@ -167,8 +142,8 @@ The formulas have no intercept, meaning that zero climate change implies zero da
 
 The coefficient files contain no embedded unit metadata. The units are inferred from the DSCIM codebase and preprocessing pipeline:
 
-- The damage function coefficients produce **damages in 2019 PPP-adjusted USD** when multiplied by the climate variables described below. This is confirmed by the DSCIM preprocessing code, which converts underlying RFF-SP GDP data from 2011 USD to 2019 USD using a GDP deflator before estimating the damage functions (see `dscim/utils/rff.py` and `dscim/preprocessing/input_damages.py` in the `dscim` package).
-- In the SC-GHG calculation pipeline (`scripts/scghg_utils.py`), the final output is further deflated from 2019 to **2020 USD** using the factor `113.648 / 112.29`. This deflator is applied after the damage functions are evaluated, not within the coefficient files.
+- The damage function coefficients produce **damages in 2019 PPP-adjusted USD** when multiplied by the climate variables described below. 
+- The final SC-GHG output is converted from 2019 to **2020 USD** using the factor `113.648 / 112.29`. This deflator is applied after the damage functions are evaluated, not within the coefficient files.
 
 The coefficients thus have the following effective units:
 
@@ -181,29 +156,15 @@ The coefficients thus have the following effective units:
 
 where USD refers to 2019 PPP-adjusted U.S. dollars, and the resulting damages are in total (global or USA) dollars, not per capita.
 
-### Climate variable baselines
+### Required climate variable baselines
 
-**GMST anomaly (T):** Celsius, relative to the **2001-2010 mean**. The DSCIM pipeline rebases FaIR temperature output (originally relative to 1765) to this base period. The rebasing is done per simulation: for each of the 10,000 draws, the mean temperature over 2001-2010 is subtracted from the full time series. The relevant code is in `Climate.gmst_anomalies` in [`dscim/menu/simple_storage.py` (v0.5.0)](https://github.com/ClimateImpactLab/dscim/blob/v0.5.0/src/dscim/menu/simple_storage.py):
+**GMST anomaly (T):** Celsius, relative to the **2001-2010 mean**. The DSCIM pipeline rebases FaIR temperature output to this base period. If you are bringing your own temperature trajectory, you need to subtract the mean of the trajectory over 2001-2010 before applying the coefficients.
 
-```python
-base_period = temps.sel(
-    year=slice(self.base_period[0], self.base_period[1])
-).mean(dim="year")
-anomaly = temps - base_period
-```
+**GMSL (S):** Centimeters, relative to the **1991-2009 mean**. No rebasing is applied in the pipeline because coastal damages are estimated relative to the same period. If you are bringing your own sea level trajectory, you need to subtract the mean of the trajectory over 1991-2009 before applying the coefficients.
 
-where `base_period` defaults to `(2001, 2010)`. If you are bringing your own temperature trajectory (for example from DICE), you need to subtract the mean of your control trajectory over 2001-2010 before applying the coefficients.
+> *Note: FACTS outputs are in millimeters and are converted to centimeters by dividing by 10 before being stored in these files.*
 
-**GMSL (S):** Centimeters, relative to the **1991-2009 mean**. No rebasing is applied in the pipeline because coastal damages are estimated relative to the same period.
-
-> *Note: FACTS outputs are in millimeters and are converted to centimeters by dividing by 10 before being stored in these files. See `Climate.gmsl_anomalies` in [`simple_storage.py`](https://github.com/ClimateImpactLab/dscim/blob/v0.5.0/src/dscim/menu/simple_storage.py).*
-
-### Spatial aggregation
-
-The coefficients are **globally aggregated** (or USA-aggregated for the `_USA` variants). They do not contain a region dimension. The underlying DSCIM model estimates damages at roughly 24,000 impact regions worldwide, but these coefficients are the result of fitting damage functions to the aggregated output. A researcher using these files works with the relationship between global climate variables and total global damages, not with spatially disaggregated impact estimates.
-
-
-## Loading the data
+## Loading and applying the coefficients
 
 The files can be opened with any NetCDF-compatible library. Using Python and xarray:
 
@@ -217,75 +178,34 @@ ds = xr.open_dataset(
 )
 
 # Access coefficients for a specific year and draw
-beta_T = ds["anomaly"].sel(year=2050, runid=1).values       # linear GMST coefficient
-beta_T2 = ds["np.power(anomaly, 2)"].sel(year=2050, runid=1).values  # quadratic GMST
-beta_S = ds["gmsl"].sel(year=2050, runid=1).values           # linear GMSL coefficient
-beta_S2 = ds["np.power(gmsl, 2)"].sel(year=2050, runid=1).values    # quadratic GMSL
+beta_gmst = ds["anomaly"].sel(year=2050, runid=1).values       # linear GMST coefficient
+beta_gmst2 = ds["np.power(anomaly, 2)"].sel(year=2050, runid=1).values  # quadratic GMST
+beta_gmsl = ds["gmsl"].sel(year=2050, runid=1).values           # linear GMSL coefficient
+beta_gmsl2 = ds["np.power(gmsl, 2)"].sel(year=2050, runid=1).values    # quadratic GMSL
 
 # Compute damages given climate inputs
 T = 2.0   # GMST anomaly in Celsius relative to 2001-2010
 S = 30.0  # GMSL in cm relative to 1991-2009
-damages = beta_T * T + beta_T2 * T**2 + beta_S * S + beta_S2 * S**2
+damages = beta_gmst * T + beta_gmst2 * T**2 + beta_gmsl * S + beta_gmsl2 * S**2
 # Result is in 2019 PPP-adjusted USD (total global damages)
 ```
 
 
-## Using the damage functions in other models
+## Using the damage functions
 
-Researchers wishing to integrate these damage functions into DICE or another integrated assessment model should note the following:
+Researchers wishing to use these damage functions should note the following:
 
-1. **Climate variable conventions**: Ensure that your model's temperature and sea level variables use the same baselines (GMST relative to 2001-2010; GMSL relative to 1991-2009) and units (Celsius; centimeters). Rebasing may be required.
+1. **Climate variable conventions**: Ensure that your model's temperature and sea level variables use the same baselines (GMST relative to 2001-2010; GMSL relative to 1991-2009) and units (Celsius; centimeters).
 
 2. **Temporal resolution**: Coefficients are provided annually from 2020 to 2300. Each year has its own set of coefficients; the damage function is not time-invariant. This reflects the fact that the relationship between climate variables and damages evolves as the economy grows and adapts.
 
-3. **Probabilistic draws**: The 10,000 `runid` draws represent joint uncertainty in socioeconomic pathways and climate parameters. For a deterministic IAM run, one option is to use the mean (or median) across draws for each year. For uncertainty analysis, the draws can be sampled or used in a Monte Carlo framework.
+3. **Probabilistic draws**: Coefficients are provided for each of 10,000 `runid` draws, which represent joint uncertainty in socioeconomic pathways and climate parameters. 
 
-4. **Sector choice**: For aggregate SC-GHG calculations, use the CAMEL files (combined sector). Individual sector files are useful for understanding the sectoral composition of damages but should not be summed, as the CAMEL coefficients already represent the combined result.
+4. **Sector choice**: For aggregate SC-GHG calculations, use the CAMEL files ("combined" sector). Individual sector files are useful for understanding the sectoral composition of damages but should not be summed, as the CAMEL coefficients already represent the combined result.
 
-5. **Recipe choice**: The `risk_aversion` recipe is the primary specification used in the EPA analysis. The `adding_up` recipe is a simpler alternative available only for CAMEL. The two recipes differ in how local damages are aggregated. In `adding_up` (risk-neutral), damages across dose-response function draws are averaged within each impact region before summing globally. In `risk_aversion`, a certainty equivalent (CE) is computed within each of the 24,378 impact regions using a CRRA utility function with elasticity eta:
+5. **Recipe choice**: The `risk_aversion` recipe is the primary specification used in the EPA specification. The `adding_up` recipe is a "risk neutral" alternative available only for CAMEL. The two recipes differ in how local damages are aggregated. In `adding_up` (risk-neutral), damages across dose-response function draws are averaged within each impact region before summing globally and fitting the damage function. In `risk_aversion`, a certainty equivalent (CE) is computed within each of the 24,378 impact regions using a CRRA utility function with elasticity `eta`, before summing globally and fitting the damage function. Risk-averse damages are typically larger than the risk-neutral mean because they include a premium for severe outcomes. See Section 4.1.2 and Appendix A of the DSCIM User Manual (September 2023) for the full derivation.
 
-    ```
-    CE_cc = [ (1/K) * sum_d( C_d^(1-eta) / (1-eta) ) * (1-eta) ]^(1/(1-eta))
-    ```
-
-    where `C_d = GDPpc - damages_d` is per capita consumption in draw `d`. The difference between the CE under no-climate-change and the CE under climate change gives risk-averse damages, which are larger than the risk-neutral mean because they include a premium for severe outcomes. See Section 4.1.2 and Appendix A of the DSCIM User Manual (September 2022) for the full derivation.
-
-6. **Currency conversion**: The coefficients produce damages in 2019 PPP-adjusted USD. Apply a deflator if your model uses a different base year. The DSCIM-FACTS-EPA pipeline uses `113.648 / 112.29` to convert from 2019 to 2020 USD. This deflator is applied after evaluating the damage function, not within the coefficient files.
-
-7. **Marginal damages and SC-GHG**: To compute the SC-GHG, evaluate the damage function under both a control (no-pulse) and pulse climate trajectory, take the difference (marginal damages), discount the stream, and sum. A minimal example:
-
-    ```python
-    import xarray as xr
-
-    ds = xr.open_dataset(
-        "input/damage_functions/CAMEL_m1_c0.20/"
-        "risk_aversion_euler_ramsey_eta1.244_rho0.002_dfc.nc4"
-    ).squeeze("discount_type", drop=True)
-
-    def eval_damages(T, S, ds):
-        b1 = ds["anomaly"]
-        b2 = ds["np.power(anomaly, 2)"]
-        b3 = ds["gmsl"]
-        b4 = ds["np.power(gmsl, 2)"]
-        return b1 * T + b2 * T**2 + b3 * S + b4 * S**2
-
-    # T_control, T_pulse: xr.DataArray with dims (runid, year)
-    # S_control, S_pulse: same, in cm relative to 1991-2009
-    # T arrays must be rebased to the 2001-2010 mean of the control
-
-    damages_control = eval_damages(T_control, S_control, ds)
-    damages_pulse   = eval_damages(T_pulse,   S_pulse,   ds)
-    marginal_damages = damages_pulse - damages_control
-
-    # Mean across draws for a deterministic estimate
-    marginal_damages_mean = marginal_damages.mean("runid")
-
-    # Convert to 2020 USD
-    marginal_damages_2020usd = marginal_damages_mean * (113.648 / 112.29)
-    ```
-
-    The gas-specific pulse conversion factors are defined in the run configuration (see `gas_conversions` in the generated config file). The default CO2 pulse conversion is `2.72916487e-10`, which converts a 1 GtC pulse to per-tonne-CO2 units.
-
+6. **Currency units**: The coefficients produce damages in 2019 PPP-adjusted USD. The DSCIM-FACTS-EPA pipeline uses `113.648 / 112.29` to convert the calculated SC-GHGs from 2019 to 2020 USD.
 
 ## References
 
@@ -299,7 +219,7 @@ Researchers wishing to integrate these damage functions into DICE or another int
 
 - Resources for the Future (2022). RFF Socioeconomic Projections (RFF-SPv2). https://www.rff.org/publications/data-tools/
 
-- Climate Impact Lab. DSCIM: The Data-driven Spatial Climate Impact Model. https://impactlab.org/
+- Climate Impact Lab. DSCIM: The Data-driven Spatial Climate Impact Model. https://impactlab.org/research/data-driven-spatial-climate-impact-model-user-manual-version-092023-epa/
 
 - Smith, C. J., et al. (2018). FAIR v1.3: A simple emissions-based impulse response and carbon cycle model. *Geoscientific Model Development*, 11(6), 2273-2297.
 
