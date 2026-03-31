@@ -514,6 +514,7 @@ where `T` is GMST anomaly in Celsius (relative to 2001-2010) and `S` is GMSL in 
 
 ```python
 import xarray as xr
+import numpy as np
 
 ds = xr.open_dataset(
     "input/damage_functions/CAMEL_m1_c0.20/"
@@ -529,6 +530,6 @@ beta_gmsl2 = ds["np.power(gmsl, 2)"].sel(year=2050, runid=1).values
 
 T = 2.0   # GMST anomaly in Celsius relative to 2001-2010
 S = 30.0  # GMSL in cm relative to 1991-2009
-damages = beta_gmst * T + beta_gmst2 * T**2 + beta_gmsl * S + beta_gmsl2 * S**2
+damages = beta_gmst * T + beta_gmst2 * np.power(T, 2) + beta_gmsl * S + beta_gmsl2 * np.power(S, 2)
 # Result is in 2019 PPP-adjusted USD
 ```

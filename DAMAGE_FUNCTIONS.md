@@ -170,6 +170,7 @@ The files can be opened with any NetCDF-compatible library. Using Python and xar
 
 ```python
 import xarray as xr
+import numpy as np
 
 # Load CAMEL risk-aversion coefficients for the 2.0% Ramsey discount rate
 ds = xr.open_dataset(
@@ -186,7 +187,7 @@ beta_gmsl2 = ds["np.power(gmsl, 2)"].sel(year=2050, runid=1).values    # quadrat
 # Compute damages given climate inputs
 T = 2.0   # GMST anomaly in Celsius relative to 2001-2010
 S = 30.0  # GMSL in cm relative to 1991-2009
-damages = beta_gmst * T + beta_gmst2 * T**2 + beta_gmsl * S + beta_gmsl2 * S**2
+damages = beta_gmst * T + beta_gmst2 * np.power(T, 2) + beta_gmsl * S + beta_gmsl2 * np.power(S, 2)
 # Result is in 2019 PPP-adjusted USD (total global damages)
 ```
 
