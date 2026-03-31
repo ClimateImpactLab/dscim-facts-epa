@@ -22,6 +22,7 @@ This README is organized as follows:
 - [Further Information](#further-information)
     - [Creating a `dscim-facts-epa` run config](#creating-a-dscim-facts-epa-run-config)
     - [Input files](#input-files)
+- [Damage function coefficients](#damage-function-coefficients)
 
 ## Types of run cases
 
@@ -453,3 +454,82 @@ Econ
 Damage Functions
 - Files containing a set of damage function coefficients for each RFF draw for each economic sector and valuation choice.
 - RFF damage function emulator weights: damage_function_weights.nc4
+
+
+## Damage function coefficients
+
+The `input/damage_functions/` directory contains pre-computed damage function coefficients used to translate climate projections into monetized damages. The coefficients are quadratic regressions of globally- or sub-globally-aggregated climate damages on global mean temperature and sea level, estimated for each year and socioeconomics pathway**. (**Note, damage functions are initially estimated on damages based on Shared Socioeconomic Pathways, or SSPs. Those damage functions are then used to emulate damage functions for Resources for the Future Socioeconomic Pathways, or RFF-SPs, provided here).
+
+For references and details on units, climate variable baselines, recipe definitions, and guidance on using the coefficients, see the companion documentation in [`DAMAGE_FUNCTIONS.md`](DAMAGE_FUNCTIONS.md).
+
+
+### Directory structure
+
+```
+damage_functions/
+|-- damage_function_weights.nc4       # Emulator weights
+|-- CAMEL_m1_c0.20/                   # Combined sectors, global
+|-- CAMEL_m1_c0.20_USA/               # Combined sectors, USA
+|-- agriculture/                      # Agriculture, global
+|-- agriculture_USA/                  # Agriculture, USA
+|-- coastal_v0.20/                    # Coastal, global
+|-- coastal_v0.20_USA/                # Coastal, USA
+|-- energy/                           # Energy, global
+|-- energy_USA/                       # Energy, USA
+|-- labor/                            # Labor, global
+|-- labor_USA/                        # Labor, USA
+|-- mortality_v1/                     # Mortality, global
+|-- mortality_v1_USA/                 # Mortality, USA
+```
+
+**CAMEL** (Coastal, Agriculture, Mortality, Energy, Labor) is the combined multi-sector aggregate and the primary output for computing SC-GHGs. The suffix `m1_c0.20` indicates specific mortality and coastal versions used in the main EPA specification here. Each sector also has a `_USA` variant for territorial U.S. damages.
+
+
+### File naming and parameters
+
+Files follow the pattern `{recipe}_euler_ramsey_eta{eta}_rho{rho}_dfc.nc4`, where `recipe` is either `risk_aversion` (primary EPA specification) or `adding_up` (CAMEL only). `risk_aversion` damage functions include the price of uncertainty in the underlying statistical relationships between impact region damages and weather, whereas `adding_up` damage functions do not (they are risk neutral). NOTE: `euler_ramsey` and `rho` in the filenames can be ignored - damage functions do not vary by these traits. `eta` can additionally be ignored in the `adding_up` filenames for the same reason - those damage functions do not vary by `eta`.
+
+
+### Data variables
+
+Each `.nc4` file has dimensions `year` (2020 to 2300), `runid` (1 to 10,000), and `discount_type` (1). The data variables are:
+
+| Variable Name          | Sectors | Description |
+|------------------------|---------|-------------|
+| `anomaly`              | Temperature-driven, CAMEL | Linear GMST coefficient |
+| `np.power(anomaly, 2)` | Temperature-driven, CAMEL | Quadratic GMST coefficient |
+| `gmsl`                 | Coastal, CAMEL | Linear GMSL coefficient |
+| `np.power(gmsl, 2)`    | Coastal, CAMEL | Quadratic GMSL coefficient |
+
+
+### Computing damages
+
+The damage functions are quadratic regressions without intercept. For CAMEL:
+
+```
+damages = beta_gmst * T + beta_gmst2 * T^2 + beta_gmsl * S + beta_gmsl2 * S^2
+```
+
+where `T` is GMST anomaly in Celsius (relative to 2001-2010) and `S` is GMSL in centimeters (relative to 1991-2009). The result is in 2019 PPP-adjusted USD. Here's an example of calculating CAMEL damages for one year and one RFF-SP-climate draw (`runid`), given a GMST and GMSL value:
+
+```python
+import xarray as xr
+import numpy as np
+
+ds = xr.open_dataset(
+    "input/damage_functions/CAMEL_m1_c0.20/"
+    "risk_aversion_euler_ramsey_eta1.244_rho0.002_dfc.nc4"
+)
+
+# select one year and one runid from the damage function coefficients 
+# to demonstrate the damage calculation
+beta_gmst  = ds["anomaly"].sel(year=2050, runid=1).values
+beta_gmst2 = ds["np.power(anomaly, 2)"].sel(year=2050, runid=1).values
+beta_gmsl  = ds["gmsl"].sel(year=2050, runid=1).values
+beta_gmsl2 = ds["np.power(gmsl, 2)"].sel(year=2050, runid=1).values
+
+T = 2.0   # GMST anomaly in Celsius relative to 2001-2010
+S = 30.0  # GMSL in cm relative to 1991-2009
+damages = beta_gmst * T + beta_gmst2 * np.power(T, 2) + beta_gmsl * S + beta_gmsl2 * np.power(S, 2)
+# Result is in 2019 PPP-adjusted USD
+```
